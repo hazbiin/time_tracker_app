@@ -3,15 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="style.css" rel="stylesheet">
     <title>Time - Tracker App</title>
 </head>
 <body>
 
-    <div>
+    <div class="container">
 
-    </div>
+        <div class="top-date-section">
+            <h3>10, April, 2025</h3>
+            <h4>monday, </h4>
+        </div>
+
+
+        <div id="tasks-section" class="tasks-section">
+
+            <div id="tasks-section-description" class="tasks-section-description">
+                <h3 class="first-task-text">Your tasks will be listed here ...</h3>
+                <p>Track your time on tasks and organize them with any tags.. its all up to you!</p>
+                <button>Creat First Task</button>
+            </div>
+
+
+            
+            
+            
+            <div class="new-tasks-container">
+
+                <ul id="new-tasks-list" class="new-tasks-list">
+                    <!-- <li class="task-list-item">
+
+                        <div class="list-item-top">
+                            <div class="list-text-section">
+                                <h4>working on project</h4>
+                                <p>0hrs 0mins 0secs</p>
+                                <p>in-progress...</p>
+                            </div>
+                            <div class="list-item-buttons">
+                                <button id="timer-btn">start timer</button>
+                                <button id="edit-btn">edit</button>
+                            </div>
+                        </div>
+
+                        <div class="list-item-bottom">
+                            <div><a href="#">see time logs.. <span>></span></a></div>
+
+                            <div class="time-log">
+                                <ul>
+                                    <li>10:00 AM - 2:00 PM</li>
+                                    <li>10:00 AM - 2:00 PM</li>
+                                    <li>10:00 AM - 2:00 PM</li>
+                                    <li>10:00 AM - 2:00 PM</li>
+                                    <li>10:00 AM - 2:00 PM</li>
+                                </ul>
+                                <div class="total-time-container">
+                                    <span>Total time:</span>
+                                    <span>4hr 50min</span>
+                                </div>
+                            </div>
+                        </div>
+                    </li> -->
+                </ul>
+                
+            </div>
+        </div>
+        
+        <div class="tasks-footer-section">
+           <button>Tasks</button>
+           <button>Timeline</button>
+           <button id="create-task-button">+</button>
+           <button>reports</button>
+           <button>settings</button>
+        </div>
     
 
+        
+        <div id="create-new-task-popup" class="create-new-task-popup">
+            <input id="task-name" type="text" placeholder="enter task name..."/>
+            <textarea id="task-desc" placeholder="enter description" id=""></textarea>
+            <input id="task-tag" type="text" placeholder="set a tag ..."/>
+            
+            <div class="status-container">
+                <label>
+                    <input type="radio" name="progress-status" value="in-progress"/ >
+                    In - Progress
+                </label>
+                <label>
+                    <input type="radio" name="progress-status" value="done"/>
+                    Done
+                </label>
+            </div>
+            
+            <button id="save-task-button">save</button>
+        </div>
+
+
+        <!-- <div id="timer-popup" class="timer-popup">
+            <h1>00:00:00</h1>
+            <div class="control-btns">
+                <button>play</button>
+                <button>pause</button>
+            </div>
+        </div> -->
+    </div>
+    
+    
+    <!--  -->
+    <!-- on clikc of start timer button -->
+     <!-- 
+        show the timer pop up.
+        when ready - play button 
+        note done the exact time and store its value
+        
+        pause button 
+        note done the time and sore its vlaue
+
+        create a key vlaue pair.
+
+     -->
     <!-- <div>
         <div class="current-date">
             <h2>10, April, 2025 </h2>
@@ -65,7 +174,7 @@
         </div>
     </div> -->
     
-
     <script src="script.js"></script>
 </body>
 </html>
+
