@@ -7,44 +7,56 @@
     <title>Time - Tracker App</title>
 </head>
 <body>
-
+    
     <div class="container">
 
-        <div class="top-date-section">
-            <h3>10, April, 2025</h3>
-            <h4>monday, </h4>
+        <div class="header">
+            <div class="user-header-section">
+                <div class="user-intro">
+                    <h2>Hello, Username</h2>
+                    <p>lets keep track of your time!</p>
+                </div>
+                <div class="user-settings-area">
+                    <button><img src="person-lines-fill.svg"/></button>
+                </div>
+            </div>
+    
+            <div class="top-date-section">
+                <h2>Today</h2>
+                <h3>10 April 2025, Monday</h3>
+            </div>
         </div>
+        
 
+        <div class="tasks-section">
 
-        <div id="tasks-section" class="tasks-section">
-
-            <div id="tasks-section-description" class="tasks-section-description">
-                <h3 class="first-task-text">Your tasks will be listed here ...</h3>
-                <p>Track your time on tasks and organize them with any tags.. its all up to you!</p>
-                <button>Creat First Task</button>
+            <div id="tasks-section-desc" class="tasks-section-desc">
+                <h3>Your tasks will be listed here!</h3>
+                <p>Track your time on tasks and organize them using any tags.. its all up to you!</p>
             </div>
 
 
-            
-            
-            
+            <!-- this it the newly created task list -->
             <div class="new-tasks-container">
-
                 <ul id="new-tasks-list" class="new-tasks-list">
-                    <!-- <li class="task-list-item">
 
-                        <div class="list-item-top">
-                            <div class="list-text-section">
+                    <!-- <li class="task-list-item">
+                        <div class="task-info">
+                            <div class="list-item-text-section">
                                 <h4>working on project</h4>
                                 <p>0hrs 0mins 0secs</p>
                                 <p>in-progress...</p>
                             </div>
-                            <div class="list-item-buttons">
-                                <button id="timer-btn">start timer</button>
+                            <div class="list-item-buttons-section">
+                                <button id="task-timer-btn">start timer</button>
                                 <button id="edit-btn">edit</button>
                             </div>
                         </div>
 
+                        <div>
+                            <h3>00:00:00</h3> 
+                        </div>
+                        
                         <div class="list-item-bottom">
                             <div><a href="#">see time logs.. <span>></span></a></div>
 
@@ -63,118 +75,45 @@
                             </div>
                         </div>
                     </li> -->
+
                 </ul>
-                
             </div>
         </div>
-        
-        <div class="tasks-footer-section">
-           <button>Tasks</button>
-           <button>Timeline</button>
-           <button id="create-task-button">+</button>
-           <button>reports</button>
-           <button>settings</button>
-        </div>
-    
 
-        
-        <div id="create-new-task-popup" class="create-new-task-popup">
-            <input id="task-name" type="text" placeholder="enter task name..."/>
-            <textarea id="task-desc" placeholder="enter description" id=""></textarea>
-            <input id="task-tag" type="text" placeholder="set a tag ..."/>
+
+
+
+        <!-- ------------daily summary tab---------------  -->
+        <div class="daily-summary-tab">
+            <h4>Let’s look at how your yesterday went!</h4>
+            <button class="summary-close-btn">X</button>
+        </div>
+
+
+        <!-- -----------bottom nav bar----------------- -->
+        <div class="bottom-nav-bar">
+            <button>Tasks</button>
+            <button>Timeline</button>
+            <button id="create-task-popup-btn">+</button>
+            <button>reports</button>
+            <button>settings</button>
+        </div>
+    </div>
+
+
+    <!-- -----------create new task popup--`----------- -->
+    <div id="create-new-task-popup" class="create-new-task-popup">
+
+        <input id="task-name" type="text" placeholder="enter task name..."/>
+        <textarea id="task-desc" placeholder="enter description" id=""></textarea>
+        <input id="task-tag" type="text" placeholder="set a tag ..."/>
+        <input id="task-status" type="text" placeholder="inprogress/done"/>
             
-            <div class="status-container">
-                <label>
-                    <input type="radio" name="progress-status" value="in-progress"/ >
-                    In - Progress
-                </label>
-                <label>
-                    <input type="radio" name="progress-status" value="done"/>
-                    Done
-                </label>
-            </div>
-            
-            <button id="save-task-button">save</button>
-        </div>
-
-
-        <!-- <div id="timer-popup" class="timer-popup">
-            <h1>00:00:00</h1>
-            <div class="control-btns">
-                <button>play</button>
-                <button>pause</button>
-            </div>
-        </div> -->
+        <button id="create-task-button">create-task</button>
+        <button class="close-create-task-pop-up-btn" id="close-create-task-pop-up-btn">x</button>
     </div>
     
-    
-    <!--  -->
-    <!-- on clikc of start timer button -->
-     <!-- 
-        show the timer pop up.
-        when ready - play button 
-        note done the exact time and store its value
-        
-        pause button 
-        note done the time and sore its vlaue
 
-        create a key vlaue pair.
-
-     -->
-    <!-- <div>
-        <div class="current-date">
-            <h2>10, April, 2025 </h2>
-        </div>
-        <div class="all-tasks-container">
-            <div class="task">
-                <div class="task-starter-container">
-                    <input id="task" class="title" type="text" placeholder="type your task..."/>
-                    <input placeholder="enter the status , in-progress / done"/>
-
-                    <div class="collapsible-add-more-section">
-                        <textarea placeholder="give description..."></textarea>
-                        <button>set a tag</button>
-                    </div>
-                    
-                    <button>create task +</button>
-                    <button>start doing!</button>
-                </div>
-
-                
-                <div class="time-log-container">
-                    <ul>
-                        <li>
-                            <div>start-time</div>
-                            <div>end-time</div>
-                            <div>total-time</div>
-                        </li>
-                        <li>
-                            <div>start-time</div>
-                            <div>end-time</div>
-                            <div>total-time</div>
-                        </li>
-                        <li>
-                            <div>start-time</div>
-                            <div>end-time</div>
-                            <div>total-time</div>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="total-time-container">
-                </div>
-            </div>
-        </div>
-
-        <div class="timer-container">
-            <div>
-                <h3>task name</h3>
-                <h1>00:00:00</h1>
-            </div>
-        </div>
-    </div> -->
-    
     <script src="script.js"></script>
 </body>
 </html>
-
