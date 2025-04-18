@@ -13,22 +13,6 @@ const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 console.log(tasks);
 
 
-// ///////////implementing timer////////////////////////
-// variables for time values 
-let seconds = 0;
-let minutes = 0;
-let hours = 0;
-
-// variables for leading zeros
-let leadingSeconds = 0;
-let leadingMinutes = 0;
-let leadingHours = 0;
-
-// variables for set inteval and timer status
-let timerInterval = null;
-let timerStatus = "stopped";
-
-
 // listing tasks if any from local storage////
 if(tasks.length !== 0) {
     tasksSectionDescription.classList.add('hide');
@@ -56,83 +40,89 @@ if(tasks.length !== 0) {
                 </div>
             </li>
     `;
-    
-    // console.log(task)  
     })
 
     const timerBtns = document.querySelectorAll("#timer-btn");
-    timerBtns.forEach(timerBtn =>{
-        timerBtn.addEventListener("click", () => {
+    timerBtns.forEach(timerBtn => {
 
-            // let displayTimer = document.getElementById("timer");
-            const timerContainer = document.getElementById("timer-container");
-            console.log(timerContainer)
-            timerContainer.classList.add("started");
+        // ///////////implementing timer////////////////////////
+        // variables for time values 
+        let seconds = 0;
+        let minutes = 0;
+        let hours = 0;
 
-            const now = new Date();
-            // let time = {}; 
+        // variables for set inteval and timer status
+        let timerInterval = null;
+        let timerStatus = "stopped";
 
-            if(timerStatus === "stopped") {   
-                timerInterval = window.setInterval(timer, 1000);
-                document.getElementById("timer-btn").innerHTML= "stop timer";
-                timerStatus = "started";
+        
+        timerBtn.addEventListener("click", (e) => {
+            
+            const timerBtn = e.target;
+            const taskItem = timerBtn.closest(".task-list-item");
+            const timerContainer = taskItem.querySelector(".timer-container");
+            const timer = taskItem.querySelector("#timer");
+
+            let time = [];
+            let startTime;
+            let endTime;
+
+            if(timerStatus === "stopped") { 
                 
-                // time["startTime"] = now.toLocaleTimeString();
-                // console.log(time)
+                startTime = new Date().toLocaleTimeString();
+                timerInterval = window.setInterval(() => {
+
+                    // ////////timer ///////////
+                    seconds ++;
+                    if(seconds === 60) {
+                        seconds = 0;
+                        minutes++;
+                        if(minutes === 60) {
+                            minutes = 0;
+                            hours++;
+                        }
+                    }
+
+                    let leadingSeconds = seconds < 10 ? `0${seconds}` : seconds;
+                    let leadingMinutes = minutes < 10 ? `0${minutes}` : minutes;
+                    let leadingHours =  hours < 10 ? `0${hours}` : hours;
+
+                    timer.innerText = `${leadingHours}:${leadingMinutes}:${leadingSeconds}`;
+                }, 1000);
+                
+                timerBtn.innerHTML= "stop timer";
+                timerContainer.classList.add("open");
+
+                timerStatus = "started";
             }else {
+
                 window.clearInterval(timerInterval);
-                document.getElementById("timer-btn").innerHTML= "start timer";
+                seconds = 0;
+                minutes = 0;
+                hours = 0;
+                timer.innerText = "00:00:00";
+
+                endTime = new Date().toLocaleTimeString();
+
+                timerBtn.innerHTML = "start timer";
+                timerContainer.classList.remove("open");
                 timerStatus = "stopped";
-    
-                // time["endTime"] = now.toLocaleTimeString();
-                // console.log(time)
             }
 
-            // console.log(time);
+
+            console.log(startTime)
+            time.push({
+                startTime,
+                endTime,
+                totalTime: "00:00:00"
+            })
+            console.log(time)
+
+            // tasks.push(time);
+            // localStorage.setItem("tasks", JSON.stringify(tasks))
         })
     })
 }
-
-
-
-// timer function
-function timer() {
-    seconds ++;
-
-    if(seconds === 60) {
-        seconds = 0;
-        minutes++;
-        if(minutes === 60) {
-            minutes = 0;
-            hours++;
-        }
-    }
-
-    if(seconds < 10) {
-        leadingSeconds = "0" + seconds.toString();
-    }else {
-        leadingSeconds = seconds;
-    }
-
-    if(minutes < 10) {
-        leadingMinutes = "0" + minutes.toString();
-    }else {
-        leadingMinutes = minutes
-    }
-
-    if(hours < 10) {
-        leadingHours = "0" + hours.toString();
-    }else {
-        leadingHours = hours;
-    }
-
-
-    let displayTimer = document.getElementById("timer");
-    displayTimer.innerText = `${leadingHours}:${leadingMinutes}:${leadingSeconds}`;
-}
-
-
-
 
 
 // creating new tasks //////////////
@@ -145,8 +135,8 @@ createTaskPopupButton.addEventListener("click", () => {
     })
 })
 
-if(createTaskButton){
 
+if(createTaskButton){
     // task creation inputs ..
     const taskNameInput = document.getElementById("task-name");
     const taskDescInput = document.getElementById("task-desc");
@@ -166,10 +156,12 @@ if(createTaskButton){
 
         
         const newTask = {
+            "taskId" : tasks.length,
             "taskName" : taskName,
             "taskDesc" : taskDesc,
             "taskTag" : taskTag,
-            "taskStatus" : taskStatus
+            "taskStatus" : taskStatus,
+            "timeLog" : []
         }
         
         tasks.push(newTask);
@@ -179,6 +171,6 @@ if(createTaskButton){
     })
 }
 
-
 // clearing tasks on development mode.
 // localStorage.clear();
+

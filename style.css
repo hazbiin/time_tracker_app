@@ -130,6 +130,6 @@ body{
 .timer-container{
     display: none;
 }
-.timer-container.started{
+.timer-container.open{
     display: block;
 }
