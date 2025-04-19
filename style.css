@@ -119,12 +119,6 @@ body{
     transform: translateY(0);
 }
 
-.close-create-task-pop-up-btn{
-    position: absolute;
-    top:10px;
-    right: 10px;
-}
-
 
 /* ////////timer//////// */
 /* .timer-container{
