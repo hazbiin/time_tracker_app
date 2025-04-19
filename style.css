@@ -121,9 +121,19 @@ body{
 
 
 /* ////////timer//////// */
-/* .timer-container{
-    display: none;
+.timer-container{
+    /* display: none; */
+    margin-bottom: 10px;
 }
 .timer-container.open{
+    display: block;
+}
+
+
+/* timer log container */
+/* .task-list-item-timelog{
+    display: none;
+}
+.task-list-item-timelog.show{
     display: block;
 } */

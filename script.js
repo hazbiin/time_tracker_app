@@ -22,12 +22,18 @@ function displayTasks() {
     newTasksList.innerHTML = "";
 
     tasks.forEach(task => {
+
+        const timeLogsMarkup = task.timeLogs.map(log => {
+            return `<li>${log.startTime} - ${log.endTime} - ${log.totalTime}</li>`
+        }).join("");
+
+
         newTasksList.innerHTML += `
-            <li class="task-list-item" data-task-id="${tasks.taskId}">
+            <li class="task-list-item" data-task-id="${task.taskId}">
                 <div class="task-info">
                     <div class="list-item-text-section">
                         <h4>${task.taskName}</h4>
-                        <p>0hrs 0mins 0secs</p>
+                        <p>${task.taskTotalDuration}</p>
                         <p>${task.taskStatus}</p>
                     </div>
                     <div class="list-item-buttons-section">
@@ -41,23 +47,16 @@ function displayTasks() {
                 </div>
 
                 <div class="task-list-item-timelog">
-                    <div>
-                        <a href="#">see time logs.. <span>></span></a>
-                    </div>
-
-                            <div class="time-log">
-                                <ul>
-                                    <li>10:00 AM - 2:00 PM</li>
-                                    <li>10:00 AM - 2:00 PM</li>
-                                    <li>10:00 AM - 2:00 PM</li>
-                                    <li>10:00 AM - 2:00 PM</li>
-                                    <li>10:00 AM - 2:00 PM</li>
-                                </ul>
-                                <div class="total-time-container">
-                                    <span>Total time:</span>
-                                    <span>4hr 50min</span>
-                                </div>
-                            </div>
+                    <button>view less</button>
+                    <div class="time-log">
+                        <ul>
+                            ${timeLogsMarkup}
+                        </ul>
+                        <div class="total-time-container">
+                            <span>Total time:</span>
+                            <span>${task.taskTotalDuration}</span>
+                        </div>
+                    </div>       
                 </div>
             </li>
         `;
@@ -85,7 +84,7 @@ function attachTimerListeners() {
 
 
         let startTime, endTime, totalTime;
-        let taskTotalTimes = [];
+        // let taskTimeLogs = [];
         let taskTotalDuration;
 
 
@@ -94,19 +93,16 @@ function attachTimerListeners() {
             const taskItem = e.target.closest(".task-list-item");
             const timer = taskItem.querySelector(".timer");
 
+
             // variable to change the task stored in local storage
-            // const taskId = Number(taskItem.getAttribute("data-task-id"));
-            // console.log(taskId)
-            // const taskToUpdate = tasks.find(t => t.taskId === taskId);
-            // console.log(taskToUpdate)
+            const taskId = Number(taskItem.dataset.taskId);
+            const taskToUpdate = tasks.find(t => t.taskId === taskId); // gets the first match
 
 
-            // starting timer
+            // timer start stop functionality///////////////////
             if(timerStatus === "stopped") {
-
                 // getting startTIme
                 startTime = new Date();
-
                 timerInterval = setInterval(() => {
                     seconds++;
                     if(seconds === 60) {
@@ -117,17 +113,11 @@ function attachTimerListeners() {
                             hours++;
                         }
                     }
-
-                    // formatting time values with leading zeros 
-                    // const format = (val) => (val < 10 ? `0${val}` : val);
-                    // timer.innerText = `${format(hours)}:${format(minutes)}:${format(seconds)}`;
-
                     timer.innerText = `${formatWithLeadingZeros(hours)}:${formatWithLeadingZeros(minutes)}:${formatWithLeadingZeros(seconds)}`;
                 }, 1000);
 
                 e.target.innerText = "stop timer";
                 timerStatus = "started";
-
             }else {
 
                 clearInterval(timerInterval);
@@ -135,48 +125,43 @@ function attachTimerListeners() {
                 // getting end time
                 endTime = new Date();
 
-                // console.log(endTime.toLocaleTimeString())
+                // finding difference between the start time and end time/////////////////////////////
+                let currentLogDuration = endTime - startTime;  // milliseconds
+                let currentLogDurationInSeconds = Math.floor(currentLogDuration / 1000);
 
-                // finding difference between the start time and end time/////////////////////////////.
-                let totalDurationInMilliseconds = endTime - startTime;  
-                let totalDurationInSeconds = Math.floor(totalDurationInMilliseconds / 1000);
+                totalTime = convertSecondsToTimeFormat(currentLogDurationInSeconds);
 
-                let hrs = Math.floor(totalDurationInSeconds / 3600); // becuase 1 hr == 3600 seconds
-                let mins = Math.floor( (totalDurationInSeconds % 3600) / 60); // we wanna check how seconds is left from total seconds after substracting hours, then we check how many full minutes we get form the reminaing seconds.
-                let secs = totalDurationInSeconds % 60; // checking how many remaining secongs we get after taking full minutes.
-                
-                
-                // formatting time values with leading zeros 
-                const totalFormat = (val) => (val < 10 ? `0${val}` : val);
-                totalTime = `${totalFormat(hrs)}:${totalFormat(mins)}:${totalFormat(secs)}`;
-                console.log(totalTime);
-
-
-                taskTotalTimes.push(totalTime);
-                console.log(taskTotalTimes)
+                // updating task object with time logs /////////////
+                taskToUpdate.timeLogs.push({
+                    timeLogId : taskToUpdate.timeLogs.length + 1,
+                    startTime : startTime.toLocaleTimeString(),
+                    endTime: endTime.toLocaleTimeString(),
+                    totalTime : totalTime
+                });
+                // console.log("task time logs ------->>", taskToUpdate.timeLogs);
 
 
                 // summing all the totaltimes of each task to get the final total time for each tasks..
-                let taskTotalSeconds = 0;
-                for(let i = 0; i < taskTotalTimes.length; i++) {
-                    let time = taskTotalTimes[i];  // getting one totaltime
+                let allTimeLogsTotalSeconds = 0;
+                taskToUpdate.timeLogs.forEach(log => {
+                    const [hrs, mins, secs] = log.totalTime.split(':');
+                    allTimeLogsTotalSeconds += (Number(hrs) * 3600) + (Number(mins) * 60) + Number(secs);
+                });
+                // console.log("all time logs total ------>>",allTimeLogsTotalSeconds);
 
-                    let [hrs, mins, secs] = time.split(":");
-                    // console.log(hrs,mins, secs)
 
-                    // let parts = time.split(":");
-                    // let hrs = Number(parts[0]);
-                    // let mins = Number(parts[1]);
-                    // let secs = Number(parts[2]);
+                // total task duration /////////////////////////////////////////////////////////
+                taskTotalDuration = convertSecondsToTimeFormat(allTimeLogsTotalSeconds);
+                // console.log("task total duration ------->>",taskTotalDuration);
 
-                    taskTotalSeconds += (Number(hrs) * 3600) + (Number(mins * 60)) + Number(secs);
-                    
-                }
 
-                console.log(taskTotalSeconds);
+                taskToUpdate["taskTotalDuration"] = taskTotalDuration;
 
-                taskTotalDuration = convertSecondsToTimeFormat(taskTotalSeconds);
-                console.log("task total duration",taskTotalDuration);
+                // updating local storage 
+                localStorage.setItem("tasks", JSON.stringify(tasks))
+
+                // refresh the UI after the update
+                displayTasks();
 
 
                 // resetting the timer.
@@ -185,29 +170,26 @@ function attachTimerListeners() {
                 e.target.innerText = "start timer";
                 timerStatus = "stopped";
             }
-
         })
     })
 }
 
 function convertSecondsToTimeFormat(totalSeconds) {
-    let hrs = Math.floor(totalSeconds / 3600);
-    let mins = Math.floor( (totalSeconds % 3600) / 60);
-    let secs = totalSeconds % 60;
+    let hrs = Math.floor(totalSeconds / 3600); // becuase 1 hr == 3600 seconds
+    let mins = Math.floor( (totalSeconds % 3600) / 60); // we wanna check how many seconds is left from total seconds after substracting hours, then we check how many full minutes we get form the reminaing seconds.
+    let secs = totalSeconds % 60; // checking how many remaining seconds we get after taking full minutes.
 
     return `${formatWithLeadingZeros(hrs)}:${formatWithLeadingZeros(mins)}:${formatWithLeadingZeros(secs)}`;
 }
-
 function formatWithLeadingZeros(val) {
     return (val < 10) ? `0${val}` : val;
 }
 
 
-// creating new tasks //////////////
+// creating new tasks ///////////////////////////////////////////////////
 createTaskPopupButton.addEventListener("click", () => {
     createNewTaskPopup.classList.add('show');
 })
-
 
 if(createTaskButton){
     // task creation inputs ..
@@ -233,8 +215,8 @@ if(createTaskButton){
             "taskDesc" : taskDesc,
             "taskTag" : taskTag,
             "taskStatus" : taskStatus,
-            "timeLog" : [],
-            "taskTotalDuration" : []
+            "timeLogs" : [],
+            "taskTotalDuration" : ""
         };
         
         tasks.push(newTask);
