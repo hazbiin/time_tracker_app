@@ -13,16 +13,17 @@ const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 console.log(tasks);
 
 
-// listing tasks if any from local storage////
+// listing tasks if any from local storage/////
 if(tasks.length !== 0) {
     tasksSectionDescription.classList.add('hide');
     
     let newTasksList = document.getElementById("new-tasks-list");
     newTasksList.innerHTML = "";
 
+
     tasks.forEach(task => {
         newTasksList.innerHTML += `
-            <li class="task-list-item">
+            <li class="task-list-item" data-task-id="${tasks.taskId}">
                 <div class="task-info">
                     <div class="list-item-text-section">
                         <h4>${task.taskName}</h4>
@@ -36,7 +37,7 @@ if(tasks.length !== 0) {
                 </div>
 
                 <div id="timer-container" class="timer-container">
-                    <h3 id="timer"></h3> 
+                    <h3 id="timer">00:00:00</h3> 
                 </div>
             </li>
     `;
@@ -60,7 +61,7 @@ if(tasks.length !== 0) {
             
             const timerBtn = e.target;
             const taskItem = timerBtn.closest(".task-list-item");
-            const timerContainer = taskItem.querySelector(".timer-container");
+            // const timerContainer = taskItem.querySelector(".timer-container");
             const timer = taskItem.querySelector("#timer");
 
             let time = [];
@@ -91,7 +92,7 @@ if(tasks.length !== 0) {
                 }, 1000);
                 
                 timerBtn.innerHTML= "stop timer";
-                timerContainer.classList.add("open");
+                // timerContainer.classList.add("open");
 
                 timerStatus = "started";
             }else {
@@ -105,7 +106,7 @@ if(tasks.length !== 0) {
                 endTime = new Date().toLocaleTimeString();
 
                 timerBtn.innerHTML = "start timer";
-                timerContainer.classList.remove("open");
+                // timerContainer.classList.remove("open");
                 timerStatus = "stopped";
             }
 
@@ -116,7 +117,7 @@ if(tasks.length !== 0) {
                 endTime,
                 totalTime: "00:00:00"
             })
-            console.log(time)
+            console.log(time);
 
             // tasks.push(time);
             // localStorage.setItem("tasks", JSON.stringify(tasks))
@@ -153,10 +154,9 @@ if(createTaskButton){
         taskDescInput.value = "";
         taskTagInput.value = "";
         taskStatusInput.value = "";
-
         
         const newTask = {
-            "taskId" : tasks.length,
+            "taskId" : tasks.length + 1,
             "taskName" : taskName,
             "taskDesc" : taskDesc,
             "taskTag" : taskTag,
