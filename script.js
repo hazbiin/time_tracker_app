@@ -1,5 +1,4 @@
 
-// localStorage.clear();
 // creating new task pop up..
 const createTaskPopupButton = document.getElementById('create-task-popup-btn');
 const createNewTaskPopup = document.getElementById('create-new-task-popup');
@@ -12,199 +11,178 @@ const tasksSectionDescription = document.getElementById("tasks-section-desc");
 const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 console.log(tasks);
 
-
 // inital loading from local storage.
 displayTasks();
 
-// listing tasks ////////////////////////////
 function displayTasks() {
     const newTasksList = document.getElementById("new-tasks-list");
-    newTasksList.innerHTML = "";
-
-    tasks.forEach(task => {
-
-        const timeLogsMarkup = task.timeLogs.map(log => {
-            return `<li>${log.startTime} - ${log.endTime} - ${log.totalTime}</li>`
-        }).join("");
-
-
-        newTasksList.innerHTML += `
-            <li class="task-list-item" data-task-id="${task.taskId}">
-                <div class="task-info">
-                    <div class="list-item-text-section">
-                        <h4>${task.taskName}</h4>
-                        <p class="task-total">${task.taskTotalDuration}</p>
-                        <p>${task.taskStatus}</p>
-                    </div>
-                    <div class="list-item-buttons-section">
-                        <button class="timer-btn">start timer</button>
-                        <button id="edit-btn">edit</button>
-                    </div>
-                </div>
-
-                <div id="timer-container" class="timer-container">
-                    <h3 class="timer">00:00:00</h3> 
-                </div>
-
-                <div class="task-list-item-timelog">
-                    <button>view less</button>
-                    <div class="time-log">
-                        <ul class="time-log-list">
-                            ${timeLogsMarkup}
-                        </ul>
-                        <div class="total-time-container">
-                            <span>Total time:</span>
-                            <span>${task.taskTotalDuration}</span>
-                        </div>
-                    </div>       
-                </div>
-            </li>
-        `;
-    });
+    newTasksList.innerHTML = "" ;
+    tasks.forEach(task => renderTask(task));
 
     if(tasks.length !== 0) {
         tasksSectionDescription.classList.add('hide');
     }
-
-    // calling funciton to attach timers 
-    attachTimerListeners();
 }
 
 
-const timers = {}; // key = taskId, value = timer state object
+function renderTask(task) {
+    const newTasksList = document.getElementById("new-tasks-list");
 
-function attachTimerListeners() {
-    const timerBtns = document.querySelectorAll(".timer-btn");
+    // generating time logs.
+    const timeLogsMarkup = task.timeLogs.map(log => {
+        return `<li>${log.startTime} - ${log.endTime} - ${log.totalTime}</li>`
+    }).join("");
 
-    timerBtns.forEach(timerBtn => {
 
+    // creating task list item.
+    const li = document.createElement("li");
+    li.className = "task-list-item";
+    li.setAttribute("data-task-id", task.taskId);
+
+    li.innerHTML = `
+        <div class="task-info">
+            <div class="list-item-text-section">
+                <h4>${task.taskName}</h4>
+                <p class="task-total">${task.taskTotalDuration}</p>
+                <p>${task.taskStatus}</p>
+            </div>
+            <div class="list-item-buttons-section">
+                <button class="timer-btn">start timer</button>
+                <button id="edit-btn">edit</button>
+            </div>
+        </div>
+
+        <div id="timer-container" class="timer-container">
+            <h3 class="timer">00:00:00</h3> 
+        </div>
+
+        <div class="task-list-item-timelog">
+            <button>view less</button>
+            <div class="time-log">
+                <ul class="time-log-list">
+                    ${timeLogsMarkup}
+                </ul>
+                <div class="total-time-container">
+                    <span>Total time:</span>
+                    <span>${task.taskTotalDuration}</span>
+                </div>
+            </div>       
+        </div>
+    `;
+
+    newTasksList.appendChild(li);
+
+    // attaching timer for that newly created task.
+    attachTimerListenerTo(li);
+}
+
+// object to store timer states.
+const timers = {};
+function attachTimerListenerTo(taskItem) {
+    const timerBtn = taskItem.querySelector(".timer-btn");
+
+    timerBtn.addEventListener("click", (e) => {
+        const timer = taskItem.querySelector(".timer");
+        const taskId = Number(taskItem.dataset.taskId);
+        const taskToUpdate = tasks.find(task => task.taskId === taskId);
         
-        // setting initial states for each timer btns
-        // let seconds = 0, minutes = 0, hours = 0;
-        // let timerInterval = null;
-        // let timerStatus = "stopped";
 
+        if(!timers[taskId]) {
+            timers[taskId] = {
+                intervalId: null,
+                status: "stopped",
+                startTime: null,
+                seconds:0,
+                minutes:0,
+                hours:0
+            };
+        }
+        const timerState = timers[taskId];
 
-        // let startTime, endTime, totalTime;
-        // let taskTimeLogs = [];
-        // let taskTotalDuration;
+        // timer start stop functionality///////////////////
+        if(timerState.status === "stopped") {
+            // getting startTIme
+            timerState.startTime = new Date();
 
-
-        // attaching event listner for timerBtn
-        timerBtn.addEventListener("click", (e) => {
-
-            const taskItem = e.target.closest(".task-list-item");
-            const timer = taskItem.querySelector(".timer");
-
-            // variable to change the task stored in local storage
-            const taskId = Number(taskItem.dataset.taskId);
-            const taskToUpdate = tasks.find(t => t.taskId === taskId); // gets the first match
-
-
-            // initializing timer initial state for each task.
-            if(!timers[taskId]) {
-                timers[taskId] = {
-                    intervalId: null,
-                    status: "stopped",
-                    startTime: null,
-                    seconds:0,
-                    minutes:0,
-                    hours:0
-                };
-            }
-            // console.log(timers);
-            const timerState = timers[taskId];
-            // console.log(timerState);
-
-
-            // timer start stop functionality///////////////////
-            if(timerState.status === "stopped") {
-                // getting startTIme
-                timerState.startTime = new Date();
-                timerState.intervalId = setInterval(() => {
-                    timerState.seconds++;
-                    if(timerState.seconds === 60) {
-                        timerState.seconds = 0;
-                        timerState.minutes++;
-                        if(timerState.minutes === 60) {
-                            timerState.minutes = 0;
-                            timerState.hours++;
-                        }
+            timerState.intervalId = setInterval(() => {
+                timerState.seconds++;
+                if(timerState.seconds === 60) {
+                    timerState.seconds = 0;
+                    timerState.minutes++;
+                    if(timerState.minutes === 60) {
+                        timerState.minutes = 0;
+                        timerState.hours++;
                     }
-                    timer.innerText = `${formatWithLeadingZeros(timerState.hours)}:${formatWithLeadingZeros(timerState.minutes)}:${formatWithLeadingZeros(timerState.seconds)}`;
-                }, 1000);
+                }
+                timer.innerText = `${formatWithLeadingZeros(timerState.hours)}:${formatWithLeadingZeros(timerState.minutes)}:${formatWithLeadingZeros(timerState.seconds)}`;
+            }, 1000);
 
-                e.target.innerText = "stop timer";
-                timerState.status = "started";
-            }else {
+            e.target.innerText = "stop timer";
+            timerState.status = "started";
+        }else {
 
-                clearInterval(timerState.intervalId);
+            clearInterval(timerState.intervalId);
 
-                // getting end time
-                const endTime = new Date();
+            // getting end time
+            const endTime = new Date();
 
-                // finding difference between the start time and end time/////////////////////////////
-                const currentLogDuration = endTime - timerState.startTime; 
-                const currentLogDurationInSeconds = Math.floor(currentLogDuration / 1000);
-                const totalTime = convertSecondsToTimeFormat(currentLogDurationInSeconds);
-
-
-                // updating task object with time logs /////////////
-                taskToUpdate.timeLogs.push({
-                    timeLogId : taskToUpdate.timeLogs.length + 1,
-                    startTime : timerState.startTime.toLocaleTimeString(),
-                    endTime: endTime.toLocaleTimeString(),
-                    totalTime : totalTime
-                });
-                // console.log("task time logs ------->>", taskToUpdate.timeLogs);
+            // finding difference between the start time and end time
+            const currentLogDuration = endTime - timerState.startTime; 
+            const currentLogDurationInSeconds = Math.floor(currentLogDuration / 1000);
+            const totalTime = convertSecondsToTimeFormat(currentLogDurationInSeconds);
 
 
-                // summing all the totaltimes of each task to get the final total time for each tasks..
-                let allTimeLogsTotalSeconds = 0;
-                taskToUpdate.timeLogs.forEach(log => {
-                    const [hrs, mins, secs] = log.totalTime.split(':');
-                    allTimeLogsTotalSeconds += (Number(hrs) * 3600) + (Number(mins) * 60) + Number(secs);
-                });
-                // console.log("all time logs total ------>>",allTimeLogsTotalSeconds);
+            // updating local storage with time logs 
+            taskToUpdate.timeLogs.push({
+                timeLogId : taskToUpdate.timeLogs.length + 1,
+                startTime : timerState.startTime.toLocaleTimeString(),
+                endTime: endTime.toLocaleTimeString(),
+                totalTime : totalTime
+            });
+            // console.log("task time logs ------->>", taskToUpdate.timeLogs);
 
 
-                // total task duration /////////////////////////////////////////////////////////
-                taskToUpdate.taskTotalDuration = convertSecondsToTimeFormat(allTimeLogsTotalSeconds);
-                // console.log("task total duration ------->>",taskTotalDuration);
-                // taskToUpdate["taskTotalDuration"] = taskTotalDuration;
-
-                // updating local storage 
-                localStorage.setItem("tasks", JSON.stringify(tasks))
-
-                // refresh the UI after the update
-                // displayTasks();
-
-                // only updating the necessary part of the list without full updating.
-                const timeLogList = taskItem.querySelector(".time-log-list");
-                const newLog = document.createElement("li");
-                newLog.textContent = `${timerState.startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()} - ${totalTime}`;
-                timeLogList.appendChild(newLog);
-
-                const totalTimeSpan = taskItem.querySelector(".total-time-container span:last-child");
-                totalTimeSpan.textContent = taskToUpdate.taskTotalDuration;
-
-                const mainTotal = taskItem.querySelector(".task-total");
-                mainTotal.textContent = taskToUpdate.taskTotalDuration;
+            // summing all the time logs
+            let allTimeLogsTotalSeconds = 0;
+            taskToUpdate.timeLogs.forEach(log => {
+                const [hrs, mins, secs] = log.totalTime.split(':');
+                allTimeLogsTotalSeconds += (Number(hrs) * 3600) + (Number(mins) * 60) + Number(secs);
+            });
+            // console.log("all time logs total ------>>",allTimeLogsTotalSeconds);
 
 
+            // total task duration /////////////////////////////////////////////////////////
+            taskToUpdate.taskTotalDuration = convertSecondsToTimeFormat(allTimeLogsTotalSeconds);
+            // console.log("task total duration ------->>",taskTotalDuration);
 
 
+            // updating local storage 
+            localStorage.setItem("tasks", JSON.stringify(tasks))
 
-                // resetting the timer.
-                timerState.seconds = 0;
-                timerState.minutes = 0;
-                timerState.hours = 0;
-                timer.innerText = "00:00:00";
-                e.target.innerText = "start timer";
-                timerState.status = "stopped";
-            }
-        })
+            
+            // only updating the necessary part of the list without full updating.
+            const timeLogList = taskItem.querySelector(".time-log-list");
+            const newLog = document.createElement("li");
+            newLog.textContent = `${timerState.startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()} - ${totalTime}`;
+            timeLogList.appendChild(newLog);
+
+            const totalTimeSpan = taskItem.querySelector(".total-time-container span:last-child");
+            totalTimeSpan.textContent = taskToUpdate.taskTotalDuration;
+
+            const mainTotal = taskItem.querySelector(".task-total");
+            mainTotal.textContent = taskToUpdate.taskTotalDuration;
+
+
+            // resetting the timer.
+            timerState.seconds = 0;
+            timerState.minutes = 0;
+            timerState.hours = 0;
+            timer.innerText = "00:00:00";
+            e.target.innerText = "start timer";
+            timerState.status = "stopped";
+        }
     })
+
 }
 
 
@@ -231,7 +209,7 @@ createTaskPopupButton.addEventListener("click", () => {
 })
 
 if(createTaskButton){
-    // task creation inputs ..
+    // task creation inputs.
     const taskNameInput = document.getElementById("task-name");
     const taskDescInput = document.getElementById("task-desc");
     const taskTagInput = document.getElementById("task-tag");
@@ -257,7 +235,6 @@ if(createTaskButton){
             "timeLogs" : [],
             "taskTotalDuration" : ""
         };
-        
         tasks.push(newTask);
         
         // storing to local storage.
@@ -265,15 +242,12 @@ if(createTaskButton){
 
         // closing the popup
         createNewTaskPopup.classList.remove('show');
+        if(tasksSectionDescription) {
+            tasksSectionDescription.classList.add('hide');
+        }
 
-
-        // display all newly created task
-        displayTasks();
-
-
-        // only append the new list , 
-        
-
+        // render newly created task.
+        renderTask(newTask);
     })
 }
 
