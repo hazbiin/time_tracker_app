@@ -118,6 +118,11 @@ body{
 .create-new-task-popup.show{
     transform: translateY(0);
 }
+.close-create-task-pop-up-btn{
+    position: absolute;
+    top:10px;
+    right: 10px;
+}
 
 
 /* ////////timer//////// */

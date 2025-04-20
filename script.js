@@ -33,7 +33,7 @@ function displayTasks() {
                 <div class="task-info">
                     <div class="list-item-text-section">
                         <h4>${task.taskName}</h4>
-                        <p>${task.taskTotalDuration}</p>
+                        <p class="task-total">${task.taskTotalDuration}</p>
                         <p>${task.taskStatus}</p>
                     </div>
                     <div class="list-item-buttons-section">
@@ -49,7 +49,7 @@ function displayTasks() {
                 <div class="task-list-item-timelog">
                     <button>view less</button>
                     <div class="time-log">
-                        <ul>
+                        <ul class="time-log-list">
                             ${timeLogsMarkup}
                         </ul>
                         <div class="total-time-container">
@@ -71,70 +71,88 @@ function displayTasks() {
 }
 
 
+const timers = {}; // key = taskId, value = timer state object
 
 function attachTimerListeners() {
     const timerBtns = document.querySelectorAll(".timer-btn");
 
     timerBtns.forEach(timerBtn => {
 
+        
         // setting initial states for each timer btns
-        let seconds = 0, minutes = 0, hours = 0;
-        let timerInterval = null;
-        let timerStatus = "stopped";
+        // let seconds = 0, minutes = 0, hours = 0;
+        // let timerInterval = null;
+        // let timerStatus = "stopped";
 
 
-        let startTime, endTime, totalTime;
+        // let startTime, endTime, totalTime;
         // let taskTimeLogs = [];
-        let taskTotalDuration;
+        // let taskTotalDuration;
 
 
         // attaching event listner for timerBtn
         timerBtn.addEventListener("click", (e) => {
+
             const taskItem = e.target.closest(".task-list-item");
             const timer = taskItem.querySelector(".timer");
-
 
             // variable to change the task stored in local storage
             const taskId = Number(taskItem.dataset.taskId);
             const taskToUpdate = tasks.find(t => t.taskId === taskId); // gets the first match
 
 
+            // initializing timer initial state for each task.
+            if(!timers[taskId]) {
+                timers[taskId] = {
+                    intervalId: null,
+                    status: "stopped",
+                    startTime: null,
+                    seconds:0,
+                    minutes:0,
+                    hours:0
+                };
+            }
+            // console.log(timers);
+            const timerState = timers[taskId];
+            // console.log(timerState);
+
+
             // timer start stop functionality///////////////////
-            if(timerStatus === "stopped") {
+            if(timerState.status === "stopped") {
                 // getting startTIme
-                startTime = new Date();
-                timerInterval = setInterval(() => {
-                    seconds++;
-                    if(seconds === 60) {
-                        seconds = 0;
-                        minutes++;
-                        if(minutes === 60) {
-                            minutes = 0;
-                            hours++;
+                timerState.startTime = new Date();
+                timerState.intervalId = setInterval(() => {
+                    timerState.seconds++;
+                    if(timerState.seconds === 60) {
+                        timerState.seconds = 0;
+                        timerState.minutes++;
+                        if(timerState.minutes === 60) {
+                            timerState.minutes = 0;
+                            timerState.hours++;
                         }
                     }
-                    timer.innerText = `${formatWithLeadingZeros(hours)}:${formatWithLeadingZeros(minutes)}:${formatWithLeadingZeros(seconds)}`;
+                    timer.innerText = `${formatWithLeadingZeros(timerState.hours)}:${formatWithLeadingZeros(timerState.minutes)}:${formatWithLeadingZeros(timerState.seconds)}`;
                 }, 1000);
 
                 e.target.innerText = "stop timer";
-                timerStatus = "started";
+                timerState.status = "started";
             }else {
 
-                clearInterval(timerInterval);
+                clearInterval(timerState.intervalId);
 
                 // getting end time
-                endTime = new Date();
+                const endTime = new Date();
 
                 // finding difference between the start time and end time/////////////////////////////
-                let currentLogDuration = endTime - startTime;  // milliseconds
-                let currentLogDurationInSeconds = Math.floor(currentLogDuration / 1000);
+                const currentLogDuration = endTime - timerState.startTime; 
+                const currentLogDurationInSeconds = Math.floor(currentLogDuration / 1000);
+                const totalTime = convertSecondsToTimeFormat(currentLogDurationInSeconds);
 
-                totalTime = convertSecondsToTimeFormat(currentLogDurationInSeconds);
 
                 // updating task object with time logs /////////////
                 taskToUpdate.timeLogs.push({
                     timeLogId : taskToUpdate.timeLogs.length + 1,
-                    startTime : startTime.toLocaleTimeString(),
+                    startTime : timerState.startTime.toLocaleTimeString(),
                     endTime: endTime.toLocaleTimeString(),
                     totalTime : totalTime
                 });
@@ -151,28 +169,44 @@ function attachTimerListeners() {
 
 
                 // total task duration /////////////////////////////////////////////////////////
-                taskTotalDuration = convertSecondsToTimeFormat(allTimeLogsTotalSeconds);
+                taskToUpdate.taskTotalDuration = convertSecondsToTimeFormat(allTimeLogsTotalSeconds);
                 // console.log("task total duration ------->>",taskTotalDuration);
-
-
-                taskToUpdate["taskTotalDuration"] = taskTotalDuration;
+                // taskToUpdate["taskTotalDuration"] = taskTotalDuration;
 
                 // updating local storage 
                 localStorage.setItem("tasks", JSON.stringify(tasks))
 
                 // refresh the UI after the update
-                displayTasks();
+                // displayTasks();
+
+                // only updating the necessary part of the list without full updating.
+                const timeLogList = taskItem.querySelector(".time-log-list");
+                const newLog = document.createElement("li");
+                newLog.textContent = `${timerState.startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()} - ${totalTime}`;
+                timeLogList.appendChild(newLog);
+
+                const totalTimeSpan = taskItem.querySelector(".total-time-container span:last-child");
+                totalTimeSpan.textContent = taskToUpdate.taskTotalDuration;
+
+                const mainTotal = taskItem.querySelector(".task-total");
+                mainTotal.textContent = taskToUpdate.taskTotalDuration;
+
+
+
 
 
                 // resetting the timer.
-                seconds = 0; minutes = 0; hours = 0;
+                timerState.seconds = 0;
+                timerState.minutes = 0;
+                timerState.hours = 0;
                 timer.innerText = "00:00:00";
                 e.target.innerText = "start timer";
-                timerStatus = "stopped";
+                timerState.status = "stopped";
             }
         })
     })
 }
+
 
 function convertSecondsToTimeFormat(totalSeconds) {
     let hrs = Math.floor(totalSeconds / 3600); // becuase 1 hr == 3600 seconds
@@ -189,6 +223,11 @@ function formatWithLeadingZeros(val) {
 // creating new tasks ///////////////////////////////////////////////////
 createTaskPopupButton.addEventListener("click", () => {
     createNewTaskPopup.classList.add('show');
+
+    const closeCreateTaskPopup = document.getElementById('close-create-task-pop-up-btn');
+    closeCreateTaskPopup.addEventListener("click", () => {
+        createNewTaskPopup.classList.remove('show');
+    })
 })
 
 if(createTaskButton){
@@ -230,6 +269,11 @@ if(createTaskButton){
 
         // display all newly created task
         displayTasks();
+
+
+        // only append the new list , 
+        
+
     })
 }
 
