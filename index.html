@@ -3,13 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="style.css" rel="stylesheet">
     <title>Time - Tracker App</title>
 </head>
 <body>
-    
-    <div class="container">
 
+    <div class="container">
+        <nav class="sidebar">
+            <ul class="main-nav-links">
+                <li>
+                   <span class="logo">time tracking app</span>
+                   <button id="toggle-btn">
+                        <img src="assets/svgs/keyboard_double_arrow_left_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg">
+                   </button>
+                </li>
+                <li>
+                    <a href= "index.html">
+                        <img src="assets/svgs/today_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+                        <span>Track Today</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="tasks-lists.html">
+                        <img src="assets/svgs/view_list_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+                        <span>Tasks Lists</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="analytics.html">
+                        <img src="assets/svgs/analytics_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="calendar.html">
+                        <img src="assets/svgs/calendar_month_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+                        <span>Calendar</span>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="profile-settings">
+                <li>
+                    <button>change theme</button>
+                </li>
+                <li>
+                    <a href= "">
+                        <img src="assets/svgs/account_box_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="">
+                        <img src="assets/svgs/logout_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <div class="main-section-top-section">
+                <div class="main-section-top-left-section">
+                    <h2>Hello, Username!</h2>
+                    <p>Let's keep track of your time..</p>
+                </div>
+            </div>
+
+            <div class="main-section-bottom-section">
+                <div class="current-day-details-section">
+                    <div>
+                        <h3>Today's Task</h3>
+                    </div>
+
+                    <div>
+                        <input type="text" placeholder="search for tasks.."/ >
+                    </div>
+                    <div>
+                        <p>Sunday 20 April 2025</p>
+                        <p>7:40 PM</p>
+                    </div>
+                </div>
+                <div class="new-tasks-section">
+                    <div id="tasks-section-desc" class="tasks-section-desc">
+                        <h3>Your tasks will be listed here.</h3>
+                        <p>Track your time on tasks and organize them using any tags.. its all up to you!</p>
+                    </div>
+
+                    <!-- here lies the newly created task list -->
+                    <div class="new-tasks-container">
+                        <ul id="new-tasks-list" class="new-tasks-list">
+
+                            <li class="task-list-item">
+                                <div class="task-info">
+                                    <div class="list-item-text-section">
+                                        <h4 class="task-name">Working on project xyz</h4>
+                                        <p class="task-total">01hr 35min 56sec</p>
+                                        <h5 class="task-status">in-progress</h5>
+                                    </div>
+                                    <div class="list-item-buttons-section">
+                                        <button class="timer-btn">
+                                            <svg class="timer-icon" xmlns="http://www.w3.org/2000/svg"  viewBox="0 -960 960 960" ><path d="M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-280Z"/></svg>
+                                        </button>
+                                        <button class="task-edit-btn" id="edit-btn">
+                                            <i class="bi bi-three-dots-vertical "></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div id="timer-container" class="timer-container">
+                                    <h3 class="timer"></h3> 
+                                </div>
+
+
+                                <div class="task-list-item-timelog">
+                                    <h4>Time logs</h4>
+                                    <button>view less</button>
+                                    <div class="time-log">
+                                        <ul class="time-log-list">
+                                            ${timeLogsMarkup}
+                                        </ul>
+                                        <div class="total-time-container">
+                                            <span>Total time:</span>
+                                            <span>${task.taskTotalDuration}</span>
+                                        </div>
+                                    </div>       
+                                </div>
+                            </li>
+                            
+                            
+
+                            
+
+
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="create-new-task-popup-container">
+                    <div class="task-input-container">
+                        <input id="task-name" type="text" placeholder="enter task name..."/>
+                        <textarea id="task-desc" placeholder="enter description" id=""></textarea>
+                        <input id="task-tag" type="text" placeholder="set a tag ..."/>
+
+                        <!-- <select id="task-status">
+                            <option value="" selected>🔽 set task status</option>
+                            <option value="pending"> 🕒 Pending</option>
+                            <option value="in-progress">🔄 In Progress</option>
+                            <option value="paused">⏸️ Paused</option>
+                            <option value="done"> ✅ Done</option>
+                            <option value="cancelled">❌ Cancelled</option>
+                        </select> -->
+
+                        <button id="create-task-button">save task</button>
+                    </div>
+                    <button class="create-task-btn" id="create-task-popup-btn">
+                        <img src="assets/svgs/add_task_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg">
+                        <span>create new task</span>
+                        <span id="close-create-task-pop-up-btn">X</span>
+                    </button>
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- <div class="container">
         <div class="header">
             <div class="user-header-section">
                 <div class="user-intro">
@@ -36,25 +213,21 @@
             </div>
 
 
-            <!-- this it the newly created task list -->
+            
             <div class="new-tasks-container">
                 <ul id="new-tasks-list" class="new-tasks-list">
 
                 </ul>
             </div>
         </div>
-
-
-
-
-        <!-- ------------daily summary tab---------------  -->
+       
         <div class="daily-summary-tab">
             <h4>Let’s look at how your yesterday went!</h4>
             <button class="summary-close-btn">X</button>
         </div>
 
 
-        <!-- -----------bottom nav bar----------------- -->
+       
         <div class="bottom-nav-bar">
             <button>Tasks</button>
             <button>Timeline</button>
@@ -65,7 +238,6 @@
     </div>
 
 
-    <!-- -----------create new task popup--`----------- -->
     <div id="create-new-task-popup" class="create-new-task-popup">
 
         <input id="task-name" type="text" placeholder="enter task name..."/>
@@ -75,7 +247,7 @@
             
         <button id="create-task-button">create-task</button>
         <button class="close-create-task-pop-up-btn" id="close-create-task-pop-up-btn">x</button>
-    </div>
+    </div> -->
     
 
     <script src="script.js"></script>

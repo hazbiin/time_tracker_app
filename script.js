@@ -1,27 +1,97 @@
+// localStorage.clear();
 
 // creating new task pop up..
 const createTaskPopupButton = document.getElementById('create-task-popup-btn');
-const createNewTaskPopup = document.getElementById('create-new-task-popup');
+const taskInputpopup = document.querySelector(".task-input-container");
 const createTaskButton = document.getElementById("create-task-button");
 
 // intro description..
 const tasksSectionDescription = document.getElementById("tasks-section-desc");
 
+
 // getting saved tasks from localStorage..
 const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 console.log(tasks);
 
+// object to store timer states.
+const timers = {};
+
+
 // inital loading from local storage.
 displayTasks();
-
 function displayTasks() {
     const newTasksList = document.getElementById("new-tasks-list");
-    newTasksList.innerHTML = "" ;
+    // newTasksList.innerHTML = "" ;
+
     tasks.forEach(task => renderTask(task));
 
     if(tasks.length !== 0) {
         tasksSectionDescription.classList.add('hide');
     }
+}
+
+
+// creating new tasks ///////////////////////////////////////////////////
+createTaskPopupButton.addEventListener("click", () => {
+    taskInputpopup.classList.add('show');
+
+    const closeCreateTaskPopup = document.getElementById('close-create-task-pop-up-btn');
+    closeCreateTaskPopup.addEventListener("click", () => {
+        taskInputpopup.classList.remove('show');
+    })
+})
+
+if(createTaskButton){
+    // task creation inputs.
+    const taskNameInput = document.getElementById("task-name");
+    const taskDescInput = document.getElementById("task-desc");
+    const taskTagInput = document.getElementById("task-tag"); 
+
+    createTaskButton.addEventListener("click", () => {
+        const taskName = taskNameInput.value;
+        const taskDesc = taskDescInput.value;
+        const taskTag = taskTagInput.value;
+    
+        taskNameInput.value = "";
+        taskDescInput.value = "";
+        taskTagInput.value = "";
+        
+        const dateCreated = new Date().toLocaleString("en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long", 
+            day:"numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12:true
+        });
+
+        const newTask = {
+            "taskId" : Date.now(),
+            "startDate": dateCreated,
+            "endDate":"",
+            "taskName" : taskName,
+            "taskDesc" : taskDesc,
+            "taskTag" : taskTag,
+            "taskStatus" : "not-started",
+            "timeLogs" : [],
+            "taskTotalDuration" : ""
+        };
+        tasks.push(newTask);
+        
+        // storing to local storage.
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+
+        // closing the popup
+        taskInputpopup.classList.remove('show');
+        if(tasksSectionDescription) {
+            tasksSectionDescription.classList.add('hide');
+        }
+
+        // render newly created task.
+        renderTask(newTask);
+    })
 }
 
 
@@ -37,26 +107,39 @@ function renderTask(task) {
     // creating task list item.
     const li = document.createElement("li");
     li.className = "task-list-item";
-    li.setAttribute("data-task-id", task.taskId);
+    li.setAttribute("data-task-id", task.taskId); 
 
+    let totalTimeToDisplay;
+    if(task.taskTotalDuration === ""){
+        totalTimeToDisplay = "00h 00min 00secs"
+    }else {
+        const [hrs,mins,secs] = task.taskTotalDuration.split(':');
+        totalTimeToDisplay = `${hrs}h ${mins}min ${secs}secs`;
+    }
+    
     li.innerHTML = `
         <div class="task-info">
             <div class="list-item-text-section">
-                <h4>${task.taskName}</h4>
-                <p class="task-total">${task.taskTotalDuration}</p>
-                <p>${task.taskStatus}</p>
+                <h4 class="task-name">${task.taskName}</h4>
+                    <p class="task-total">${totalTimeToDisplay}</p>
+                    <h5 class="task-status">${task.taskStatus}</h5>
             </div>
             <div class="list-item-buttons-section">
-                <button class="timer-btn">start timer</button>
-                <button id="edit-btn">edit</button>
+                <button class="timer-btn">
+                    <svg class="timer-icon" xmlns="http://www.w3.org/2000/svg"  viewBox="0 -960 960 960" ><path class="timer-path" d="M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-280Z"/></svg>
+                </button>
+                <button class="task-edit-btn" id="edit-btn">
+                    <i class="bi bi-three-dots-vertical "></i>
+                </button>
             </div>
         </div>
 
         <div id="timer-container" class="timer-container">
-            <h3 class="timer">00:00:00</h3> 
+            <h3 class="timer"></h3> 
         </div>
 
         <div class="task-list-item-timelog">
+            <h4>Time logs</h4>
             <button>view less</button>
             <div class="time-log">
                 <ul class="time-log-list">
@@ -70,23 +153,27 @@ function renderTask(task) {
         </div>
     `;
 
-    newTasksList.appendChild(li);
-
-    // attaching timer for that newly created task.
+    if(task.taskName !== "") {
+        newTasksList.appendChild(li);
+    }
+    
+    // attaching timer for the tasks.
     attachTimerListenerTo(li);
 }
 
-// object to store timer states.
-const timers = {};
+
 function attachTimerListenerTo(taskItem) {
     const timerBtn = taskItem.querySelector(".timer-btn");
 
     timerBtn.addEventListener("click", (e) => {
         const timer = taskItem.querySelector(".timer");
+        const timerPath = taskItem.querySelector(".timer-path")
+
+        // inputs for updating the tasks.
         const taskId = Number(taskItem.dataset.taskId);
         const taskToUpdate = tasks.find(task => task.taskId === taskId);
         
-
+        // setting initial timerstates for each clicked task
         if(!timers[taskId]) {
             timers[taskId] = {
                 intervalId: null,
@@ -98,6 +185,7 @@ function attachTimerListenerTo(taskItem) {
             };
         }
         const timerState = timers[taskId];
+        // console.log(timers)
 
         // timer start stop functionality///////////////////
         if(timerState.status === "stopped") {
@@ -116,8 +204,9 @@ function attachTimerListenerTo(taskItem) {
                 }
                 timer.innerText = `${formatWithLeadingZeros(timerState.hours)}:${formatWithLeadingZeros(timerState.minutes)}:${formatWithLeadingZeros(timerState.seconds)}`;
             }, 1000);
+            
 
-            e.target.innerText = "stop timer";
+            timerPath.setAttribute("d", "m798-274-60-60q11-27 16.5-53.5T760-440q0-116-82-198t-198-82q-24 0-51 5t-56 16l-60-60q38-20 80.5-30.5T480-800q60 0 117.5 20T706-722l56-56 56 56-56 56q38 51 58 108.5T840-440q0 42-10.5 83.5T798-274ZM520-552v-88h-80v8l80 80ZM792-56l-96-96q-48 35-103.5 53.5T480-80q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-60 18.5-115.5T192-656L56-792l56-56 736 736-56 56ZM480-160q42 0 82-13t75-37L248-599q-24 35-36 75t-12 84q0 116 82 198t198 82ZM360-840v-80h240v80H360Zm83 435Zm113-112Z");
             timerState.status = "started";
         }else {
 
@@ -155,11 +244,15 @@ function attachTimerListenerTo(taskItem) {
             taskToUpdate.taskTotalDuration = convertSecondsToTimeFormat(allTimeLogsTotalSeconds);
             // console.log("task total duration ------->>",taskTotalDuration);
 
+            if(taskToUpdate.timeLogs.length !== 0 && taskToUpdate.taskStatus !== "in-progress") {
+                taskToUpdate.taskStatus = "in-progress"
+            }
 
             // updating local storage 
             localStorage.setItem("tasks", JSON.stringify(tasks))
 
             
+            // //////////////////////necesaryy dom updates ////////////////////////
             // only updating the necessary part of the list without full updating.
             const timeLogList = taskItem.querySelector(".time-log-list");
             const newLog = document.createElement("li");
@@ -169,20 +262,23 @@ function attachTimerListenerTo(taskItem) {
             const totalTimeSpan = taskItem.querySelector(".total-time-container span:last-child");
             totalTimeSpan.textContent = taskToUpdate.taskTotalDuration;
 
-            const mainTotal = taskItem.querySelector(".task-total");
-            mainTotal.textContent = taskToUpdate.taskTotalDuration;
+            const taskStatus  = taskItem.querySelector(".task-status");
+            taskStatus.textContent = taskToUpdate.taskStatus;
 
+            const taskTotal = taskItem.querySelector(".task-total");
+            const [hrs,mins,secs] = taskToUpdate.taskTotalDuration.split(':');
+            taskTotal.textContent = `${hrs}h ${mins}min ${secs}secs`;
 
+            
             // resetting the timer.
             timerState.seconds = 0;
             timerState.minutes = 0;
             timerState.hours = 0;
-            timer.innerText = "00:00:00";
-            e.target.innerText = "start timer";
+            timer.innerText = "";
+            timerPath.setAttribute("d", "M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-280Z");
             timerState.status = "stopped";
         }
     })
-
 }
 
 
@@ -193,63 +289,61 @@ function convertSecondsToTimeFormat(totalSeconds) {
 
     return `${formatWithLeadingZeros(hrs)}:${formatWithLeadingZeros(mins)}:${formatWithLeadingZeros(secs)}`;
 }
+
+// function convertTimeFormatToSeconds(h, m, s){
+//     return (h * 3600 + m * 60 + s)
+// }
+
 function formatWithLeadingZeros(val) {
     return (val < 10) ? `0${val}` : val;
 }
 
 
-// creating new tasks ///////////////////////////////////////////////////
-createTaskPopupButton.addEventListener("click", () => {
-    createNewTaskPopup.classList.add('show');
 
-    const closeCreateTaskPopup = document.getElementById('close-create-task-pop-up-btn');
-    closeCreateTaskPopup.addEventListener("click", () => {
-        createNewTaskPopup.classList.remove('show');
-    })
-})
+//////////////////////// to do soon //////////////////
+// associate date with the task.
+// start date, end date - when can i take that,??????
+// start date -- take whenever a new task is created in the localstorage. -- done.
 
-if(createTaskButton){
-    // task creation inputs.
-    const taskNameInput = document.getElementById("task-name");
-    const taskDescInput = document.getElementById("task-desc");
-    const taskTagInput = document.getElementById("task-tag");
-    const taskStatusInput = document.getElementById("task-status"); 
+// end date -- when user manually enter status done.
+// if status is done, get the end date, and also dont allow the user to further work on it.
+// give a seperate section for easily accessing and changing the status rather than going to edit task menu.
 
-    createTaskButton.addEventListener("click", () => {
-        const taskName = taskNameInput.value;
-        const taskDesc = taskDescInput.value;
-        const taskTag = taskTagInput.value;
-        const taskStatus = taskStatusInput.value;
-    
-        taskNameInput.value = "";
-        taskDescInput.value = "";
-        taskTagInput.value = "";
-        taskStatusInput.value = "";
-        
-        const newTask = {
-            "taskId" : Date.now(),
-            "taskName" : taskName,
-            "taskDesc" : taskDesc,
-            "taskTag" : taskTag,
-            "taskStatus" : taskStatus,
-            "timeLogs" : [],
-            "taskTotalDuration" : ""
-        };
-        tasks.push(newTask);
-        
-        // storing to local storage.
-        localStorage.setItem("tasks", JSON.stringify(tasks));
+// what all status can be given??
+// 1) in-progress 
+// 2) done 
+// do we need to give another statuses as well??????
+// what can be other statuses --- pending, 
+// You could also add a status change history later, to keep track of transitions.
 
-        // closing the popup
-        createNewTaskPopup.classList.remove('show');
-        if(tasksSectionDescription) {
-            tasksSectionDescription.classList.add('hide');
-        }
 
-        // render newly created task.
-        renderTask(newTask);
-    })
-}
 
-// clearing tasks on development mode.
-// localStorage.clear();
+// style task views -
+// do styling, // displaying only current running taskss.
+// plan agian on create task pop up, and clubing it with option to edit or delete tasks..
+
+// create login page design -- and set color theme based on the login page image.
+// associate user and task done by each user.
+
+
+
+// //////////////////////////////to do later /////////////////////////////////
+// what if user want to work on some other previous task. ????????????
+// on each new day, user must hve an option ot create a new task and also work on old task(take the task from local storage and resume timelogs) 
+
+
+// now you gathered total time of a particular task? what can you do with that?
+// can show daily, weekly, monthly --- analytics, like how much hrs spend on each task.
+// plan on how to display insights??????///
+// tasks pov
+// hours by tasks -- daily, weekly, monthly (for this associating dates is necessary.)
+// day pov
+// hours per day -- daily, weekly, monthly
+
+
+// task listing --
+// just take the tasks form local storage and list with certain dom manipulation.
+// allow user to search tasks by tags.-- user can give any tags to task to group tasks together.
+// task details --
+// you must note down - when a user started to work on a task and when did he ended that task.
+// and user must get the whole details about how many days he have worked on that task, on which dates, including time log lists.
