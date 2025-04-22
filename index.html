@@ -95,7 +95,7 @@
                     <div class="new-tasks-container">
                         <ul id="new-tasks-list" class="new-tasks-list">
 
-                            <li class="task-list-item">
+                            <!-- <li class="task-list-item">
                                 <div class="task-info">
                                     <div class="list-item-text-section">
                                         <h4 class="task-name">Working on project xyz</h4>
@@ -117,26 +117,25 @@
                                 </div>
 
 
-                                <div class="task-list-item-timelog">
-                                    <h4>Time logs</h4>
-                                    <button>view less</button>
+                                <div class="task-timelogs">
+                                    <button class="time-log-btn">
+                                        <span class="time-log-btn-text">Hide Time Logs</span>
+                                        <i class="bi bi-chevron-up"></i>
+                                    </button>
+                                    
                                     <div class="time-log">
                                         <ul class="time-log-list">
                                             ${timeLogsMarkup}
                                         </ul>
                                         <div class="total-time-container">
-                                            <span>Total time:</span>
-                                            <span>${task.taskTotalDuration}</span>
+                                            <h3>Total Task Duration: <span class="task-total">${task.taskTotalDuration}</span> </h3>
                                         </div>
                                     </div>       
+
                                 </div>
                             </li>
+                             -->
                             
-                            
-
-                            
-
-
                         </ul>
                     </div>
                 </div>
@@ -168,11 +167,6 @@
         </main>
 
     </div>
-
-
-
-
-
 
 
 

@@ -165,15 +165,14 @@ a{
     font-size: 18px;
 }
 
-
+/* ///////////////////////taskss list///////////////////// */
 .new-tasks-list{
     display: grid;
-    grid-template-columns: auto auto auto;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 10px;
 }
-
 .task-list-item {
-    padding: 20px;
+    padding: 15px;
     background-color: #f6f6f6;
     border-radius: 15px;
     list-style-type:none;
@@ -222,7 +221,6 @@ a{
     height: 30px;
     fill: rgb(114, 44, 114);
 }
-
 .task-edit-btn{
     border: none;
     background: none;
@@ -239,22 +237,48 @@ a{
     height: 60px;
 }
 
-
-
-
-/* ////////timer//////// */
-.timer-container{
-    /* display: none; */
+/* //////////////timer container////////////// */
+/* .timer-container{
     margin-bottom: 10px;
+} */
+
+
+/* /////////////////time logs list/////////////////// */
+
+.time-log-btn{
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: none;
+    font-family: Poppins;
+    font-weight: 300;
+    font-size: 14px;
+    border-radius: 5px;
+    padding: 5px 5px;
+    cursor: pointer;
+
 }
-.timer-container.open{
+.time-log-btn:hover{
+    background-color: #e2e2e2;
+}
+
+.time-log-btn{
+    display: none;
+}
+.time-log-btn.show{
+    display: flex;
+}
+.time-log{
+    display: none;
+}
+.time-log.show{
     display: block;
 }
-
-
-
-
-
+.time-log-list{
+    list-style: none;
+}
 
 
 
@@ -284,7 +308,6 @@ a{
     top:10px;
     right: 10px;
 } */
-
 
 /* .daily-summary-tab{
     margin-bottom: 60px;

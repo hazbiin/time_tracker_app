@@ -23,7 +23,9 @@ function displayTasks() {
     const newTasksList = document.getElementById("new-tasks-list");
     // newTasksList.innerHTML = "" ;
 
-    tasks.forEach(task => renderTask(task));
+    tasks.forEach(task =>{
+        renderTask(task)
+    });
 
     if(tasks.length !== 0) {
         tasksSectionDescription.classList.add('hide');
@@ -121,8 +123,8 @@ function renderTask(task) {
         <div class="task-info">
             <div class="list-item-text-section">
                 <h4 class="task-name">${task.taskName}</h4>
-                    <p class="task-total">${totalTimeToDisplay}</p>
-                    <h5 class="task-status">${task.taskStatus}</h5>
+                <p class="task-total">${totalTimeToDisplay}</p>
+                <h5 class="task-status">${task.taskStatus}</h5>
             </div>
             <div class="list-item-buttons-section">
                 <button class="timer-btn">
@@ -138,29 +140,45 @@ function renderTask(task) {
             <h3 class="timer"></h3> 
         </div>
 
-        <div class="task-list-item-timelog">
-            <h4>Time logs</h4>
-            <button>view less</button>
+
+        <div class="task-timelogs">
+            <button class="time-log-btn">
+                <span class="time-log-btn-text">Hide Time Logs</span>
+                <i class="bi bi-chevron-up"></i>
+            </button>
+                                    
             <div class="time-log">
                 <ul class="time-log-list">
                     ${timeLogsMarkup}
                 </ul>
                 <div class="total-time-container">
-                    <span>Total time:</span>
-                    <span>${task.taskTotalDuration}</span>
+                    <h3>Total Task Duration: <span class="task-total"></span> </h3>
                 </div>
-            </div>       
-        </div>
+            </div> 
+        </div>                       
     `;
+
 
     if(task.taskName !== "") {
         newTasksList.appendChild(li);
+
+        if(task.timeLogs.length > 0) {
+            const timeLogBtns = document.querySelectorAll(".time-log-btn");
+            timeLogBtns.forEach(timeLogBtn =>{
+                timeLogBtn.classList.add("show");
+                timeLogBtn.querySelector(".time-log-btn-text").textContent = "Show Time Logs";
+
+                if(timeLogBtn.querySelector("i").classList.contains("bi-chevron-up")){
+                    timeLogBtn.querySelector("i").classList.remove("bi-chevron-up");
+                    timeLogBtn.querySelector("i").classList.add("bi-chevron-down");
+                }
+            });
+        }
     }
     
     // attaching timer for the tasks.
     attachTimerListenerTo(li);
 }
-
 
 function attachTimerListenerTo(taskItem) {
     const timerBtn = taskItem.querySelector(".timer-btn");
@@ -185,7 +203,7 @@ function attachTimerListenerTo(taskItem) {
             };
         }
         const timerState = timers[taskId];
-        // console.log(timers)
+        // console.log(timers);
 
         // timer start stop functionality///////////////////
         if(timerState.status === "stopped") {
@@ -208,6 +226,11 @@ function attachTimerListenerTo(taskItem) {
 
             timerPath.setAttribute("d", "m798-274-60-60q11-27 16.5-53.5T760-440q0-116-82-198t-198-82q-24 0-51 5t-56 16l-60-60q38-20 80.5-30.5T480-800q60 0 117.5 20T706-722l56-56 56 56-56 56q38 51 58 108.5T840-440q0 42-10.5 83.5T798-274ZM520-552v-88h-80v8l80 80ZM792-56l-96-96q-48 35-103.5 53.5T480-80q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-60 18.5-115.5T192-656L56-792l56-56 736 736-56 56ZM480-160q42 0 82-13t75-37L248-599q-24 35-36 75t-12 84q0 116 82 198t198 82ZM360-840v-80h240v80H360Zm83 435Zm113-112Z");
             timerState.status = "started";
+
+            taskToUpdate.taskStatus = "in-progress"
+            const taskStatus = taskItem.querySelector(".task-status");
+            taskStatus.textContent = taskToUpdate.taskStatus;
+
         }else {
 
             clearInterval(timerState.intervalId);
@@ -230,7 +253,6 @@ function attachTimerListenerTo(taskItem) {
             });
             // console.log("task time logs ------->>", taskToUpdate.timeLogs);
 
-
             // summing all the time logs
             let allTimeLogsTotalSeconds = 0;
             taskToUpdate.timeLogs.forEach(log => {
@@ -244,30 +266,46 @@ function attachTimerListenerTo(taskItem) {
             taskToUpdate.taskTotalDuration = convertSecondsToTimeFormat(allTimeLogsTotalSeconds);
             // console.log("task total duration ------->>",taskTotalDuration);
 
-            if(taskToUpdate.timeLogs.length !== 0 && taskToUpdate.taskStatus !== "in-progress") {
-                taskToUpdate.taskStatus = "in-progress"
-            }
+            // if(taskToUpdate.timeLogs.length !== 0 && taskToUpdate.taskStatus !== "in-progress") {
+            //     taskToUpdate.taskStatus = "in-progress"
+            // }
 
             // updating local storage 
-            localStorage.setItem("tasks", JSON.stringify(tasks))
+            localStorage.setItem("tasks", JSON.stringify(tasks));
 
             
             // //////////////////////necesaryy dom updates ////////////////////////
             // only updating the necessary part of the list without full updating.
-            const timeLogList = taskItem.querySelector(".time-log-list");
-            const newLog = document.createElement("li");
-            newLog.textContent = `${timerState.startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()} - ${totalTime}`;
-            timeLogList.appendChild(newLog);
-
-            const totalTimeSpan = taskItem.querySelector(".total-time-container span:last-child");
-            totalTimeSpan.textContent = taskToUpdate.taskTotalDuration;
-
-            const taskStatus  = taskItem.querySelector(".task-status");
-            taskStatus.textContent = taskToUpdate.taskStatus;
 
             const taskTotal = taskItem.querySelector(".task-total");
             const [hrs,mins,secs] = taskToUpdate.taskTotalDuration.split(':');
             taskTotal.textContent = `${hrs}h ${mins}min ${secs}secs`;
+
+            // const taskStatus = taskItem.querySelector(".task-status");
+            // taskStatus.textContent = taskToUpdate.taskStatus;
+            
+
+            const timeLogBtn = taskItem.querySelector(".time-log-btn");
+            timeLogBtn.classList.add("show");
+
+            const textSpan = timeLogBtn.querySelector(".time-log-btn-text");
+            const icon = timeLogBtn.querySelector("i");
+            textSpan.textContent = "Hide Time Logs";
+            if(icon.classList.contains("bi-chevron-down")){
+                icon.classList.remove("bi-chevron-down");
+                icon.classList.add("bi-chevron-up");
+            }  
+
+            
+
+            const taskTimeLogs = taskItem.querySelector(".time-log");
+            taskTimeLogs.classList.add("show");
+            
+
+            const timeLogList = taskItem.querySelector(".time-log-list");
+            const newLog = document.createElement("li");
+            newLog.textContent = `${timerState.startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()} - ${totalTime}`;
+            timeLogList.appendChild(newLog);
 
             
             // resetting the timer.
@@ -293,11 +331,36 @@ function convertSecondsToTimeFormat(totalSeconds) {
 // function convertTimeFormatToSeconds(h, m, s){
 //     return (h * 3600 + m * 60 + s)
 // }
-
 function formatWithLeadingZeros(val) {
     return (val < 10) ? `0${val}` : val;
 }
 
+
+//////toggling time logs ///////////
+const timeLogBtns = document.querySelectorAll(".time-log-btn");
+timeLogBtns.forEach(timeLogBtn => {
+    timeLogBtn.addEventListener("click", () => {
+
+        console.log("herereeeeeee")
+
+        const timeLogContainer = timeLogBtn.closest(".task-timelogs").querySelector(".time-log");
+        timeLogContainer.classList.toggle("show");
+
+        const textSpan = timeLogBtn.querySelector(".time-log-btn-text");
+        const icon = timeLogBtn.querySelector("i");
+
+        // Toggle text
+        if(textSpan.textContent.trim() === "Hide Time Logs") {
+            textSpan.textContent = "Show Time Logs";
+        }else {
+            textSpan.textContent = "Hide Time Logs";
+        }
+
+        // Toggle icon
+        icon.classList.toggle("bi-chevron-up");
+        icon.classList.toggle("bi-chevron-down");
+    })
+})
 
 
 //////////////////////// to do soon //////////////////
@@ -347,3 +410,7 @@ function formatWithLeadingZeros(val) {
 // task details --
 // you must note down - when a user started to work on a task and when did he ended that task.
 // and user must get the whole details about how many days he have worked on that task, on which dates, including time log lists.
+
+
+
+// jjjjj
