@@ -27,7 +27,7 @@
                 <li>
                     <a href="tasks-lists.html">
                         <img src="assets/svgs/view_list_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
-                        <span>Tasks Lists</span>
+                        <span>All Tasks Overview</span>
                     </a>
                 </li>
                 <li>
@@ -63,10 +63,11 @@
             </ul>
         </nav>
 
-        <main class="main-content">
+        <main class="main-content"> 
+
             <div class="main-section-top-section">
                 <div class="main-section-top-left-section">
-                    <h2>Hello, Username!</h2>
+                    <h3>Hello, Username!</h3>
                     <p>Let's keep track of your time..</p>
                 </div>
             </div>
@@ -75,71 +76,98 @@
                 <div class="current-day-details-section">
                     <div>
                         <h3>Today's Task</h3>
+                        <p>Sunday 20 April 2025 7:40 PM</p>
                     </div>
-
+                   
                     <div>
-                        <input type="text" placeholder="search for tasks.."/ >
-                    </div>
-                    <div>
-                        <p>Sunday 20 April 2025</p>
-                        <p>7:40 PM</p>
+                        <button class="create-task-btn" id="create-task-popup-btn">Create New Task + </button>
+                        <!-- <button class="create-task-btn">Work on exisiting task?</button> -->
                     </div>
                 </div>
+
                 <div class="new-tasks-section">
+
                     <div id="tasks-section-desc" class="tasks-section-desc">
                         <h3>Your tasks will be listed here.</h3>
                         <p>Track your time on tasks and organize them using any tags.. its all up to you!</p>
                     </div>
-
-                    <!-- here lies the newly created task list -->
+                    
+                    
                     <div class="new-tasks-container">
-                        <ul id="new-tasks-list" class="new-tasks-list">
 
-                            <!-- <li class="task-list-item">
+                        <div class="tasks-list-section">
+                            <!-- <div class="ongoing-task">
+                                <div class="section-heading">
+                                    <p>On-Going Task</p>
+                                </div>
                                 <div class="task-info">
                                     <div class="list-item-text-section">
-                                        <h4 class="task-name">Working on project xyz</h4>
-                                        <p class="task-total">01hr 35min 56sec</p>
-                                        <h5 class="task-status">in-progress</h5>
+                                        <h2 class="ongoing-task-name">Working on project xyz</h2>
+                                        <p class="task-total">Last started at: Monday 28 April, 2025, 12:00 AM</p>
                                     </div>
                                     <div class="list-item-buttons-section">
                                         <button class="timer-btn">
                                             <svg class="timer-icon" xmlns="http://www.w3.org/2000/svg"  viewBox="0 -960 960 960" ><path d="M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-280Z"/></svg>
                                         </button>
-                                        <button class="task-edit-btn" id="edit-btn">
-                                            <i class="bi bi-three-dots-vertical "></i>
-                                        </button>
+                                        <p class="task-total">Last started at: Monday 28 April, 2025, 12:00 AM</p>
+                                        
                                     </div>
                                 </div>
+                            </div> -->
 
-                                <div id="timer-container" class="timer-container">
-                                    <h3 class="timer"></h3> 
-                                </div>
+                            <div class="other-tasks-section">
+                                <ul id="new-tasks-list" class="new-tasks-list">
 
-
-                                <div class="task-timelogs">
-                                    <button class="time-log-btn">
-                                        <span class="time-log-btn-text">Hide Time Logs</span>
-                                        <i class="bi bi-chevron-up"></i>
-                                    </button>
-                                    
-                                    <div class="time-log">
-                                        <ul class="time-log-list">
-                                            ${timeLogsMarkup}
-                                        </ul>
-                                        <div class="total-time-container">
-                                            <h3>Total Task Duration: <span class="task-total">${task.taskTotalDuration}</span> </h3>
+                                    <!-- <li class="task-list-item">
+                                        <div class="task-info">
+                                            <div class="list-item-text-section">
+                                                <h4 class="task-name">Working on project xyz</h4>
+                                                <p class="task-total">01hr 35min 56sec</p>
+                                            </div>
+                                            <div class="list-item-buttons-section">
+                                                <button class="timer-btn">
+                                                    start working ?
+                                                    <svg class="timer-icon" xmlns="http://www.w3.org/2000/svg"  viewBox="0 -960 960 960" ><path d="M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-280Z"/></svg>
+                                                </button>
+                                                <button class="task-edit-btn" id="edit-btn">
+                                                    <i class="bi bi-three-dots-vertical "></i>
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>       
+                                    </li> -->
+                                    
+                                    
+                                </ul>
+                            </div>
+                        </div>
 
+
+                        <div class="timer-section">
+                            <div class="time-container">
+                                <div>
+                                    <p>Ongoing Task Name: </p>
+                                    <p class="ongoing-task-name"></p>
                                 </div>
-                            </li>
-                             -->
-                            
-                        </ul>
+                                
+
+                                <p class="hours">00 <span>h</span></p>
+                                <p class="minutes">00 <span>m</span></p>
+                                <p class="seconds">00 <span>s</span></p>
+
+                                <button class="timer-btn">
+                                    Start 
+                                </button>
+                            </div>
+                        </div>  
+
                     </div>
                 </div>
 
+                
+                
+                
+
+                <!-- ------------------create new task pop up ------------------------ -->
                 <div class="create-new-task-popup-container">
                     <div class="task-input-container">
                         <input id="task-name" type="text" placeholder="enter task name..."/>
@@ -155,94 +183,21 @@
                             <option value="cancelled">❌ Cancelled</option>
                         </select> -->
 
-                        <button id="create-task-button">save task</button>
+                        <button id="create-task-button">CREATE TASK</button>
                     </div>
-                    <button class="create-task-btn" id="create-task-popup-btn">
+
+                    <!-- <button class="create-task-btn" id="create-task-popup-btn">
                         <img src="assets/svgs/add_task_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg">
-                        <span>create new task</span>
+                        <span>Working on a new Task? / Work on Exisisting task?</span>
                         <span id="close-create-task-pop-up-btn">X</span>
-                    </button>
+                    </button> -->
+
                 </div>
             </div>
+            
+    
         </main>
-
     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- <div class="container">
-        <div class="header">
-            <div class="user-header-section">
-                <div class="user-intro">
-                    <h2>Hello, Username</h2>
-                    <p>lets keep track of your time!</p>
-                </div>
-                <div class="user-settings-area">
-                    <button><img src="person-lines-fill.svg"/></button>
-                </div>
-            </div>
-    
-            <div class="top-date-section">
-                <h2>Today</h2>
-                <h3>10 April 2025, Monday</h3>
-            </div>
-        </div>
-        
-
-        <div class="tasks-section">
-
-            <div id="tasks-section-desc" class="tasks-section-desc">
-                <h3>Your tasks will be listed here!</h3>
-                <p>Track your time on tasks and organize them using any tags.. its all up to you!</p>
-            </div>
-
-
-            
-            <div class="new-tasks-container">
-                <ul id="new-tasks-list" class="new-tasks-list">
-
-                </ul>
-            </div>
-        </div>
-       
-        <div class="daily-summary-tab">
-            <h4>Let’s look at how your yesterday went!</h4>
-            <button class="summary-close-btn">X</button>
-        </div>
-
-
-       
-        <div class="bottom-nav-bar">
-            <button>Tasks</button>
-            <button>Timeline</button>
-            <button id="create-task-popup-btn">+</button>
-            <button>reports</button>
-            <button>settings</button>
-        </div>
-    </div>
-
-
-    <div id="create-new-task-popup" class="create-new-task-popup">
-
-        <input id="task-name" type="text" placeholder="enter task name..."/>
-        <textarea id="task-desc" placeholder="enter description" id=""></textarea>
-        <input id="task-tag" type="text" placeholder="set a tag ..."/>
-        <input id="task-status" type="text" placeholder="inprogress/done"/>
-            
-        <button id="create-task-button">create-task</button>
-        <button class="close-create-task-pop-up-btn" id="close-create-task-pop-up-btn">x</button>
-    </div> -->
-    
 
     <script src="script.js"></script>
 </body>
