@@ -1,4 +1,6 @@
 // localStorage.clear();
+// localStorage.removeItem("users");
+
 
 // creating new task pop up..
 const createTaskPopupButton = document.getElementById("create-task-popup-btn");
@@ -84,12 +86,82 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector("#auth-section").style.display = "block";
     document.querySelector(".main-page").style.display = "none"
   }
+
+
+  // restoring any active timers 
+  const activeTimer = JSON.parse(localStorage.getItem("activeTimer"));
+
+  if(activeTimer){
+    const taskId = activeTimer.taskId;
+
+    startTime = new Date(activeTimer.startTime);
+    const taskToUpdate = tasks.find(task => task.taskId === taskId);
+
+    if(taskToUpdate) {
+      currentTaskItem = document.querySelector(`[data-task-id= '${taskId}']`);
+      ongoingTaskName.textContent = taskToUpdate.taskName;
+
+      if(!timerSection.classList.contains('show')) {
+        timerSection.classList.add('show');
+      }
+      
+      // restore timer variables
+      hours = activeTimer.hours;
+      minutes = activeTimer.minutes;
+      seconds = activeTimer.seconds;
+  
+      const elapsedSeconds = Math.floor((Date.now() - startTime.getTime()) / 1000);
+      
+  
+      //converting excess seconds into minutes, and minutes into hours.
+      seconds += elapsedSeconds;
+      
+      if(seconds >= 60){
+        minutes += Math.floor(seconds / 60);
+        seconds = seconds % 60;
+      }
+  
+      if(minutes >= 60){
+        hours += Math.floor(minutes / 60);
+        minutes = minutes % 60;
+      }
+  
+      hoursText.innerText = `${formatWithLeadingZeros(hours)} h`;
+      minutesText.innerText = `${formatWithLeadingZeros(minutes)} m`;
+      secondsText.innerText = `${formatWithLeadingZeros(seconds)} s`;
+  
+  
+      // start timer form where it was paused
+      timerStatus = 'started';
+      timerBtn.textContent = 'stop';
+  
+      // startTime = new Date(); //reset startTime from now
+
+      intervalId = setInterval(() => {
+        seconds++;
+        if(seconds === 60) {
+          seconds = 0;
+          minutes ++;
+          if(minutes === 60) {
+            minutes = 0;
+            hours++
+          }
+        }
+  
+        hoursText.innerText = `${formatWithLeadingZeros(hours)} h`;
+        minutesText.innerText = `${formatWithLeadingZeros(minutes)} m`;
+        secondsText.innerText = `${formatWithLeadingZeros(seconds)} s`;
+  
+      }, 1000);
+    }
+  }
+
+
 })
 
 
 const currentUserName = localStorage.getItem('currentUser');
 const currentUser = users.find(u => u.username === currentUserName);
-
 
 // getting saved tasks from localStorage.. 
 const tasks = currentUser?.tasks || [];
@@ -113,15 +185,6 @@ function displayTasks() {
 // creating new tasks ///////////////////////////////////////////////////
 createTaskPopupButton.addEventListener("click", () => {
   taskInputpopup.classList.add("show");
-
-  // const closeCreateTaskPopup = document.getElementById(
-  //   "close-create-task-pop-up-btn"
-  // );
-
-  // closeCreateTaskPopup.addEventListener("click", () => {
-  //   taskInputpopup.classList.remove("show");
-  // });
-
 });
 
 
@@ -163,13 +226,19 @@ if (createTaskButton) {
       timeLogs: [],
       taskTotalDuration: "",
     };
-
     tasks.push(newTask);
 
-    currentUser.tasks = tasks;
 
-    // storing to local storage.
-    localStorage.setItem("users", JSON.stringify(users));
+    const users = JSON.parse(localStorage.getItem("users"));
+    const userIndex = users.findIndex(u => u.username === currentUserName);
+    console.log(userIndex)
+    if(userIndex !== -1) {
+      users[userIndex].tasks = tasks;
+      localStorage.setItem("users", JSON.stringify(users));
+    }
+
+    // currentUser.tasks = tasks;
+    // localStorage.setItem("users", JSON.stringify(users));
 
     // closing the popup
     taskInputpopup.classList.remove("show");
@@ -180,7 +249,6 @@ if (createTaskButton) {
     // render newly created task.
     renderTask(newTask);
   });
-
 }
 
 
@@ -299,9 +367,17 @@ timerBtn.addEventListener("click", (e) => {
   const taskToUpdate = tasks.find(task => task.taskId === taskId);
 
   if(timerStatus === "stopped"){
-    
+
       // getting start time.
       startTime = new Date();
+      
+      localStorage.setItem("activeTimer", JSON.stringify({
+        taskId: taskToUpdate.taskId,
+        startTime: startTime.toISOString(),
+        hours,
+        minutes,
+        seconds
+      }))
 
       intervalId = setInterval(() => {
         seconds++;
@@ -330,6 +406,8 @@ timerBtn.addEventListener("click", (e) => {
 
       const endTime = new Date();
 
+      console.log("start time", startTime)
+
       const currentLogDuration = endTime - startTime;
       const currentLogDurationInSeconds = Math.floor(currentLogDuration / 1000);
       const totalTime = convertSecondsToTimeFormat(currentLogDurationInSeconds);
@@ -357,8 +435,15 @@ timerBtn.addEventListener("click", (e) => {
 
 
       // updating local storage 
-      currentUser.tasks = tasks;
-      localStorage.setItem("users", JSON.stringify(users));
+      const users = JSON.parse(localStorage.getItem("users"));
+      const userIndex = users.findIndex(u => u.username === currentUserName);
+      if(userIndex !== -1) {
+        users[userIndex].tasks = tasks;
+        localStorage.setItem("users", JSON.stringify(users));
+      }
+
+      // currentUser.tasks = tasks;
+      // localStorage.setItem("users", JSON.stringify(users));
 
 
       const taskTotal = currentTaskItem.querySelector(".task-total");
@@ -369,8 +454,7 @@ timerBtn.addEventListener("click", (e) => {
       const currentTaskButtonLable = currentTaskItem.querySelector('.start-timer-btn');
       currentTaskButtonLable.textContent = `Resume Your Work Session`;
 
-      //  //
-
+    
       if(timerSection.classList.contains("show")) {
         timerSection.classList.remove('show');
       }
@@ -385,6 +469,8 @@ timerBtn.addEventListener("click", (e) => {
 
 
       timerBtn.textContent = "start";
+
+      localStorage.removeItem("activeTimer");
     }
   });
 
@@ -424,7 +510,7 @@ showAnalyticsBtn.addEventListener("click", () => {
   const initialData = getTaskHoursForDate(tasks, today);
   console.log(initialData)
   renderTaskChart(initialData);
-  
+
 })
 
 

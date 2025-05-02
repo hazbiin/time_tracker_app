@@ -146,3 +146,68 @@ let task = {
 // allow user to edit whatever he needs
 // on clciking save button, we wanna check if there is a change for each task object property, 
 // if there is change means update that, else keep no change. 
+
+
+
+const activeTimer = JSON.parse(localStorage.getItem("activeTimer"));
+
+if (activeTimer) {
+  const taskId = activeTimer.taskId;
+  const startTime = new Date(activeTimer.startTime);
+  const taskToUpdate = tasks.find(task => task.taskId === taskId);
+
+  if (taskToUpdate) {
+    currentTaskItem = document.querySelector(`[data-task-id='${taskId}']`);
+    ongoingTaskName.textContent = taskToUpdate.taskName;
+
+    // Show timer section
+    if (!timerSection.classList.contains("show")) {
+      timerSection.classList.add("show");
+    }
+
+    // Restore timer variables
+    hours = activeTimer.hours;
+    minutes = activeTimer.minutes;
+    seconds = activeTimer.seconds;
+
+    const elapsed = Math.floor((Date.now() - startTime.getTime()) / 1000);
+    seconds += elapsed;
+
+    // Convert to proper h/m/s
+    if (seconds >= 60) {
+      minutes += Math.floor(seconds / 60);
+      seconds = seconds % 60;
+    }
+
+    if (minutes >= 60) {
+      hours += Math.floor(minutes / 60);
+      minutes = minutes % 60;
+    }
+
+    hoursText.innerText = `${formatWithLeadingZeros(hours)} h`;
+    minutesText.innerText = `${formatWithLeadingZeros(minutes)} m`;
+    secondsText.innerText = `${formatWithLeadingZeros(seconds)} s`;
+
+    // Start timer
+    timerStatus = "started";
+    timerBtn.textContent = "stop";
+
+    startTime = new Date(); // reset startTime from now
+    intervalId = setInterval(() => {
+      seconds++;
+      if (seconds === 60) {
+        seconds = 0;
+        minutes++;
+        if (minutes === 60) {
+          minutes = 0;
+          hours++;
+        }
+      }
+
+      hoursText.innerText = `${formatWithLeadingZeros(hours)} h`;
+      minutesText.innerText = `${formatWithLeadingZeros(minutes)} m`;
+      secondsText.innerText = `${formatWithLeadingZeros(seconds)} s`;
+
+    }, 1000);
+  }
+}
