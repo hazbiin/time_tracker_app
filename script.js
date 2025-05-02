@@ -26,12 +26,73 @@ let startTime = null;
 let currentTaskItem = null;
 
 
-// getting saved tasks from localStorage..
-const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-console.log(tasks);
+// getting users form localStorage.
+let users = JSON.parse(localStorage.getItem("users")) || [];
+console.log(users);
 
-// object to store timer states.
-const timers = {};
+// signup
+document.querySelector('#signup-btn').addEventListener("click", () => {
+  const username = document.querySelector("#signup-username").value;
+  const password = document.querySelector("#signup-password").value;
+
+  const newUser = {
+    userId: Date.now(),
+    username,
+    password,
+    tasks : []
+  }
+  users.push(newUser);
+
+  localStorage.setItem("users", JSON.stringify(users));
+  localStorage.setItem("currentUser", username);
+
+  const currentUser = localStorage.getItem('currentUser');
+  if(currentUser) {
+    document.querySelector("#auth-section").style.display = "none";
+    document.querySelector(".main-page").style.display = "block"
+  }else {
+    document.querySelector("#auth-section").style.display = "block";
+    document.querySelector(".main-page").style.display = "none"
+  }
+
+});
+
+// login 
+document.querySelector("#login-btn").addEventListener("click", () => {
+  const username = document.querySelector("#login-username").value;
+  const password = document.querySelector("#login-password").value;
+  
+  const user = users.find( u => u.username === username && u.password === password);
+  
+  if(!user){
+    alert("invalid credentials");
+    return;
+  }
+
+  localStorage.setItem("currentUser", username);
+});
+
+
+// loading page based on if user is logged in or not.
+document.addEventListener("DOMContentLoaded", () => {
+  const currentUser = localStorage.getItem('currentUser');
+
+  if(currentUser) {
+    document.querySelector("#auth-section").style.display = "none";
+    document.querySelector(".main-page").style.display = "block"
+  }else {
+    document.querySelector("#auth-section").style.display = "block";
+    document.querySelector(".main-page").style.display = "none"
+  }
+})
+
+
+const currentUserName = localStorage.getItem('currentUser');
+const currentUser = users.find(u => u.username === currentUserName);
+
+
+// getting saved tasks from localStorage.. 
+const tasks = currentUser?.tasks || [];
 
 
 // inital loading from local storage.
@@ -49,8 +110,7 @@ function displayTasks() {
   }
 }
 
-
-// creating new tasks ////////////////////////////////////////////////
+// creating new tasks ///////////////////////////////////////////////////
 createTaskPopupButton.addEventListener("click", () => {
   taskInputpopup.classList.add("show");
 
@@ -106,8 +166,10 @@ if (createTaskButton) {
 
     tasks.push(newTask);
 
+    currentUser.tasks = tasks;
+
     // storing to local storage.
-    localStorage.setItem("tasks", JSON.stringify(tasks));
+    localStorage.setItem("users", JSON.stringify(users));
 
     // closing the popup
     taskInputpopup.classList.remove("show");
@@ -118,6 +180,7 @@ if (createTaskButton) {
     // render newly created task.
     renderTask(newTask);
   });
+
 }
 
 
@@ -235,8 +298,6 @@ timerBtn.addEventListener("click", (e) => {
   const taskId = Number(currentTaskItem.dataset.taskId);
   const taskToUpdate = tasks.find(task => task.taskId === taskId);
 
- 
-
   if(timerStatus === "stopped"){
     
       // getting start time.
@@ -276,14 +337,14 @@ timerBtn.addEventListener("click", (e) => {
 
       taskToUpdate.timeLogs.push({
         timeLogId : taskToUpdate.timeLogs.length + 1,
-        startTime : startTime.toLocaleTimeString(),
-        endTime: endTime.toLocaleTimeString(),
-        totalTime : totalTime
+        startTime,
+        endTime,
+        totalTime
       });
       console.log("task time logs ------->>", taskToUpdate.timeLogs);
 
 
-      // summing all the time logs
+      // summing all the time logs///////
       let allTimeLogsTotalSeconds = 0;
       taskToUpdate.timeLogs.forEach(log => {
           const [hrs, mins, secs] = log.totalTime.split(':');
@@ -294,8 +355,10 @@ timerBtn.addEventListener("click", (e) => {
       taskToUpdate.taskTotalDuration = convertSecondsToTimeFormat(allTimeLogsTotalSeconds);
       console.log("task total duration ------->>", convertSecondsToTimeFormat(allTimeLogsTotalSeconds));
 
+
       // updating local storage 
-      localStorage.setItem("tasks", JSON.stringify(tasks));
+      currentUser.tasks = tasks;
+      localStorage.setItem("users", JSON.stringify(users));
 
 
       const taskTotal = currentTaskItem.querySelector(".task-total");
@@ -306,13 +369,11 @@ timerBtn.addEventListener("click", (e) => {
       const currentTaskButtonLable = currentTaskItem.querySelector('.start-timer-btn');
       currentTaskButtonLable.textContent = `Resume Your Work Session`;
 
+      //  //
 
       if(timerSection.classList.contains("show")) {
         timerSection.classList.remove('show');
-        // setTimeout(() => {
-        // }, 2000)
       }
-
 
       seconds = 0;
       minutes = 0;
@@ -328,7 +389,6 @@ timerBtn.addEventListener("click", (e) => {
   });
 
 
-
 function convertSecondsToTimeFormat(totalSeconds) {
   let hrs = Math.floor(totalSeconds / 3600); // becuase 1 hr == 3600 seconds
   let mins = Math.floor((totalSeconds % 3600) / 60); // we wanna check how many seconds is left from total seconds after substracting hours, then we check how many full minutes we get form the reminaing seconds.
@@ -341,14 +401,116 @@ function formatWithLeadingZeros(val) {
   return val < 10 ? `0${val}` : val;
 }
 
+const taskListBtn = document.querySelector("#task-list-btn");
+taskListBtn.addEventListener("click", () =>{
+  if(document.querySelector("#analytics-section").style.display === "block") {
+    document.querySelector("#analytics-section").style.display = "none";
+    document.querySelector(".main-content").style.display = "flex";
+  }
+})
+
+// //////////////////////////////////analytics///////////////////////////////////////////////
+const showAnalyticsBtn = document.querySelector("#analytics-btn");
+
+let dailyTaskChart = null;
+
+showAnalyticsBtn.addEventListener("click", () => {
+  document.querySelector(".main-content").style.display = "none";
+  document.querySelector("#analytics-section").style.display = "block"; 
+
+  // initial chart rendering for today's date
+  const today = new Date().toISOString().split('T')[0];
+  document.querySelector('#datePicker').value = today;
+  const initialData = getTaskHoursForDate(tasks, today);
+  console.log(initialData)
+  renderTaskChart(initialData);
+  
+})
+
+
+// adding listener for date changes
+document.getElementById("datePicker").addEventListener("change", function () {
+  const selectedDate = this.value;
+  const newData = getTaskHoursForDate(tasks, selectedDate);
+  renderTaskChart(newData);
+
+});
+
+
+function getTaskHoursForDate(tasks, selectedDate){
+  const targetDate = new Date(selectedDate).toLocaleDateString();
+  const taskDurations = {};
+
+  tasks.forEach(task => {
+
+    console.log(task.taskName)
+    task.timeLogs.forEach(log => {
+      const logDate = new Date(log.startTime).toLocaleDateString();
+
+      if(logDate === targetDate) {
+        const [hrs, mins, secs] = log.totalTime.split(':');
+        const totalSeconds = Number(hrs) * 3600 + Number(mins) * 60 + Number(secs);
+
+        if(!taskDurations[task.taskName]){
+          taskDurations[task.taskName] = 0;
+        }
+
+        taskDurations[task.taskName] += totalSeconds;
+      }
+    })
+  })
+
+  // console.log(taskDurations)
+  return Object.entries(taskDurations).map(([task, secs]) => ({
+    task,
+    hours: (secs/ 3600)
+  }))
+}
 
 
 
 
+function renderTaskChart(taskAnalytics){
+  const ctx = document.getElementById('dailyTaskChart').getContext('2d');
+  if(dailyTaskChart) dailyTaskChart.destroy();
+  
+  dailyTaskChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: taskAnalytics.map(t => t.task),
+      datasets: [
+        {
+          label:"Hours Spent on Each Task",
+          data : taskAnalytics.map(t => t.hours),
+          backgroundColor: "rgba(73, 70, 80, 0.6)"
+        }
+      ]
+    },
+    options:{
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            stepSize: 1,
+            callback: function(value) {
+              return value + "h"
+            }
+          }
+        }
+      }
+    }
+
+
+  })
+
+  
+
+}
 
 
 
-
+// object to store timer states.
+const timers = {};
 function attachTimerListenerTo(taskItem) {
     const timerBtn = taskItem.querySelector(".timer-btn");
 
@@ -563,7 +725,6 @@ function attachTimerListenerTo(taskItem) {
 
 
 
-
 // what is actally boss asking , understand his concern and plan accordingly.
 // his main concern is to keep recorde of what we have done, like a graph he wanna see, were our time went.
 // example he is saying is slack.
@@ -582,24 +743,3 @@ function attachTimerListenerTo(taskItem) {
 // ------- match user with there tasks ...
 // what to do for it?
 
-
-// 2) task listing ...
-// edit and delete later,
-
-// see main thing you wanna do is the analytics reach there soon and, 
-// and see boss wont give time further, you already late, 
-// he gave this task of apr 4th rihgt, its gonna be one month, 
-// before may 5 you wanna atleast do something, 
-// let design be done later,
-
-
-
-// how to associate user with task, 
-// first what you have to do?
-
-
-// think and decide the viewwww.
-// then only you can move on.
-
-
-// today taskss, or tasks listtt , which should we need, 

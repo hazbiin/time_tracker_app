@@ -6,118 +6,117 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="style.css" rel="stylesheet">
     <title>Time - Tracker App</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-    <div class="container">
-        <nav class="sidebar">
-            <ul class="main-nav-links">
-                <li>
-                   <span class="logo">time tracking app</span>
-                   <button id="toggle-btn">
-                        <img src="assets/svgs/keyboard_double_arrow_left_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg">
-                   </button>
-                </li>
-                <li>
-                    <a href= "index.html">
-                        <img src="assets/svgs/today_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
-                        <span>Track Today</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="tasks-lists.html">
-                        <img src="assets/svgs/view_list_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
-                        <span>All Tasks Overview</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="analytics.html">
-                        <img src="assets/svgs/analytics_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
-                        <span>Analytics</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="calendar.html">
-                        <img src="assets/svgs/calendar_month_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
-                        <span>Calendar</span>
-                    </a>
-                </li>
-            </ul>
+    
+    <div id="auth-section">
+        <div id="login-form">
+            <h3>Login</h3>
+            <input type="text" id="login-username" placeholder="Username" />
+            <input type="password" id="login-password" placeholder="Password"/ >
+            <button id="login-btn">Login</button>
+            <p>No account? <a href="#" id="show-signup">Signup</a> </p>
+        </div>
 
-            <ul class="profile-settings">
-                <li>
-                    <button>change theme</button>
-                </li>
-                <li>
-                    <a href= "">
-                        <img src="assets/svgs/account_box_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
-                        <span>Profile</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="">
-                        <img src="assets/svgs/logout_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
-                        <span>Logout</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
+        <div id="signup-form">
+            <h3>Signup</h3>
+            <input type="text" id="signup-username" placeholder="Username" />
+            <input type="password" id="signup-password" placeholder="Password" />
+            <button id="signup-btn">Create Account</button>
+            <p>Have an account? <a href="#" id="show-login">Login</a></p>
+        </div>
 
-        <main class="main-content"> 
+    </div>
+    
+    
 
-            <div class="main-section-top-section">
-                <div class="main-section-top-left-section">
-                    <h3>Hello, Username!</h3>
-                    <p>Let's keep track of your time..</p>
+    <div class="main-page" style="display: none;">
+        <div class="container">
+            <nav class="sidebar">
+                <ul class="main-nav-links">
+                    <li>
+                       <span class="logo">time tracking app</span>
+                       <button id="toggle-btn">
+                            <img src="assets/svgs/keyboard_double_arrow_left_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg">
+                       </button>
+                    </li>
+                    <li>
+                        <!-- <a href="tasks-lists.html">
+                            <img src="assets/svgs/view_list_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+                            <span>My Tasks List</span>
+                        </a> -->
+                        <button id="task-list-btn" class="nav-link">My Tasks List</button>
+                    </li>
+                    <li>
+                        <button id="analytics-btn" class="nav-link">See Analytics</button>
+                        <!-- <a href="analytics.html">
+                            <img src="assets/svgs/analytics_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+                            <span>Analytics</span>
+                        </a> -->
+                    </li>
+                    <!-- <li>
+                        <a href="calendar.html">
+                            <img src="assets/svgs/calendar_month_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+                            <span>Calendar</span>
+                        </a>
+                    </li> -->
+                </ul>
+    
+                <ul class="profile-settings">
+                    <li>
+                        <button>change theme</button>
+                    </li>
+                    <li>
+                        <a href= "">
+                            <img src="assets/svgs/account_box_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="">
+                            <img src="assets/svgs/logout_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+    
+            <main class="main-content"> 
+                <div class="main-section-top-section">
+                    <div class="main-section-top-left-section">
+                        <h3>Hello, Username!</h3>
+                        <p>Let's keep track of your time..</p>
+                    </div>
                 </div>
-            </div>
-
-            <div class="main-section-bottom-section">
-                <div class="current-day-details-section">
-                    <div>
-                        <h3>Today's Task</h3>
-                        <p>Sunday 20 April 2025 7:40 PM</p>
+    
+                <div class="main-section-bottom-section">
+                    <div class="current-day-details-section">
+                        <div>
+                            <h3>My Tasks List</h3>
+                            <p>Sunday 20 April 2025 7:40 PM</p>
+                        </div>
+                       
+                        <div>
+                            <button class="create-task-btn" id="create-task-popup-btn">Create New Task + </button>
+                            <!-- <button class="create-task-btn">Work on exisiting task?</button> -->
+                        </div>
                     </div>
-                   
-                    <div>
-                        <button class="create-task-btn" id="create-task-popup-btn">Create New Task + </button>
-                        <!-- <button class="create-task-btn">Work on exisiting task?</button> -->
-                    </div>
-                </div>
-
-                <div class="new-tasks-section">
-
-                    <div id="tasks-section-desc" class="tasks-section-desc">
-                        <h3>Your tasks will be listed here.</h3>
-                        <p>Track your time on tasks and organize them using any tags.. its all up to you!</p>
-                    </div>
-                    
-                    
-                    <div class="new-tasks-container">
-
-                        <div class="tasks-list-section">
-                            <!-- <div class="ongoing-task">
-                                <div class="section-heading">
-                                    <p>On-Going Task</p>
-                                </div>
-                                <div class="task-info">
-                                    <div class="list-item-text-section">
-                                        <h2 class="ongoing-task-name">Working on project xyz</h2>
-                                        <p class="task-total">Last started at: Monday 28 April, 2025, 12:00 AM</p>
-                                    </div>
-                                    <div class="list-item-buttons-section">
-                                        <button class="timer-btn">
-                                            <svg class="timer-icon" xmlns="http://www.w3.org/2000/svg"  viewBox="0 -960 960 960" ><path d="M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-280Z"/></svg>
-                                        </button>
-                                        <p class="task-total">Last started at: Monday 28 April, 2025, 12:00 AM</p>
-                                        
-                                    </div>
-                                </div>
-                            </div> -->
-
-                            <div class="other-tasks-section">
+    
+                    <div class="new-tasks-section">
+    
+                        <div id="tasks-section-desc" class="tasks-section-desc">
+                            <h3>Your tasks will be listed here.</h3>
+                            <p>Track your time on tasks and organize them using any tags.. its all up to you!</p>
+                        </div>
+                        
+                        
+                        <div class="new-tasks-container">
+    
+                            <div class="tasks-list-section">
                                 <ul id="new-tasks-list" class="new-tasks-list">
-
+    
                                     <!-- <li class="task-list-item">
                                         <div class="task-info">
                                             <div class="list-item-text-section">
@@ -139,65 +138,79 @@
                                     
                                 </ul>
                             </div>
-                        </div>
-
-
-                        <div class="timer-section">
-                            <div class="time-container">
-                                <div>
-                                    <p>Ongoing Task Name: </p>
-                                    <p class="ongoing-task-name"></p>
-                                </div>
-                                
-
-                                <p class="hours">00 <span>h</span></p>
-                                <p class="minutes">00 <span>m</span></p>
-                                <p class="seconds">00 <span>s</span></p>
-
-                                <button class="timer-btn">
-                                    Start 
-                                </button>
-                            </div>
-                        </div>  
-
-                    </div>
-                </div>
-
-                
-                
-                
-
-                <!-- ------------------create new task pop up ------------------------ -->
-                <div class="create-new-task-popup-container">
-                    <div class="task-input-container">
-                        <input id="task-name" type="text" placeholder="enter task name..."/>
-                        <textarea id="task-desc" placeholder="enter description" id=""></textarea>
-                        <input id="task-tag" type="text" placeholder="set a tag ..."/>
-
-                        <!-- <select id="task-status">
-                            <option value="" selected>🔽 set task status</option>
-                            <option value="pending"> 🕒 Pending</option>
-                            <option value="in-progress">🔄 In Progress</option>
-                            <option value="paused">⏸️ Paused</option>
-                            <option value="done"> ✅ Done</option>
-                            <option value="cancelled">❌ Cancelled</option>
-                        </select> -->
-
-                        <button id="create-task-button">CREATE TASK</button>
-                    </div>
-
-                    <!-- <button class="create-task-btn" id="create-task-popup-btn">
-                        <img src="assets/svgs/add_task_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg">
-                        <span>Working on a new Task? / Work on Exisisting task?</span>
-                        <span id="close-create-task-pop-up-btn">X</span>
-                    </button> -->
-
-                </div>
-            </div>
-            
     
-        </main>
+                            <div class="timer-section">
+                                <div class="time-container">
+                                    <div>
+                                        <p>Ongoing Task Name: </p>
+                                        <p class="ongoing-task-name"></p>
+                                    </div>
+                                    
+    
+                                    <p class="hours">00 <span>h</span></p>
+                                    <p class="minutes">00 <span>m</span></p>
+                                    <p class="seconds">00 <span>s</span></p>
+    
+                                    <button class="timer-btn">
+                                        Start 
+                                    </button>
+                                </div>
+                            </div>  
+    
+                        </div>
+                    </div>
+    
+                    
+                    
+                    
+    
+                    <!-- ------------------create new task pop up ------------------------ -->
+                    <div class="create-new-task-popup-container">
+                        <div class="task-input-container">
+                            <input id="task-name" type="text" placeholder="enter task name..."/>
+                            <textarea id="task-desc" placeholder="enter description" id=""></textarea>
+                            <input id="task-tag" type="text" placeholder="set a tag ..."/>
+    
+                            <!-- <select id="task-status">
+                                <option value="" selected>🔽 set task status</option>
+                                <option value="pending"> 🕒 Pending</option>
+                                <option value="in-progress">🔄 In Progress</option>
+                                <option value="paused">⏸️ Paused</option>
+                                <option value="done"> ✅ Done</option>
+                                <option value="cancelled">❌ Cancelled</option>
+                            </select> -->
+    
+                            <button id="create-task-button">CREATE TASK</button>
+                        </div>
+    
+                        <!-- <button class="create-task-btn" id="create-task-popup-btn">
+                            <img src="assets/svgs/add_task_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg">
+                            <span>Working on a new Task?</span>
+                        </button> -->
+    
+                    </div>
+                </div>
+            </main>
+
+            <section id="analytics-section" style="display: none;">
+                <h1>VIew All Your Analytics</h1>
+                <div class="analytics-container">
+                    <h3>DAILY TASK CHART</h3>
+                    <input id="datePicker" type="date"/>
+                    <canvas id="dailyTaskChart" class="dailyTaskChart" width=" 400" height="200"></canvas>
+                </div>
+
+                
+                
+            </section>
+        </div>
+
+       
+
     </div>
+
+    
+   
 
     <script src="script.js"></script>
 </body>
