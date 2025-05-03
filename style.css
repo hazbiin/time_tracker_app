@@ -163,6 +163,13 @@ a{
 
     transform: translateX(100%);
     transition: transform 0.5s ease, max-width 0.5s ease, flex-basis 0.5s ease;
+    position: relative;
+}
+
+.timer-section-close-btn {
+    position: absolute;
+    right: 10px;
+    top: 10px;
 }
 
 .timer-section.show{

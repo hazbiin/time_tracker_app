@@ -1,6 +1,4 @@
 // localStorage.clear();
-// localStorage.removeItem("users");
-
 
 // creating new task pop up..
 const createTaskPopupButton = document.getElementById("create-task-popup-btn");
@@ -11,6 +9,7 @@ const tasksSectionDescription = document.getElementById("tasks-section-desc");
 
 // timer section 
 const timerSection = document.querySelector(".timer-section");
+const timerSectionCloseBtn = document.querySelector(".timer-section-close-btn");
 const ongoingTaskName = document.querySelector(".ongoing-task-name");
 const hoursText = document.querySelector(".hours");
 const minutesText = document.querySelector(".minutes");
@@ -18,21 +17,22 @@ const secondsText = document.querySelector(".seconds");
 const timerBtn = document.querySelector(".timer-btn");
 
 
+// global variables
 let intervalId = null;
 let timerStatus = "stopped";
 let seconds = 0;
 let minutes = 0;
 let hours = 0;
-
 let startTime = null;
 let currentTaskItem = null;
 
 
-// getting users form localStorage.
-let users = JSON.parse(localStorage.getItem("users")) || [];
-console.log(users);
+// getting users form localStorage. 
+const users = JSON.parse(localStorage.getItem("users")) || [];
+console.log("users",users);
 
-// signup
+
+// signup 
 document.querySelector('#signup-btn').addEventListener("click", () => {
   const username = document.querySelector("#signup-username").value;
   const password = document.querySelector("#signup-password").value;
@@ -56,8 +56,8 @@ document.querySelector('#signup-btn').addEventListener("click", () => {
     document.querySelector("#auth-section").style.display = "block";
     document.querySelector(".main-page").style.display = "none"
   }
-
 });
+
 
 // login 
 document.querySelector("#login-btn").addEventListener("click", () => {
@@ -75,6 +75,7 @@ document.querySelector("#login-btn").addEventListener("click", () => {
 });
 
 
+
 // loading page based on if user is logged in or not.
 document.addEventListener("DOMContentLoaded", () => {
   const currentUser = localStorage.getItem('currentUser');
@@ -88,13 +89,16 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  // restoring any active timers 
+  // restoring any active timers on page reloads
   const activeTimer = JSON.parse(localStorage.getItem("activeTimer"));
 
   if(activeTimer){
     const taskId = activeTimer.taskId;
-
     startTime = new Date(activeTimer.startTime);
+
+    const currentUserName = localStorage.getItem('currentUser');
+    const currentUser = users.find(u => u.username === currentUserName);
+    const tasks = currentUser?.tasks || [];
     const taskToUpdate = tasks.find(task => task.taskId === taskId);
 
     if(taskToUpdate) {
@@ -105,14 +109,13 @@ document.addEventListener("DOMContentLoaded", () => {
         timerSection.classList.add('show');
       }
       
-      // restore timer variables
+      // restore timer variables.
       hours = activeTimer.hours;
       minutes = activeTimer.minutes;
       seconds = activeTimer.seconds;
   
       const elapsedSeconds = Math.floor((Date.now() - startTime.getTime()) / 1000);
       
-  
       //converting excess seconds into minutes, and minutes into hours.
       seconds += elapsedSeconds;
       
@@ -120,22 +123,18 @@ document.addEventListener("DOMContentLoaded", () => {
         minutes += Math.floor(seconds / 60);
         seconds = seconds % 60;
       }
-  
       if(minutes >= 60){
         hours += Math.floor(minutes / 60);
         minutes = minutes % 60;
       }
-  
+      
       hoursText.innerText = `${formatWithLeadingZeros(hours)} h`;
       minutesText.innerText = `${formatWithLeadingZeros(minutes)} m`;
       secondsText.innerText = `${formatWithLeadingZeros(seconds)} s`;
   
-  
       // start timer form where it was paused
       timerStatus = 'started';
       timerBtn.textContent = 'stop';
-  
-      // startTime = new Date(); //reset startTime from now
 
       intervalId = setInterval(() => {
         seconds++;
@@ -155,24 +154,21 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 1000);
     }
   }
-
-
 })
 
 
-const currentUserName = localStorage.getItem('currentUser');
-const currentUser = users.find(u => u.username === currentUserName);
 
-// getting saved tasks from localStorage.. 
-const tasks = currentUser?.tasks || [];
-
-
-// inital loading from local storage.
+// inital loading of tasks from local storage.
 displayTasks();
 function displayTasks() {
   const newTasksList = document.getElementById("new-tasks-list");
   newTasksList.innerHTML = "";
   
+  //getting saved tasks from localStorage.. 
+  const currentUserName = localStorage.getItem('currentUser');
+  const currentUser = users.find(u => u.username === currentUserName);
+  const tasks = currentUser?.tasks || [];
+
   tasks.forEach((task) => {
     renderTask(task);
   });
@@ -182,13 +178,13 @@ function displayTasks() {
   }
 }
 
-// creating new tasks ///////////////////////////////////////////////////
+
+// creating new tasks 
 createTaskPopupButton.addEventListener("click", () => {
   taskInputpopup.classList.add("show");
 });
 
-
-if (createTaskButton) {
+if(createTaskButton) {
   // task creation inputs.
   const taskNameInput = document.getElementById("task-name");
   const taskDescInput = document.getElementById("task-desc");
@@ -214,7 +210,6 @@ if (createTaskButton) {
       hour12: true,
     });
 
-
     const newTask = {
       taskId: Date.now(),
       startDate: dateCreated,
@@ -226,23 +221,18 @@ if (createTaskButton) {
       timeLogs: [],
       taskTotalDuration: "",
     };
-    tasks.push(newTask);
 
 
-    const users = JSON.parse(localStorage.getItem("users"));
-    const userIndex = users.findIndex(u => u.username === currentUserName);
-    console.log(userIndex)
-    if(userIndex !== -1) {
-      users[userIndex].tasks = tasks;
-      localStorage.setItem("users", JSON.stringify(users));
-    }
+    // storing to local Storage
+    const currentUserName = localStorage.getItem('currentUser');
+    const currentUser = users.find(u => u.username === currentUserName);
 
-    // currentUser.tasks = tasks;
-    // localStorage.setItem("users", JSON.stringify(users));
+    currentUser.tasks.push(newTask);
+    localStorage.setItem("users", JSON.stringify(users));
 
     // closing the popup
     taskInputpopup.classList.remove("show");
-    if (tasksSectionDescription) {
+    if(tasksSectionDescription) {
       tasksSectionDescription.classList.add("hide");
     }
 
@@ -269,7 +259,6 @@ function renderTask(task) {
         totalTimeToDisplay = `${hrs}h ${mins}min ${secs}secs`;
       }
 
-
       let buttonLabel;
       if(task.timeLogs.length === 0) {
         buttonLabel = "Begin Your Work Session"
@@ -295,14 +284,11 @@ function renderTask(task) {
         </div>
       `;
 
-
-      if (task.taskName !== "") {
+      if(task.taskName !== "") {
         newTasksList.appendChild(li);
       }
 
       // attaching timer for the tasks.
-      // attachTimerListenerTo(li);
-
       showTimer(li);
 }
 
@@ -319,19 +305,22 @@ function showTimer(taskItem) {
     // setting current task to update
     currentTaskItem = taskItem;
     
+    // getting tasks of current user form local storage
+    const currentUserName = localStorage.getItem('currentUser');
+    const currentUser = users.find(u => u.username === currentUserName);
+    const tasks = currentUser?.tasks || [];
 
-    // dom updates and necessary changes on btn click.
     const taskId = Number(currentTaskItem.dataset.taskId);
     const taskToUpdate = tasks.find(task => task.taskId === taskId);
 
 
+    // necessary dom updates
     if(timerStatus !== "started"){
 
       const currentTaskName = taskItem.querySelector('.task-name');
       ongoingTaskName.textContent = currentTaskName.textContent;
 
       timerBtn.textContent = 'start';
-
       hoursText.innerText = `00 h`;
       minutesText.innerText = `00 m`;
       secondsText.innerText = `00 s`;
@@ -339,7 +328,6 @@ function showTimer(taskItem) {
       seconds = 0;
       minutes = 0;
       hours = 0;
-
 
       if(taskToUpdate.timeLogs.length !== 0){
 
@@ -354,14 +342,22 @@ function showTimer(taskItem) {
         minutes = Number(mins);
         hours = Number(hrs);
       }
-
     }
-
   });
 }
+timerSectionCloseBtn.addEventListener("click", () => {
+  if(timerStatus !== "started"){
+    timerSection.classList.remove('show');
+  }
+});
 
 
+// main timer functionality
 timerBtn.addEventListener("click", (e) => {
+
+  const currentUserName = localStorage.getItem('currentUser');
+  const currentUser = users.find(u => u.username === currentUserName);
+  const tasks = currentUser?.tasks || [];
 
   const taskId = Number(currentTaskItem.dataset.taskId);
   const taskToUpdate = tasks.find(task => task.taskId === taskId);
@@ -371,6 +367,7 @@ timerBtn.addEventListener("click", (e) => {
       // getting start time.
       startTime = new Date();
       
+      // storing active timer incase of page refresh
       localStorage.setItem("activeTimer", JSON.stringify({
         taskId: taskToUpdate.taskId,
         startTime: startTime.toISOString(),
@@ -378,6 +375,7 @@ timerBtn.addEventListener("click", (e) => {
         minutes,
         seconds
       }))
+
 
       intervalId = setInterval(() => {
         seconds++;
@@ -389,12 +387,9 @@ timerBtn.addEventListener("click", (e) => {
             hours ++;
           }
         }
-        
-
         hoursText.innerText = `${formatWithLeadingZeros(hours)} h`;
         minutesText.innerText = `${formatWithLeadingZeros(minutes)} m`;
         secondsText.innerText = `${formatWithLeadingZeros(seconds)} s`;
-
       }, 1000);
 
       timerStatus = "started";
@@ -406,12 +401,9 @@ timerBtn.addEventListener("click", (e) => {
 
       const endTime = new Date();
 
-      console.log("start time", startTime)
-
       const currentLogDuration = endTime - startTime;
       const currentLogDurationInSeconds = Math.floor(currentLogDuration / 1000);
       const totalTime = convertSecondsToTimeFormat(currentLogDurationInSeconds);
-
 
       taskToUpdate.timeLogs.push({
         timeLogId : taskToUpdate.timeLogs.length + 1,
@@ -419,42 +411,31 @@ timerBtn.addEventListener("click", (e) => {
         endTime,
         totalTime
       });
-      console.log("task time logs ------->>", taskToUpdate.timeLogs);
 
-
-      // summing all the time logs///////
+      // summing all time logs
       let allTimeLogsTotalSeconds = 0;
       taskToUpdate.timeLogs.forEach(log => {
           const [hrs, mins, secs] = log.totalTime.split(':');
           allTimeLogsTotalSeconds += (Number(hrs) * 3600) + (Number(mins) * 60) + Number(secs);
       });
       
-      // total task duration /////////////////////////////////////////////////////////
+      // total task duration 
       taskToUpdate.taskTotalDuration = convertSecondsToTimeFormat(allTimeLogsTotalSeconds);
-      console.log("task total duration ------->>", convertSecondsToTimeFormat(allTimeLogsTotalSeconds));
+      // console.log("task total duration ------->>", convertSecondsToTimeFormat(allTimeLogsTotalSeconds));
 
 
-      // updating local storage 
-      const users = JSON.parse(localStorage.getItem("users"));
-      const userIndex = users.findIndex(u => u.username === currentUserName);
-      if(userIndex !== -1) {
-        users[userIndex].tasks = tasks;
-        localStorage.setItem("users", JSON.stringify(users));
-      }
+      // update local Storage
+      currentUser.tasks = tasks;
+      localStorage.setItem("users", JSON.stringify(users));
 
-      // currentUser.tasks = tasks;
-      // localStorage.setItem("users", JSON.stringify(users));
-
-
+      // necessary dom changes 
       const taskTotal = currentTaskItem.querySelector(".task-total");
       const [hrs,mins,secs] = taskToUpdate.taskTotalDuration.split(':');
       taskTotal.textContent = `${hrs}h ${mins}min ${secs}secs`;
 
-
       const currentTaskButtonLable = currentTaskItem.querySelector('.start-timer-btn');
       currentTaskButtonLable.textContent = `Resume Your Work Session`;
 
-    
       if(timerSection.classList.contains("show")) {
         timerSection.classList.remove('show');
       }
@@ -467,9 +448,9 @@ timerBtn.addEventListener("click", (e) => {
       secondsText.innerText = `00 s`;
       timerStatus = "stopped";
 
-
       timerBtn.textContent = "start";
 
+      // removing active timer from local storage
       localStorage.removeItem("activeTimer");
     }
   });
@@ -482,11 +463,12 @@ function convertSecondsToTimeFormat(totalSeconds) {
   
   return `${formatWithLeadingZeros(hrs)}:${formatWithLeadingZeros(mins)}:${formatWithLeadingZeros(secs)}`;
 }
-  
 function formatWithLeadingZeros(val) {
   return val < 10 ? `0${val}` : val;
 }
 
+
+// side bar navigations
 const taskListBtn = document.querySelector("#task-list-btn");
 taskListBtn.addEventListener("click", () =>{
   if(document.querySelector("#analytics-section").style.display === "block") {
@@ -495,7 +477,9 @@ taskListBtn.addEventListener("click", () =>{
   }
 })
 
-// //////////////////////////////////analytics///////////////////////////////////////////////
+
+
+////////////////////////////////////////////////analytics///////////////////////////////////////////////
 const showAnalyticsBtn = document.querySelector("#analytics-btn");
 
 let dailyTaskChart = null;
@@ -554,8 +538,6 @@ function getTaskHoursForDate(tasks, selectedDate){
 }
 
 
-
-
 function renderTaskChart(taskAnalytics){
   const ctx = document.getElementById('dailyTaskChart').getContext('2d');
   if(dailyTaskChart) dailyTaskChart.destroy();
@@ -585,155 +567,13 @@ function renderTaskChart(taskAnalytics){
         }
       }
     }
-
-
   })
-
-  
-
 }
 
 
 
-// object to store timer states.
-const timers = {};
-function attachTimerListenerTo(taskItem) {
-    const timerBtn = taskItem.querySelector(".timer-btn");
-
-    timerBtn.addEventListener("click", (e) => {
-        const timer = taskItem.querySelector(".timer");
-        const timerPath = taskItem.querySelector(".timer-path")
-
-        // inputs for updating the tasks.
-        const taskId = Number(taskItem.dataset.taskId);
-        const taskToUpdate = tasks.find(task => task.taskId === taskId);
-        
-        // setting initial timerstates for each clicked task
-        if(!timers[taskId]) {
-            timers[taskId] = {
-                intervalId: null,
-                status: "stopped",
-                startTime: null,
-                seconds:0,
-                minutes:0,
-                hours:0
-            };
-        }
-        const timerState = timers[taskId];
-        // console.log(timers);
-
-        // timer start stop functionality///////////////////
-        if(timerState.status === "stopped") {
-            // getting startTIme
-            timerState.startTime = new Date();
-
-            timerState.intervalId = setInterval(() => {
-                timerState.seconds++;
-                if(timerState.seconds === 60) {
-                    timerState.seconds = 0;
-                    timerState.minutes++;
-                    if(timerState.minutes === 60) {
-                        timerState.minutes = 0;
-                        timerState.hours++;
-                    }
-                }
-                timer.innerText = `${formatWithLeadingZeros(timerState.hours)}:${formatWithLeadingZeros(timerState.minutes)}:${formatWithLeadingZeros(timerState.seconds)}`;
-            }, 1000);
-            
-
-            timerPath.setAttribute("d", "m798-274-60-60q11-27 16.5-53.5T760-440q0-116-82-198t-198-82q-24 0-51 5t-56 16l-60-60q38-20 80.5-30.5T480-800q60 0 117.5 20T706-722l56-56 56 56-56 56q38 51 58 108.5T840-440q0 42-10.5 83.5T798-274ZM520-552v-88h-80v8l80 80ZM792-56l-96-96q-48 35-103.5 53.5T480-80q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-60 18.5-115.5T192-656L56-792l56-56 736 736-56 56ZM480-160q42 0 82-13t75-37L248-599q-24 35-36 75t-12 84q0 116 82 198t198 82ZM360-840v-80h240v80H360Zm83 435Zm113-112Z");
-            timerState.status = "started";
-
-            taskToUpdate.taskStatus = "in-progress"
-            const taskStatus = taskItem.querySelector(".task-status");
-            taskStatus.textContent = taskToUpdate.taskStatus;
-
-        }else {
-
-            clearInterval(timerState.intervalId);
-
-            // getting end time
-            const endTime = new Date();
-
-            // finding difference between the start time and end time
-            const currentLogDuration = endTime - timerState.startTime; 
-            const currentLogDurationInSeconds = Math.floor(currentLogDuration / 1000);
-            const totalTime = convertSecondsToTimeFormat(currentLogDurationInSeconds);
 
 
-            // updating local storage with time logs 
-            taskToUpdate.timeLogs.push({
-                timeLogId : taskToUpdate.timeLogs.length + 1,
-                startTime : timerState.startTime.toLocaleTimeString(),
-                endTime: endTime.toLocaleTimeString(),
-                totalTime : totalTime
-            });
-            // console.log("task time logs ------->>", taskToUpdate.timeLogs);
-
-            // summing all the time logs
-            let allTimeLogsTotalSeconds = 0;
-            taskToUpdate.timeLogs.forEach(log => {
-                const [hrs, mins, secs] = log.totalTime.split(':');
-                allTimeLogsTotalSeconds += (Number(hrs) * 3600) + (Number(mins) * 60) + Number(secs);
-            });
-            // console.log("all time logs total ------>>",allTimeLogsTotalSeconds);
-
-
-            // total task duration /////////////////////////////////////////////////////////
-            taskToUpdate.taskTotalDuration = convertSecondsToTimeFormat(allTimeLogsTotalSeconds);
-            // console.log("task total duration ------->>",taskTotalDuration);
-
-            // if(taskToUpdate.timeLogs.length !== 0 && taskToUpdate.taskStatus !== "in-progress") {
-            //     taskToUpdate.taskStatus = "in-progress"
-            // }
-
-            // updating local storage 
-            localStorage.setItem("tasks", JSON.stringify(tasks));
-
-            
-            // //////////////////////necesaryy dom updates ////////////////////////
-            // only updating the necessary part of the list without full updating.
-
-            const taskTotal = taskItem.querySelector(".task-total");
-            const [hrs,mins,secs] = taskToUpdate.taskTotalDuration.split(':');
-            taskTotal.textContent = `${hrs}h ${mins}min ${secs}secs`;
-
-            // const taskStatus = taskItem.querySelector(".task-status");
-            // taskStatus.textContent = taskToUpdate.taskStatus;
-            
-
-            const timeLogBtn = taskItem.querySelector(".time-log-btn");
-            timeLogBtn.classList.add("show");
-
-            const textSpan = timeLogBtn.querySelector(".time-log-btn-text");
-            const icon = timeLogBtn.querySelector("i");
-            textSpan.textContent = "Hide Time Logs";
-            if(icon.classList.contains("bi-chevron-down")){
-                icon.classList.remove("bi-chevron-down");
-                icon.classList.add("bi-chevron-up");
-            }  
-
-            
-            const taskTimeLogs = taskItem.querySelector(".time-log");
-            taskTimeLogs.classList.add("show");
-            
-
-            const timeLogList = taskItem.querySelector(".time-log-list");
-            const newLog = document.createElement("li");
-            newLog.textContent = `${timerState.startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()} - ${totalTime}`;
-            timeLogList.appendChild(newLog);
-
-            
-            // resetting the timer.
-            timerState.seconds = 0;
-            timerState.minutes = 0;
-            timerState.hours = 0;
-            timer.innerText = "";
-            timerPath.setAttribute("d", "M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-280Z");
-            timerState.status = "stopped";
-        }
-    })
-}
 
 //////toggling time logs ///////////j/
 // const timeLogBtns = document.querySelectorAll(".time-log-btn");
@@ -768,9 +608,6 @@ function attachTimerListenerTo(taskItem) {
 //////////////////////// to do soon ///////////
 
 // associate date with the task.
-// start date, end date - when can i take that,??????
-// start date -- take whenever a new task is created in the localstorage. -- done.
-
 // end date -- when user manually enter status done.
 // if status is done, get the end date, and also dont allow the user to further work on it.
 // give a seperate section for easily accessing and changing the status rather than going to edit task menu.
