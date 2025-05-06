@@ -13,41 +13,36 @@ html {
 body{
     height: 100vh;
     overflow: hidden;
-    /* padding: 10px; */
-    /* background-color: rgb(54, 15, 51); */
-    /* background-color: #1b003f; */
+    /* background-color: rgb(54, 15, 51);
+    background-color: #1b003f; */
 }
 a{
     text-decoration: none;
 }
-
-.container {
-    /* display: grid; */
-    /* grid-template-columns: auto 1fr; */
-    display: flex;
-    align-items: center;
+button{
+    cursor: pointer;
 }
-
+.container {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+}
 .sidebar{
     height: 100vh;
-    width: 250px;
     padding: 20px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-
     position: sticky;
     top: 0px;
     align-self: start;
     border: 1px solid rgb(217, 217, 217);
-    /* border-radius: 15px; */
-    /* margin: 10px; */
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    overflow: hidden;
 }
-
 .sidebar ul{
     list-style: none;
 }
-
 .main-nav-links, .profile-settings{
     display: flex;
     flex-direction: column;
@@ -71,45 +66,75 @@ a{
 
 /* ///////////main content/////////// */
 .main-content{
-    flex:1;
-    padding: 15px;
+    padding: 10px;
+    height: 100vh;
+    overflow: hidden;
+}
+#today-tasks-section,#analytics-section,#all-tasks-section {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    height: 100vh;
+    height: 100%;
 }
-.main-section-top-section, .main-section-bottom-section{
+.main-section-top{
+    /* border: 1px solid rgb(217, 217, 217);
+    border-radius: 15px;
+    padding: 10px; */
+}
+
+#all-tasks-section .main-section-top{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+#all-tasks-section .main-section-bottom{
+   padding: 20px;
+}
+
+.main-section-bottom{
     border: 1px solid rgb(217, 217, 217);
     border-radius: 15px;
     padding: 10px;
-}
-.main-section-bottom-section{
-    flex: 1;
-    position: relative;
+    flex: 2;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
+
+
 .current-day-details-section{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid rgb(217, 217, 217);
+    /* border-bottom: 1px solid rgb(217, 217, 217); */
     margin-bottom: 10px;
 }
 
-
-
+.top-button-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.create-task-btn{
+    background: black;
+    color: #f6f6f6;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 10px;
+    border-radius: 5px;
+    padding: 10px 8px;
+    width:100%;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+}
 /* ---------------tasks section----------------- */
-.new-tasks-section {
-    flex: 1;
-    overflow-y: auto;
-    position: relative;
-    /* margin-bottom: 34px; */
-}
-.new-tasks-section::-webkit-scrollbar{
-    display: none;
-}
 .tasks-section-desc{
     text-align: center;
     position: absolute;
@@ -126,89 +151,47 @@ a{
 }
 
 
-
-.new-tasks-container{
+.tasks-management-container{
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: stretch;
     justify-content: center;
-    /* gap: 10px; */
     height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
+
+/* ---------------------tasks list section--------------------------*/
 .tasks-list-section{
-    /* background-color: rgb(219, 255, 255); */
-    border: 1px solid lightgrey;
-    border-radius: 15px;
-    height: 100%;
+    /* background-color: rgb(241, 241, 241); */
+    /* border: 1px solid lightgrey;
+    border-radius: 15px; */
+    /* padding: 10px; */
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 10px;
     transition: flex 0.5s ease;
 }
-
-.timer-section{
-    background-color: rgb(241, 241, 241);
-    height: 100%;
-    border: 0px solid #e2e2e2;
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    flex-basis: 0;
-    max-width: 0;
-    overflow: hidden;
-
-    transform: translateX(100%);
-    transition: transform 0.5s ease, max-width 0.5s ease, flex-basis 0.5s ease;
-    position: relative;
-}
-
-.timer-section-close-btn {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-}
-
-.timer-section.show{
-    /* background-color: rgb(150, 144, 155); */
-    flex-basis: 25%;
-    max-width: 25%;
-    transform:  translateX(0);
-    margin-left: 10px;
-}
-
-.time-container{
+.new-tasks-list{
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    font-size: 25px;
-}
-
-/* ///////////////////////taskss list///////////////////// */
-.new-tasks-list{
-    display: grid;
-    grid-template-columns: 1fr;
     gap: 10px;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.new-tasks-list::-webkit-scrollbar{
+    display: none;
 }
 .task-list-item {
-    padding: 15px;
+    padding: 5px;
     background-color: #f6f6f6;
     border-radius: 15px;
     list-style-type:none;
 }
 
-/* .task-list-item.ongoing{
-    border: 3px solid black;
-} */
-
 .task-info {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
 }
 .list-item-text-section{
     display: flex;
@@ -259,11 +242,93 @@ a{
     border-radius: 5px;
     cursor: pointer;
 }
-.three-dots-icon{
-    width: 60px;
-    height: 60px;
+
+
+/* ---------------tasks details section------------------------ */
+.tasks-details-section {
+    height: 100%;
+    background-color: rgb(241, 241, 241);
+    border-radius: 15px;
+    position: relative;
+
+    flex-basis: 0;
+    max-width: 0;
+    overflow: hidden;
+    transform: translateX(100%);
+    transition: transform 0.5s ease, max-width 0.5s ease, flex-basis 0.5s ease;
+}
+.tasks-details-section.show{
+    flex-basis: 30%;
+    max-width: 30%;
+    transform:  translateX(0);
+    margin-left: 10px;
+}
+.timer-section{
+    background-color: rgb(241, 241, 241);
+    height: 100%;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    flex-basis: 0;
+    max-width: 0;
+    overflow: hidden;
+    transform: translateX(100%);
+    transition: transform 0.5s ease, max-width 0.5s ease, flex-basis 0.5s ease;
+}
+.timer-section.show{
+    /* background-color: rgb(150, 144, 155); */
+    flex-basis: 25%;
+    max-width: 25%;
+    transform:  translateX(0);
+    margin-left: 10px;
+}
+.timer-section-close-btn {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+.tasks-details-section-close-btn {
+    position: absolute;
+    right: 10px;
+    top: 10px;
 }
 
+.time-container{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-size: 25px;
+}
+
+/* ---------------all tasks page styles ------------------- */
+#all-tasks-section .tasks-management-container {
+    margin-top: 30px;
+}
+.main-tasks-list{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* gap: 15px; */
+}
+.list-category{
+    padding: 10px;
+    /* background-color: rgb(160, 159, 160); */
+}
+.list-category h3 {
+    background-color: lightgrey;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+.list-sub-category{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
 
 
 /* ////////////////////create new task popup ////////////////// */
@@ -292,23 +357,14 @@ a{
 .task-input-container.show{
     display: flex;
 }
-.create-task-btn{
-    background: black;
-    color: #f6f6f6;
-    border: none;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: start;
-    gap: 10px;
-    border-radius: 15px;
-    padding: 5px 10px;
-    width:100%;
-    font-size: 18px;
-    cursor: pointer;
-}
 
 
+
+/* --------------analytics------------------- */
+.dailyTaskChart {
+    width: 100%;   /* or fixed like 600px */
+    height: 300px; /* optional */
+  }
 
 
 

@@ -11,7 +11,7 @@
 <body>
 
     
-    <div id="auth-section">
+    <section id="auth-section">
         <div id="login-form">
             <h3>Login</h3>
             <input type="text" id="login-username" placeholder="Username" />
@@ -19,7 +19,6 @@
             <button id="login-btn">Login</button>
             <p>No account? <a href="#" id="show-signup">Signup</a> </p>
         </div>
-
         <div id="signup-form">
             <h3>Signup</h3>
             <input type="text" id="signup-username" placeholder="Username" />
@@ -27,12 +26,10 @@
             <button id="signup-btn">Create Account</button>
             <p>Have an account? <a href="#" id="show-login">Login</a></p>
         </div>
+    </section>
 
-    </div>
-    
-    
 
-    <div class="main-page" style="display: none;">
+    <section class="main-page" style="display: none;">
         <div class="container">
             <nav class="sidebar">
                 <ul class="main-nav-links">
@@ -47,7 +44,15 @@
                             <img src="assets/svgs/view_list_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
                             <span>My Tasks List</span>
                         </a> -->
-                        <button id="task-list-btn" class="nav-link">My Tasks List</button>
+                        <button id="today-task-list-btn" class="nav-link">Track Today</button>
+                        <!--jj  -->
+                    </li>
+                    <li>
+                        <!-- <a href="tasks-lists.html">
+                            <img src="assets/svgs/view_list_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
+                            <span>My Tasks List</span>
+                        </a> -->
+                        <button id="list-all-tasks-btn" class="nav-link">My Tasks List</button>
                     </li>
                     <li>
                         <button id="analytics-btn" class="nav-link">See Analytics</button>
@@ -82,61 +87,74 @@
                     </li>
                 </ul>
             </nav>
-    
+            
+            <!-- -------------------------main content--------------------- -->
             <main class="main-content"> 
-                <div class="main-section-top-section">
-                    <div class="main-section-top-left-section">
-                        <h3>Hello, Username!</h3>
-                        <p>Let's keep track of your time..</p>
-                    </div>
-                </div>
-    
-                <div class="main-section-bottom-section">
-                    <div class="current-day-details-section">
-                        <div>
-                            <h3>My Tasks List</h3>
-                            <p>Sunday 20 April 2025 7:40 PM</p>
-                        </div>
-                       
-                        <div>
-                            <button class="create-task-btn" id="create-task-popup-btn">Create New Task + </button>
-                            <!-- <button class="create-task-btn">Work on exisiting task?</button> -->
+
+                <!-- ---------------------task -management- section --------------------- -->
+                <section id="today-tasks-section">
+                    <div class="main-section-top">
+                        <div class="main-section-top-left-section">
+                            <h3>Hello, Username!</h3>
+                            <p>Let's keep track of your time..</p>
                         </div>
                     </div>
+                    <div class="main-section-bottom">
+                        <div class="current-day-details-section">
+                            <div>
+                                <h3>Today's Tasks </h3>
+                                <span class="current-date">Monday, 10 April 2025</span>
+                            </div>
+                            <div class="top-button-container">
+                                <button class="create-task-btn" id="create-task-popup-btn"> + Create New Task </button>
+                                <button class="create-task-btn">Work on Existing tasks ?</button>
+                            </div>
+                        </div>
     
-                    <div class="new-tasks-section">
-    
+                         <!-- ------------------create new task pop up ------------------------ -->
+                         <div class="create-new-task-popup-container">
+                            <div class="task-input-container">
+                                <input id="task-name" type="text" placeholder="enter task name..."/>
+                                <textarea id="task-desc" placeholder="enter description" id=""></textarea>
+                                <input id="task-tag" type="text" placeholder="set a tag ..."/>
+        
+                                <!-- <select id="task-status">
+                                    <option value="" selected>🔽 set task status</option>
+                                    <option value="pending"> 🕒 Pending</option>
+                                    <option value="in-progress">🔄 In Progress</option>
+                                    <option value="paused">⏸️ Paused</option>
+                                    <option value="done"> ✅ Done</option>
+                                    <option value="cancelled">❌ Cancelled</option>
+                                </select> -->
+        
+                                <button id="create-task-button">CREATE TASK</button>
+                            </div>
+        
+                            <!-- <button class="create-task-btn" id="create-task-popup-btn">
+                                <img src="assets/svgs/add_task_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg">
+                                <span>Working on a new Task?</span>
+                            </button> -->
+                            
+                            
+                        </div>
+
                         <div id="tasks-section-desc" class="tasks-section-desc">
                             <h3>Your tasks will be listed here.</h3>
                             <p>Track your time on tasks and organize them using any tags.. its all up to you!</p>
                         </div>
-                        
-                        
-                        <div class="new-tasks-container">
-    
+
+                        <div class="tasks-management-container">
                             <div class="tasks-list-section">
-                                <ul id="new-tasks-list" class="new-tasks-list">
-    
-                                    <!-- <li class="task-list-item">
-                                        <div class="task-info">
-                                            <div class="list-item-text-section">
-                                                <h4 class="task-name">Working on project xyz</h4>
-                                                <p class="task-total">01hr 35min 56sec</p>
-                                            </div>
-                                            <div class="list-item-buttons-section">
-                                                <button class="timer-btn">
-                                                    start working ?
-                                                    <svg class="timer-icon" xmlns="http://www.w3.org/2000/svg"  viewBox="0 -960 960 960" ><path d="M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-280Z"/></svg>
-                                                </button>
-                                                <button class="task-edit-btn" id="edit-btn">
-                                                    <i class="bi bi-three-dots-vertical "></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </li> -->
-                                    
+                                <ul id="daily-tasks-list" class="new-tasks-list">
                                     
                                 </ul>
+                            </div>
+
+                            <div class="tasks-details-section">
+                                <div class="tasks-details-container">
+                                    <h3>Task Details</h3>
+                                </div>
+                                <button class="tasks-details-section-close-btn">x</button>
                             </div>
     
                             <div class="timer-section">
@@ -156,62 +174,102 @@
                                 </div>
                                 <button class="timer-section-close-btn">x</button>
                             </div>  
-    
                         </div>
                     </div>
-    
-                    
-                    
-                    
-    
-                    <!-- ------------------create new task pop up ------------------------ -->
-                    <div class="create-new-task-popup-container">
-                        <div class="task-input-container">
-                            <input id="task-name" type="text" placeholder="enter task name..."/>
-                            <textarea id="task-desc" placeholder="enter description" id=""></textarea>
-                            <input id="task-tag" type="text" placeholder="set a tag ..."/>
-    
-                            <!-- <select id="task-status">
-                                <option value="" selected>🔽 set task status</option>
-                                <option value="pending"> 🕒 Pending</option>
-                                <option value="in-progress">🔄 In Progress</option>
-                                <option value="paused">⏸️ Paused</option>
-                                <option value="done"> ✅ Done</option>
-                                <option value="cancelled">❌ Cancelled</option>
-                            </select> -->
-    
-                            <button id="create-task-button">CREATE TASK</button>
+                </section>
+
+                <!-- -------------------all tasks section----------------------------- -->
+                <section id="all-tasks-section" style="display: none;">
+                    <div class="main-section-top">
+                        <div class="main-section-top-left-section">
+                            <input type="text" placeholder="search by tags"/>
                         </div>
-    
-                        <!-- <button class="create-task-btn" id="create-task-popup-btn">
-                            <img src="assets/svgs/add_task_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg">
-                            <span>Working on a new Task?</span>
-                        </button> -->
-    
+                        <div class="main-section-top-right-section">
+                            <button class="create-task-btn" id="create-task-popup-btn"> + Create New Task </button>
+                        </div>
                     </div>
-                </div>
+                    <div class="main-section-bottom">
+                        <h3>Your Tasks List</h3>
+                        <div class="tasks-management-container">
+                            <div class="tasks-list-section">
+                                <ul class="main-tasks-list">
+                                    <li class="list-category">
+                                        <h3>To do</h3>
+                                        <ul class="todo-tasks list-sub-category">
+                                          
+                                        </ul>
+                                    </li>
+                                    <li class="list-category">
+                                        <h3>In-progress</h3>
+                                        <ul class="inprogress-tasks list-sub-category">
+                                           
+                                        </ul>
+                                    </li>
+                                    <li class="list-category">
+                                        <h3>Done</h3>
+                                        <ul class="done-tasks list-sub-category">
+                                        
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="tasks-details-section">
+                                <div class="tasks-details-container">
+                                    <h3>Task Details</h3>
+                                </div>
+                                <button class="tasks-details-section-close-btn">x</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ---------------analytics-section------------------- -->
+                <section id="analytics-section" style="display: none;">
+                    <div class="main-section-top">
+                        <div class="main-section-top-left-section">
+                            <h3>Analytics Dashboard</h3>
+                        </div>
+                    </div>
+                    <div class="main-section-bottom">
+
+                        <div class="analytics-top-row">
+                            <div>
+                                total hours spend today
+                            </div>
+                            <div>
+                                total hours spend this week
+                            </div>
+                            <div>
+                                total hours spend this month
+                            </div>
+                        </div>
+                        <div class="analytics-bottom-row">
+                            <!-- <div class="analytics-bottom-row-left-section">
+                                <div class="daily-task-chart">
+                                    <h3>weekly, Monthly Hours </h3>
+                                    <input id="datePicker" type="date"/>
+                                    <div class="chart-container" style="position: relative; height: 40vh; width: 80vw;">
+                                        <canvas id="dailyTaskChart" class="dailyTaskChart"></canvas>
+                                    </div>
+                                </div>
+                            </div> -->
+                            <div class="analytics-bottom-row-right-section">
+                                <div class="daily-task-chart">
+                                    <h3>Top Tasks</h3>
+                                    <input id="datePicker" type="date"/>
+                                    <div class="chart-container" style="position: relative; height: 40vh; width: 80vw;">
+                                        <canvas id="dailyTaskChart" class="dailyTaskChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
             </main>
-
-            <section id="analytics-section" style="display: none;">
-                <h1>VIew All Your Analytics</h1>
-                <div class="analytics-container">
-                    <h3>DAILY TASK CHART</h3>
-                    <input id="datePicker" type="date"/>
-                    <canvas id="dailyTaskChart" class="dailyTaskChart" width=" 400" height="200"></canvas>
-                </div>
-
-                
-                
-            </section>
         </div>
-
-       
-
-    </div>
-
-    
-   
-
+    </section>
     <script src="script.js"></script>
 </body>
 </html>

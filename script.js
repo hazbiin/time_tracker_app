@@ -6,6 +6,7 @@ const taskInputpopup = document.querySelector(".task-input-container");
 const createTaskButton = document.getElementById("create-task-button");
 
 const tasksSectionDescription = document.getElementById("tasks-section-desc");
+const todayTasksContainer = document.querySelector("#today-tasks-section .tasks-management-container");
 
 // timer section 
 const timerSection = document.querySelector(".timer-section");
@@ -15,6 +16,10 @@ const hoursText = document.querySelector(".hours");
 const minutesText = document.querySelector(".minutes");
 const secondsText = document.querySelector(".seconds");
 const timerBtn = document.querySelector(".timer-btn");
+
+// taskDetails
+const tasksDetailSection = document.querySelector(".tasks-details-section");
+const tasksDetailSectionCloseBtn = document.querySelector(".tasks-details-section-close-btn");
 
 
 // global variables
@@ -78,6 +83,10 @@ document.querySelector("#login-btn").addEventListener("click", () => {
 
 // loading page based on if user is logged in or not.
 document.addEventListener("DOMContentLoaded", () => {
+
+  // making changes on new day
+  scheduleMidnightUpdate();
+
   const currentUser = localStorage.getItem('currentUser');
 
   if(currentUser) {
@@ -88,7 +97,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector(".main-page").style.display = "none"
   }
 
-
   // restoring any active timers on page reloads
   const activeTimer = JSON.parse(localStorage.getItem("activeTimer"));
 
@@ -98,7 +106,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const currentUserName = localStorage.getItem('currentUser');
     const currentUser = users.find(u => u.username === currentUserName);
-    const tasks = currentUser?.tasks || [];
+    const tasks = currentUser?.tasks;
+
     const taskToUpdate = tasks.find(task => task.taskId === taskId);
 
     if(taskToUpdate) {
@@ -161,8 +170,8 @@ document.addEventListener("DOMContentLoaded", () => {
 // inital loading of tasks from local storage.
 displayTasks();
 function displayTasks() {
-  const newTasksList = document.getElementById("new-tasks-list");
-  newTasksList.innerHTML = "";
+  const dailyTasksList = document.getElementById("daily-tasks-list");
+  dailyTasksList.innerHTML = "";
   
   //getting saved tasks from localStorage.. 
   const currentUserName = localStorage.getItem('currentUser');
@@ -170,7 +179,7 @@ function displayTasks() {
   const tasks = currentUser?.tasks || [];
 
   tasks.forEach((task) => {
-    renderTask(task);
+    renderTask(task, dailyTasksList);
   });
 
   if (tasks.length !== 0) {
@@ -179,7 +188,7 @@ function displayTasks() {
 }
 
 
-// creating new tasks 
+// -------------------------------creating new tasks -----------------------------------------
 createTaskPopupButton.addEventListener("click", () => {
   taskInputpopup.classList.add("show");
 });
@@ -217,7 +226,7 @@ if(createTaskButton) {
       taskName: taskName,
       taskDesc: taskDesc,
       taskTag: taskTag,
-      taskStatus: "not-started",
+      taskStatus: "to-do",
       timeLogs: [],
       taskTotalDuration: "",
     };
@@ -226,70 +235,82 @@ if(createTaskButton) {
     // storing to local Storage
     const currentUserName = localStorage.getItem('currentUser');
     const currentUser = users.find(u => u.username === currentUserName);
-
     currentUser.tasks.push(newTask);
+
     localStorage.setItem("users", JSON.stringify(users));
 
     // closing the popup
     taskInputpopup.classList.remove("show");
+
+
     if(tasksSectionDescription) {
       tasksSectionDescription.classList.add("hide");
     }
+    if(todayTasksContainer.style.display = "none") {
+      todayTasksContainer.style.display = "flex";
+    }
 
     // render newly created task.
-    renderTask(newTask);
+    const dailyTasksList = document.getElementById("daily-tasks-list");
+    renderTask(newTask, dailyTasksList);
   });
 }
 
 
+//-------------------- task rendering function ------------------------
+function renderTask(task, containerElement) {
 
-function renderTask(task) {
-      const newTasksList = document.getElementById("new-tasks-list");
-      
-      // creating task list item.
-      const li = document.createElement("li");
-      li.className = "task-list-item";
-      li.setAttribute("data-task-id", task.taskId);
+  // skip if task name is empty
+  if(!task.taskName) return;
 
-      let totalTimeToDisplay;
-      if (task.taskTotalDuration === "") {
-        totalTimeToDisplay = "00h 00min 00secs";
-      } else {
-        const [hrs, mins, secs] = task.taskTotalDuration.split(":");
-        totalTimeToDisplay = `${hrs}h ${mins}min ${secs}secs`;
-      }
+  // skip if task already exists in the list
+  if(containerElement.querySelector(`[data-task-id="${task.taskId}"]`)) return;
 
-      let buttonLabel;
-      if(task.timeLogs.length === 0) {
-        buttonLabel = "Begin Your Work Session"
-      }else {
-        buttonLabel = "Resume Your Work Session"
-      }
-      
 
-      li.innerHTML = `
-        <div class="task-info">
-            <div class="list-item-text-section">
-                <h4 class="task-name">${task.taskName}</h4>
-                <p class="task-total">${totalTimeToDisplay}</p>
-            </div>
-            <div class="list-item-buttons-section">
-                <button class="start-timer-btn">
-                    ${buttonLabel}
-                </button>
-                <button class="task-edit-btn" id="edit-btn">
-                    <i class="bi bi-three-dots-vertical "></i>
-                </button>
-            </div>
-        </div>
-      `;
+  // create task list item
+  const li = document.createElement("li");
+  li.className = "task-list-item";
+  li.setAttribute("data-task-id", task.taskId);
 
-      if(task.taskName !== "") {
-        newTasksList.appendChild(li);
-      }
+  // formatting totaltime
+  let totalTimeToDisplay;
+  if (task.taskTotalDuration === "") {
+    totalTimeToDisplay = "00h 00min 00secs";
+  } else {
+    const [hrs, mins, secs] = task.taskTotalDuration.split(":");
+    totalTimeToDisplay = `${hrs}h ${mins}min ${secs}secs`;
+  }
 
-      // attaching timer for the tasks.
-      showTimer(li);
+  // formatting buttonlabel
+  let buttonLabel;
+  if(task.timeLogs.length === 0) {
+    buttonLabel = "Begin Your Work Session"
+  }else {
+    buttonLabel = "Resume Your Work Session"
+  }
+
+  // setting innerHTML
+  li.innerHTML = `
+    <div class="task-info">
+      <div class="list-item-text-section">
+          <h4 class="task-name">${task.taskName}</h4>
+          <p class="task-total">${totalTimeToDisplay}</p>
+      </div>
+      <div class="list-item-buttons-section">
+          <button class="start-timer-btn">
+            ${buttonLabel}
+          </button>
+          <button class="task-details-btn" id="task-details-btn">
+            view task details
+          </button>
+      </div>
+    </div>
+  `;
+
+  containerElement.appendChild(li);
+
+  // attach timers
+  showTimer(li)
 }
 
 
@@ -308,12 +329,12 @@ function showTimer(taskItem) {
     // getting tasks of current user form local storage
     const currentUserName = localStorage.getItem('currentUser');
     const currentUser = users.find(u => u.username === currentUserName);
-    const tasks = currentUser?.tasks || [];
+    const tasks = currentUser?.tasks;
 
     const taskId = Number(currentTaskItem.dataset.taskId);
     const taskToUpdate = tasks.find(task => task.taskId === taskId);
 
-
+    
     // necessary dom updates
     if(timerStatus !== "started"){
 
@@ -344,12 +365,24 @@ function showTimer(taskItem) {
       }
     }
   });
+
+
+  const taskDetailsBtn = taskItem.querySelector(".task-details-btn");
+  taskDetailsBtn.addEventListener("click", () => {
+    if(!tasksDetailSection.classList.contains("show")) {
+      tasksDetailSection.classList.add('show');
+    }
+  })
 }
+
 timerSectionCloseBtn.addEventListener("click", () => {
   if(timerStatus !== "started"){
     timerSection.classList.remove('show');
   }
 });
+tasksDetailSectionCloseBtn.addEventListener("click", () => {
+  tasksDetailSection.classList.remove('show');
+})
 
 
 // main timer functionality
@@ -357,7 +390,7 @@ timerBtn.addEventListener("click", (e) => {
 
   const currentUserName = localStorage.getItem('currentUser');
   const currentUser = users.find(u => u.username === currentUserName);
-  const tasks = currentUser?.tasks || [];
+  const tasks = currentUser?.tasks;
 
   const taskId = Number(currentTaskItem.dataset.taskId);
   const taskToUpdate = tasks.find(task => task.taskId === taskId);
@@ -468,13 +501,91 @@ function formatWithLeadingZeros(val) {
 }
 
 
-// side bar navigations
-const taskListBtn = document.querySelector("#task-list-btn");
-taskListBtn.addEventListener("click", () =>{
-  if(document.querySelector("#analytics-section").style.display === "block") {
-    document.querySelector("#analytics-section").style.display = "none";
-    document.querySelector(".main-content").style.display = "flex";
+// //////////////////////////////// new day function //////////////////////////
+function onNewDay() {
+
+  // updating todays tasks container
+  if(todayTasksContainer.style.display = "flex") {
+    todayTasksContainer.style.display = "none"
   }
+  tasksSectionDescription.classList.remove("hide");
+
+  // changing date.
+  const currentDate = document.querySelector(".current-date");
+  const today = new Date().toLocaleString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  });
+  currentDate.textContent = today;
+}
+
+function scheduleMidnightUpdate() {
+  const now = new Date();
+  const tomorrow = new Date().setHours(24, 0, 0, 0); // getting 12:00 AM time.
+
+  const msUntilMidnight = tomorrow - now;
+  setTimeout(() => {
+    onNewDay(); // logic running at midnight
+    setInterval(onNewDay, 24 * 60 * 60* 1000); // repeat every 24 hours
+  }, msUntilMidnight)
+}
+
+
+
+
+
+
+
+// side bar navigations
+const todayTaskListBtn = document.querySelector("#today-task-list-btn");
+todayTaskListBtn.addEventListener("click", () =>{
+  if(document.querySelector("#analytics-section").style.display === "flex") {
+    document.querySelector("#analytics-section").style.display = "none";
+  }
+
+  if(document.querySelector("#all-tasks-section").style.display = "flex") {
+    document.querySelector("#all-tasks-section").style.display = "none";
+  }
+
+  document.querySelector("#today-tasks-section").style.display = "flex";
+})
+
+
+const listAllTasksBtn = document.querySelector("#list-all-tasks-btn");
+listAllTasksBtn.addEventListener("click", () => {
+
+  // controling display
+  if(document.querySelector("#analytics-section").style.display === "flex") {
+    document.querySelector("#analytics-section").style.display = "none";
+  }
+
+  if(document.querySelector("#today-tasks-section").style.display = "flex"){
+    document.querySelector("#today-tasks-section").style.display = "none"
+  }
+  document.querySelector("#all-tasks-section").style.display = "flex";
+
+
+  // populating the lists 
+  const todoTasksList = document.querySelector('.todo-tasks');
+  const inProgressTasksList = document.querySelector('.inprogress-tasks');
+  const doneTasksList = document.querySelector('.done-tasks');
+
+  const currentUserName = localStorage.getItem('currentUser');
+  const currentUser = users.find(u => u.username === currentUserName);
+  const tasks = currentUser?.tasks;
+
+  tasks.forEach(task =>{
+    if(task.taskStatus === "to-do") {
+      renderTask(task, todoTasksList)
+    }else if(task.taskStatus === "in-progress") {
+      renderTask(task, inProgressTasksList)
+    }else if(task.taskStatus === "done") {
+      renderTask(task, doneTasksList)
+    }
+  })
+
 })
 
 
@@ -482,82 +593,114 @@ taskListBtn.addEventListener("click", () =>{
 ////////////////////////////////////////////////analytics///////////////////////////////////////////////
 const showAnalyticsBtn = document.querySelector("#analytics-btn");
 
-let dailyTaskChart = null;
-
 showAnalyticsBtn.addEventListener("click", () => {
-  document.querySelector(".main-content").style.display = "none";
-  document.querySelector("#analytics-section").style.display = "block"; 
+
+  if(document.querySelector("#all-tasks-section").style.display = "flex") {
+    document.querySelector("#all-tasks-section").style.display = "none";
+  }
+
+  if(document.querySelector("#today-tasks-section").style.display = "flex"){
+    document.querySelector("#today-tasks-section").style.display = "none"
+  }
+
+  document.querySelector("#analytics-section").style.display = "flex"; 
+
+
+  const currentUserName = localStorage.getItem('currentUser');
+  const currentUser = users.find(u => u.username === currentUserName);
+  const tasks = currentUser?.tasks || [];
+
 
   // initial chart rendering for today's date
   const today = new Date().toISOString().split('T')[0];
   document.querySelector('#datePicker').value = today;
-  const initialData = getTaskHoursForDate(tasks, today);
-  console.log(initialData)
-  renderTaskChart(initialData);
 
+  // getting data to render chart
+  const initialData = getTaskHoursForDate(tasks, today);
+  const chartData = convertDataToArrayFormat(initialData);
+
+  // rendering chart
+  renderTaskChart(chartData);
 })
 
 
 // adding listener for date changes
 document.getElementById("datePicker").addEventListener("change", function () {
+
+  const currentUserName = localStorage.getItem('currentUser');
+  const currentUser = users.find(u => u.username === currentUserName);
+  const tasks = currentUser?.tasks || [];
+
+  // getting data to render chart
   const selectedDate = this.value;
   const newData = getTaskHoursForDate(tasks, selectedDate);
-  renderTaskChart(newData);
+  const chartData = convertDataToArrayFormat(newData);
 
+  // rendering chart
+  renderTaskChart(chartData);;;;
 });
 
 
-function getTaskHoursForDate(tasks, selectedDate){
+function getTaskHoursForDate(tasks, selectedDate) {
   const targetDate = new Date(selectedDate).toLocaleDateString();
+
   const taskDurations = {};
-
   tasks.forEach(task => {
+   task.timeLogs.forEach(log => {
+    const logDate = new Date(log.startTime).toLocaleDateString();
+    if(logDate === targetDate) {
+      const [hrs, mins, secs] = log.totalTime.split(":");
+      const totalSeconds = Number(hrs) * 3600 + Number(mins) * 60 + Number(secs);
 
-    console.log(task.taskName)
-    task.timeLogs.forEach(log => {
-      const logDate = new Date(log.startTime).toLocaleDateString();
-
-      if(logDate === targetDate) {
-        const [hrs, mins, secs] = log.totalTime.split(':');
-        const totalSeconds = Number(hrs) * 3600 + Number(mins) * 60 + Number(secs);
-
-        if(!taskDurations[task.taskName]){
-          taskDurations[task.taskName] = 0;
-        }
-
-        taskDurations[task.taskName] += totalSeconds;
+      if(!taskDurations[task.taskName]) {
+        taskDurations[task.taskName] = 0
       }
-    })
+
+      taskDurations[task.taskName] += totalSeconds;
+    }
+   })
   })
 
-  // console.log(taskDurations)
+  return taskDurations;
+}
+
+function convertDataToArrayFormat(taskDurations) {
   return Object.entries(taskDurations).map(([task, secs]) => ({
-    task,
-    hours: (secs/ 3600)
+    task: task,
+    hours: (secs/3600)
   }))
 }
 
-
+let dailyTaskChart = null;
 function renderTaskChart(taskAnalytics){
-  const ctx = document.getElementById('dailyTaskChart').getContext('2d');
-  if(dailyTaskChart) dailyTaskChart.destroy();
+
+  const canvas = document.getElementById("dailyTaskChart");
+  canvas.width = 800;
+  canvas.height = 600;
   
-  dailyTaskChart = new Chart(ctx, {
-    type: "bar",
+  const graphArea = document.getElementById('dailyTaskChart').getContext('2d');
+  if(dailyTaskChart) dailyTaskChart.destroy();
+
+  
+  
+  dailyTaskChart = new Chart(graphArea, {
+    type: "line",
     data: {
-      labels: taskAnalytics.map(t => t.task),
+      labels: taskAnalytics.map(task => task.task),
       datasets: [
         {
           label:"Hours Spent on Each Task",
-          data : taskAnalytics.map(t => t.hours),
-          backgroundColor: "rgba(73, 70, 80, 0.6)"
+          data : taskAnalytics.map(task => task.hours),
+          backgroundColor: 'rgba(98, 0, 115, 0.81)'
         }
       ]
     },
+
     options:{
       scales: {
         y: {
           beginAtZero: true,
+          // max: 8,
           ticks: {
             stepSize: 1,
             callback: function(value) {
@@ -569,7 +712,6 @@ function renderTaskChart(taskAnalytics){
     }
   })
 }
-
 
 
 
