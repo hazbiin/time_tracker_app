@@ -6,7 +6,7 @@ const taskInputpopup = document.querySelector(".task-input-container");
 const createTaskButton = document.getElementById("create-task-button");
 
 const tasksSectionDescription = document.getElementById("tasks-section-desc");
-const todayTasksContainer = document.querySelector("#today-tasks-section .tasks-management-container");
+// const todayTasksContainer = document.querySelector("#today-tasks-section .tasks-management-container");
 
 // timer section 
 const timerSection = document.querySelector(".timer-section");
@@ -16,10 +16,6 @@ const hoursText = document.querySelector(".hours");
 const minutesText = document.querySelector(".minutes");
 const secondsText = document.querySelector(".seconds");
 const timerBtn = document.querySelector(".timer-btn");
-
-// taskDetails
-const tasksDetailSection = document.querySelector(".tasks-details-section");
-const tasksDetailSectionCloseBtn = document.querySelector(".tasks-details-section-close-btn");
 
 
 // global variables
@@ -166,27 +162,33 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 
-
-// inital loading of tasks from local storage.
+// inital loading of daily tasks list from local storage.
 displayTasks();
 function displayTasks() {
   const dailyTasksList = document.getElementById("daily-tasks-list");
   dailyTasksList.innerHTML = "";
-  
+
+  const today = new Date().toISOString().split("T")[0];
+
   //getting saved tasks from localStorage.. 
   const currentUserName = localStorage.getItem('currentUser');
   const currentUser = users.find(u => u.username === currentUserName);
   const tasks = currentUser?.tasks || [];
 
   tasks.forEach((task) => {
-    renderTask(task, dailyTasksList);
-  });
+    task.timeLogs.forEach(timeLog => {
+      if(timeLog.startTime.split("T")[0] === today) {
+        console.log(timeLog.startTime.split("T")[0]);
+        renderTask(task, dailyTasksList);
 
-  if (tasks.length !== 0) {
-    tasksSectionDescription.classList.add("hide");
-  }
+        tasksSectionDescription.classList.add("hide");
+      }
+    })
+  });
 }
 
+const localDate = new Date().toLocaleDateString("en-CA");
+console.log(localDate)
 
 // -------------------------------creating new tasks -----------------------------------------
 createTaskPopupButton.addEventListener("click", () => {
@@ -213,10 +215,6 @@ if(createTaskButton) {
       year: "numeric",
       month: "long",
       day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: true,
     });
 
     const newTask = {
@@ -246,9 +244,7 @@ if(createTaskButton) {
     if(tasksSectionDescription) {
       tasksSectionDescription.classList.add("hide");
     }
-    if(todayTasksContainer.style.display = "none") {
-      todayTasksContainer.style.display = "flex";
-    }
+
 
     // render newly created task.
     const dailyTasksList = document.getElementById("daily-tasks-list");
@@ -259,13 +255,24 @@ if(createTaskButton) {
 
 //-------------------- task rendering function ------------------------
 function renderTask(task, containerElement) {
-
   // skip if task name is empty
   if(!task.taskName) return;
 
   // skip if task already exists in the list
   if(containerElement.querySelector(`[data-task-id="${task.taskId}"]`)) return;
 
+  // removing exisiting tasks from other lists if the status is changed.
+  const mainTaskList = document.querySelector('.main-tasks-list');
+  const listSubCategories = mainTaskList.querySelectorAll('.list-sub-category');
+  const taskId = task.taskId;
+  listSubCategories.forEach(subCat => {
+    if(subCat !== containerElement) {
+      const existingItem = subCat.querySelector(`[data-task-id="${taskId}"]`);
+      if(existingItem) {
+        existingItem.remove();
+      }
+    }
+  });
 
   // create task list item
   const li = document.createElement("li");
@@ -284,9 +291,9 @@ function renderTask(task, containerElement) {
   // formatting buttonlabel
   let buttonLabel;
   if(task.timeLogs.length === 0) {
-    buttonLabel = "Begin Your Work Session"
+    buttonLabel = "Begin Your Work Session";
   }else {
-    buttonLabel = "Resume Your Work Session"
+    buttonLabel = "Resume Your Work Session";
   }
 
   // setting innerHTML
@@ -295,6 +302,7 @@ function renderTask(task, containerElement) {
       <div class="list-item-text-section">
           <h4 class="task-name">${task.taskName}</h4>
           <p class="task-total">${totalTimeToDisplay}</p>
+          <p class="task-status">${task.taskStatus}</p>
       </div>
       <div class="list-item-buttons-section">
           <button class="start-timer-btn">
@@ -306,19 +314,24 @@ function renderTask(task, containerElement) {
       </div>
     </div>
   `;
-
   containerElement.appendChild(li);
 
   // attach timers
-  showTimer(li)
+  showTimer(li);
 }
 
 
 function showTimer(taskItem) {
-  
   const startTimerBtn = taskItem.querySelector(".start-timer-btn");
   startTimerBtn.addEventListener("click", (e) => {
 
+    if(startTimerBtn.closest('.list-sub-category')){
+      if(document.querySelector("#all-tasks-section").style.display = "flex") {
+        document.querySelector("#all-tasks-section").style.display = "none";
+      }
+      document.querySelector("#today-tasks-section").style.display = "flex";
+    }
+    
     if(!timerSection.classList.contains("show")) {
       timerSection.classList.add('show');
     }
@@ -366,12 +379,18 @@ function showTimer(taskItem) {
     }
   });
 
-
+  
   const taskDetailsBtn = taskItem.querySelector(".task-details-btn");
+  const tasksDetailSection = taskDetailsBtn.closest('.tasks-management-container').querySelector('.tasks-details-section');
   taskDetailsBtn.addEventListener("click", () => {
     if(!tasksDetailSection.classList.contains("show")) {
       tasksDetailSection.classList.add('show');
     }
+  })
+
+  const tasksDetailSectionCloseBtn = tasksDetailSection.querySelector(".tasks-details-section-close-btn");
+  tasksDetailSectionCloseBtn.addEventListener("click", () => {
+    tasksDetailSection.classList.remove('show');
   })
 }
 
@@ -380,9 +399,6 @@ timerSectionCloseBtn.addEventListener("click", () => {
     timerSection.classList.remove('show');
   }
 });
-tasksDetailSectionCloseBtn.addEventListener("click", () => {
-  tasksDetailSection.classList.remove('show');
-})
 
 
 // main timer functionality
@@ -409,7 +425,13 @@ timerBtn.addEventListener("click", (e) => {
         seconds
       }))
 
+      taskToUpdate.taskStatus = "in-progress";
+      currentUser.tasks = tasks;
+      localStorage.setItem("users", JSON.stringify(users));
 
+      const taskStatusLabel = currentTaskItem.querySelector('.task-status');
+      taskStatusLabel.textContent = taskToUpdate.taskStatus;
+      
       intervalId = setInterval(() => {
         seconds++;
         if(seconds === 60) {
@@ -427,6 +449,10 @@ timerBtn.addEventListener("click", (e) => {
 
       timerStatus = "started";
       timerBtn.textContent = "stop";
+
+      // appending to daily tasks list if an exisisting task is resumed.
+      const dailyTasksList = document.getElementById("daily-tasks-list");
+      renderTask(taskToUpdate, dailyTasksList);
 
     }else {
 
@@ -462,12 +488,16 @@ timerBtn.addEventListener("click", (e) => {
       localStorage.setItem("users", JSON.stringify(users));
 
       // necessary dom changes 
-      const taskTotal = currentTaskItem.querySelector(".task-total");
-      const [hrs,mins,secs] = taskToUpdate.taskTotalDuration.split(':');
-      taskTotal.textContent = `${hrs}h ${mins}min ${secs}secs`;
+      const allListItemToUpdate = document.querySelectorAll(`[data-task-id="${taskId}"]`);
+      allListItemToUpdate.forEach(listItemToUpdate => {
+        const taskTotalContainer =  listItemToUpdate.querySelector('.task-total');
+        const [hrs,mins,secs] = taskToUpdate.taskTotalDuration.split(':');
 
-      const currentTaskButtonLable = currentTaskItem.querySelector('.start-timer-btn');
-      currentTaskButtonLable.textContent = `Resume Your Work Session`;
+        taskTotalContainer.textContent = `${hrs}h ${mins}min ${secs}secs`;
+      })
+
+      const currentTaskButtonLabel = currentTaskItem.querySelector('.start-timer-btn');
+      currentTaskButtonLabel.textContent = `Resume Your Work Session`;
 
       if(timerSection.classList.contains("show")) {
         timerSection.classList.remove('show');
@@ -480,7 +510,7 @@ timerBtn.addEventListener("click", (e) => {
       minutesText.innerText = `00 m`;
       secondsText.innerText = `00 s`;
       timerStatus = "stopped";
-
+      
       timerBtn.textContent = "start";
 
       // removing active timer from local storage
@@ -501,13 +531,23 @@ function formatWithLeadingZeros(val) {
 }
 
 
+// /////setting current date initially
+const currentDate = document.querySelector(".current-date");
+const today = new Date().toLocaleString("en-US", {
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric"
+});
+currentDate.textContent = today;
+
 // //////////////////////////////// new day function //////////////////////////
 function onNewDay() {
 
   // updating todays tasks container
-  if(todayTasksContainer.style.display = "flex") {
-    todayTasksContainer.style.display = "none"
-  }
+  const dailyTasksList = document.getElementById("daily-tasks-list");
+  dailyTasksList.innerHTML = "";
+
   tasksSectionDescription.classList.remove("hide");
 
   // changing date.
@@ -531,10 +571,6 @@ function scheduleMidnightUpdate() {
     setInterval(onNewDay, 24 * 60 * 60* 1000); // repeat every 24 hours
   }, msUntilMidnight)
 }
-
-
-
-
 
 
 
@@ -576,7 +612,11 @@ listAllTasksBtn.addEventListener("click", () => {
   const currentUser = users.find(u => u.username === currentUserName);
   const tasks = currentUser?.tasks;
 
-  tasks.forEach(task =>{
+  todoTasksList.innerHTML = "";
+  inProgressTasksList.innerHTML = "";
+  doneTasksList.innerHTML = "";
+
+  tasks.forEach(task => {
     if(task.taskStatus === "to-do") {
       renderTask(task, todoTasksList)
     }else if(task.taskStatus === "in-progress") {
