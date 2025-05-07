@@ -168,7 +168,7 @@ function displayTasks() {
   const dailyTasksList = document.getElementById("daily-tasks-list");
   dailyTasksList.innerHTML = "";
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toLocaleDateString();
 
   //getting saved tasks from localStorage.. 
   const currentUserName = localStorage.getItem('currentUser');
@@ -177,18 +177,16 @@ function displayTasks() {
 
   tasks.forEach((task) => {
     task.timeLogs.forEach(timeLog => {
-      if(timeLog.startTime.split("T")[0] === today) {
-        console.log(timeLog.startTime.split("T")[0]);
-        renderTask(task, dailyTasksList);
+      const logDate = new Date(timeLog.startTime).toLocaleDateString();
 
-        tasksSectionDescription.classList.add("hide");
-      }
+        if(logDate === today) {
+          renderTask(task, dailyTasksList);
+
+          tasksSectionDescription.classList.add("hide");
+        }
     })
   });
 }
-
-const localDate = new Date().toLocaleDateString("en-CA");
-console.log(localDate)
 
 // -------------------------------creating new tasks -----------------------------------------
 createTaskPopupButton.addEventListener("click", () => {
@@ -652,7 +650,7 @@ showAnalyticsBtn.addEventListener("click", () => {
 
 
   // initial chart rendering for today's date
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toLocaleDateString();
   document.querySelector('#datePicker').value = today;
 
   // getting data to render chart
@@ -677,17 +675,17 @@ document.getElementById("datePicker").addEventListener("change", function () {
   const chartData = convertDataToArrayFormat(newData);
 
   // rendering chart
-  renderTaskChart(chartData);;;;
+  renderTaskChart(chartData);
 });
-
 
 function getTaskHoursForDate(tasks, selectedDate) {
   const targetDate = new Date(selectedDate).toLocaleDateString();
-
   const taskDurations = {};
+  
   tasks.forEach(task => {
    task.timeLogs.forEach(log => {
     const logDate = new Date(log.startTime).toLocaleDateString();
+
     if(logDate === targetDate) {
       const [hrs, mins, secs] = log.totalTime.split(":");
       const totalSeconds = Number(hrs) * 3600 + Number(mins) * 60 + Number(secs);
