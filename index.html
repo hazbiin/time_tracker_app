@@ -107,7 +107,7 @@
                             </div>
                             <div class="top-button-container">
                                 <button class="create-task-btn" id="create-task-popup-btn"> + Create New Task </button>
-                                <button class="create-task-btn">Work on Existing tasks ?</button>
+                                <button class="create-task-btn" id="existing-task-btn">Work on Existing tasks ?</button>
                             </div>
                         </div>
     
@@ -120,11 +120,9 @@
         
                                 <!-- <select id="task-status">
                                     <option value="" selected>🔽 set task status</option>
-                                    <option value="pending"> 🕒 Pending</option>
+                                    <option value="pending"> 🕒 To do</option>
                                     <option value="in-progress">🔄 In Progress</option>
-                                    <option value="paused">⏸️ Paused</option>
                                     <option value="done"> ✅ Done</option>
-                                    <option value="cancelled">❌ Cancelled</option>
                                 </select> -->
         
                                 <button id="create-task-button">CREATE TASK</button>
@@ -134,7 +132,6 @@
                                 <img src="assets/svgs/add_task_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg">
                                 <span>Working on a new Task?</span>
                             </button> -->
-                            
                             
                         </div>
 
@@ -185,7 +182,7 @@
                             <input type="text" placeholder="search by tags"/>
                         </div>
                         <div class="main-section-top-right-section">
-                            <button class="create-task-btn" id="create-task-popup-btn"> + Create New Task </button>
+                            <!-- <button class="create-task-btn" id="create-task-popup-btn"> + Create New Task </button> -->
                         </div>
                     </div>
                     <div class="main-section-bottom">
@@ -234,31 +231,34 @@
                     <div class="main-section-bottom">
 
                         <div class="analytics-top-row">
-                            <div>
-                                total hours spend today
+                            <div class="analytics-top-column">
+                                <span>total time spend today</span>
+                                <h4>00h 00m</h4>
+                                <!-- <button>change date</button> -->
+                                <input type="date">
                             </div>
-                            <div>
-                                total hours spend this week
+                            <div class="analytics-top-column">
+                                <span>total time spend this week</span>
+                                <h4>00h 00m</h4>
+                                <!-- <button>change week</button> -->
+                                <input type="week">
                             </div>
-                            <div>
-                                total hours spend this month
+                            <div class="analytics-top-column">
+                                <span>total time spend this month</span>
+                                <h4>00h 00m</h4>
+                                <!-- <button>change month</button> -->
+                                <input type="month"/>
                             </div>
                         </div>
                         <div class="analytics-bottom-row">
-                            <!-- <div class="analytics-bottom-row-left-section">
-                                <div class="daily-task-chart">
-                                    <h3>weekly, Monthly Hours </h3>
-                                    <input id="datePicker" type="date"/>
-                                    <div class="chart-container" style="position: relative; height: 40vh; width: 80vw;">
-                                        <canvas id="dailyTaskChart" class="dailyTaskChart"></canvas>
-                                    </div>
-                                </div>
-                            </div> -->
+                            <div class="analytics-bottom-row-left-section">
+                                <h3>Hours Per Day, Week, Month</h3>
+                            </div>
                             <div class="analytics-bottom-row-right-section">
+                                <h3>Hours Per Task (Top Tasks)</h3>
                                 <div class="daily-task-chart">
-                                    <h3>Top Tasks</h3>
                                     <input id="datePicker" type="date"/>
-                                    <div class="chart-container" style="position: relative; height: 40vh; width: 80vw;">
+                                    <div class="chart-container" style="position: relative; height: 50vh; width: 50vw;">
                                         <canvas id="dailyTaskChart" class="dailyTaskChart"></canvas>
                                     </div>
                                 </div>

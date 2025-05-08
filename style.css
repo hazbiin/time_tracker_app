@@ -331,6 +331,41 @@ button{
 }
 
 
+/* --------------analytics-page styles ------------------- */
+#analytics-section .main-section-bottom {
+    gap: 20px;
+}
+.analytics-top-row{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    /* height: 100%; */
+}
+.analytics-top-column {
+
+}
+
+.analytics-bottom-row {
+    display: flex;
+    align-items: center;
+    /* justify-content: space-evenly; */
+    justify-content: space-between;
+    height: 100%;
+}
+.analytics-bottom-row-left-section {
+    /* flex: 1; */
+}
+
+.analytics-bottom-row-right-section {
+    /* flex: 1; */
+}
+
+
+
+
+
+
+
 /* ////////////////////create new task popup ////////////////// */
 .create-new-task-popup-container{
     position: absolute;
@@ -360,18 +395,10 @@ button{
 
 
 
-/* --------------analytics------------------- */
-.dailyTaskChart {
-    width: 100%;   /* or fixed like 600px */
-    height: 300px; /* optional */
-  }
 
 
 
-/* //////////////timer container////////////// */
-/* .timer-container{
-    margin-bottom: 10px;
-} */
+
 
 
 /* /////////////////time logs list/////////////////// */

@@ -5,8 +5,9 @@ const createTaskPopupButton = document.getElementById("create-task-popup-btn");
 const taskInputpopup = document.querySelector(".task-input-container");
 const createTaskButton = document.getElementById("create-task-button");
 
+const exisistingTaskBtn = document.getElementById("existing-task-btn");
+
 const tasksSectionDescription = document.getElementById("tasks-section-desc");
-// const todayTasksContainer = document.querySelector("#today-tasks-section .tasks-management-container");
 
 // timer section 
 const timerSection = document.querySelector(".timer-section");
@@ -169,6 +170,12 @@ function displayTasks() {
   dailyTasksList.innerHTML = "";
 
   const today = new Date().toLocaleDateString();
+  const formatedTodayDate = new Date().toLocaleString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
   //getting saved tasks from localStorage.. 
   const currentUserName = localStorage.getItem('currentUser');
@@ -176,12 +183,16 @@ function displayTasks() {
   const tasks = currentUser?.tasks || [];
 
   tasks.forEach((task) => {
+    const taskCreatedDate = task.startDate;
+    if(taskCreatedDate === formatedTodayDate) {
+      renderTask(task, dailyTasksList);
+      tasksSectionDescription.classList.add("hide");
+    }
+
     task.timeLogs.forEach(timeLog => {
       const logDate = new Date(timeLog.startTime).toLocaleDateString();
-
         if(logDate === today) {
           renderTask(task, dailyTasksList);
-
           tasksSectionDescription.classList.add("hide");
         }
     })
@@ -243,13 +254,13 @@ if(createTaskButton) {
       tasksSectionDescription.classList.add("hide");
     }
 
-
     // render newly created task.
     const dailyTasksList = document.getElementById("daily-tasks-list");
     renderTask(newTask, dailyTasksList);
   });
 }
 
+exisistingTaskBtn.addEventListener("click", renderAllTasksList);
 
 //-------------------- task rendering function ------------------------
 function renderTask(task, containerElement) {
@@ -299,6 +310,7 @@ function renderTask(task, containerElement) {
     <div class="task-info">
       <div class="list-item-text-section">
           <h4 class="task-name">${task.taskName}</h4>
+          <p>time spent until now:</p>
           <p class="task-total">${totalTimeToDisplay}</p>
           <p class="task-status">${task.taskStatus}</p>
       </div>
@@ -406,7 +418,16 @@ timerBtn.addEventListener("click", (e) => {
   const currentUser = users.find(u => u.username === currentUserName);
   const tasks = currentUser?.tasks;
 
-  const taskId = Number(currentTaskItem.dataset.taskId);
+  const activeTimer = JSON.parse(localStorage.getItem("activeTimer"));
+
+  let taskId;
+  if(activeTimer) {
+    taskId = activeTimer.taskId
+  }else {
+    taskId = Number(currentTaskItem.dataset.taskId);
+  }
+
+  // const taskId = Number(currentTaskItem.dataset.taskId);
   const taskToUpdate = tasks.find(task => task.taskId === taskId);
 
   if(timerStatus === "stopped"){
@@ -542,20 +563,35 @@ currentDate.textContent = today;
 // //////////////////////////////// new day function //////////////////////////
 function onNewDay() {
 
-  // updating todays tasks container
-  const dailyTasksList = document.getElementById("daily-tasks-list");
-  dailyTasksList.innerHTML = "";
+  const currentUserName = localStorage.getItem("currentUser");
+  const currentUser = users.find(u => u.username === currentUserName);
+  const tasks = currentUser?.tasks;
 
-  tasksSectionDescription.classList.remove("hide");
-
-  // changing date.
-  const currentDate = document.querySelector(".current-date");
   const today = new Date().toLocaleString("en-US", {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric"
   });
+
+
+  let taskCreatedToday = false
+  tasks.forEach(task => {
+    if(task.startDate === today) {
+      taskCreatedToday = true
+      return;
+    }
+  })
+
+  if(!taskCreatedToday) {
+    // updating todays tasks container
+    const dailyTasksList = document.getElementById("daily-tasks-list");
+    dailyTasksList.innerHTML = "";
+    tasksSectionDescription.classList.remove("hide");
+  }
+  
+  // changing date.
+  const currentDate = document.querySelector(".current-date");
   currentDate.textContent = today;
 }
 
@@ -588,8 +624,9 @@ todayTaskListBtn.addEventListener("click", () =>{
 
 
 const listAllTasksBtn = document.querySelector("#list-all-tasks-btn");
-listAllTasksBtn.addEventListener("click", () => {
+listAllTasksBtn.addEventListener("click", renderAllTasksList);
 
+function renderAllTasksList(){
   // controling display
   if(document.querySelector("#analytics-section").style.display === "flex") {
     document.querySelector("#analytics-section").style.display = "none";
@@ -600,8 +637,7 @@ listAllTasksBtn.addEventListener("click", () => {
   }
   document.querySelector("#all-tasks-section").style.display = "flex";
 
-
-  // populating the lists 
+  // populating lists
   const todoTasksList = document.querySelector('.todo-tasks');
   const inProgressTasksList = document.querySelector('.inprogress-tasks');
   const doneTasksList = document.querySelector('.done-tasks');
@@ -623,13 +659,28 @@ listAllTasksBtn.addEventListener("click", () => {
       renderTask(task, doneTasksList)
     }
   })
-
-})
-
+}
 
 
 ////////////////////////////////////////////////analytics///////////////////////////////////////////////
 const showAnalyticsBtn = document.querySelector("#analytics-btn");
+
+// adding listener for date changes
+document.getElementById("datePicker").addEventListener("change", function () {
+  const currentUserName = localStorage.getItem('currentUser');
+  const currentUser = users.find(u => u.username === currentUserName);
+  const tasks = currentUser?.tasks || [];
+
+  // getting data to render chart
+  const selectedDate = this.value;
+  const newData = getTaskDurationForDate(tasks, selectedDate);
+  // const chartData = convertDataToArrayFormat(newData);
+
+  // rendering chart
+  // renderTaskChart(chartData);
+  renderTaskChart(newData)
+});
+
 
 showAnalyticsBtn.addEventListener("click", () => {
 
@@ -647,41 +698,30 @@ showAnalyticsBtn.addEventListener("click", () => {
   const currentUserName = localStorage.getItem('currentUser');
   const currentUser = users.find(u => u.username === currentUserName);
   const tasks = currentUser?.tasks || [];
-
-
+  
   // initial chart rendering for today's date
   const today = new Date().toLocaleDateString();
-  document.querySelector('#datePicker').value = today;
+  // document.querySelector('#datePicker').value = today;
 
   // getting data to render chart
-  const initialData = getTaskHoursForDate(tasks, today);
-  const chartData = convertDataToArrayFormat(initialData);
+  const initialData = getTaskDurationForDate(tasks, today);
+  console.log(initialData);
+
+  // const chartData = convertDataToArrayFormat(initialData);
+  // console.log(chartData);
 
   // rendering chart
-  renderTaskChart(chartData);
+  // renderTaskChart(chartData);
+
+  renderTaskChart(initialData)
 })
 
 
-// adding listener for date changes
-document.getElementById("datePicker").addEventListener("change", function () {
-
-  const currentUserName = localStorage.getItem('currentUser');
-  const currentUser = users.find(u => u.username === currentUserName);
-  const tasks = currentUser?.tasks || [];
-
-  // getting data to render chart
-  const selectedDate = this.value;
-  const newData = getTaskHoursForDate(tasks, selectedDate);
-  const chartData = convertDataToArrayFormat(newData);
-
-  // rendering chart
-  renderTaskChart(chartData);
-});
-
-function getTaskHoursForDate(tasks, selectedDate) {
+// -------------------getting duration worked for each task by date--------------
+function getTaskDurationForDate(tasks, selectedDate) {
   const targetDate = new Date(selectedDate).toLocaleDateString();
   const taskDurations = {};
-  
+
   tasks.forEach(task => {
    task.timeLogs.forEach(log => {
     const logDate = new Date(log.startTime).toLocaleDateString();
@@ -693,36 +733,57 @@ function getTaskHoursForDate(tasks, selectedDate) {
       if(!taskDurations[task.taskName]) {
         taskDurations[task.taskName] = 0
       }
-
       taskDurations[task.taskName] += totalSeconds;
     }
    })
   })
 
-  return taskDurations;
+
+  // const formattedTaskDetails = getTotalSecondsInTimeFormat(taskDurations)
+  // return formattedTaskDetails;
+
+  // return taskDurations;
+
+  return Object.entries(taskDurations).map(([task, secs]) => ({
+    task: task,
+    hours: secs
+  }))
 }
+
+function getTotalSecondsInTimeFormat(taskDurations) {
+  const tasksDurationArr = Object.entries(taskDurations);
+  const formattedTaskDuration = tasksDurationArr.map(([task, duration]) => {
+
+    const formattedSeconds = convertSecondsToTimeFormat(duration);
+    const [hrs, mins, secs] = formattedSeconds.split(':');
+
+    return ({
+      task,
+      duration: `${hrs}h ${mins}m ${secs}s`
+    })
+  })
+
+  return formattedTaskDuration;
+}
+
 
 function convertDataToArrayFormat(taskDurations) {
   return Object.entries(taskDurations).map(([task, secs]) => ({
     task: task,
-    hours: (secs/3600)
+    hours: secs
   }))
 }
 
+// -----------chart rendering-----------------------
 let dailyTaskChart = null;
 function renderTaskChart(taskAnalytics){
-
-  const canvas = document.getElementById("dailyTaskChart");
-  canvas.width = 800;
-  canvas.height = 600;
   
   const graphArea = document.getElementById('dailyTaskChart').getContext('2d');
   if(dailyTaskChart) dailyTaskChart.destroy();
 
   
-  
   dailyTaskChart = new Chart(graphArea, {
-    type: "line",
+    type: "bar",
     data: {
       labels: taskAnalytics.map(task => task.task),
       datasets: [
@@ -739,12 +800,12 @@ function renderTaskChart(taskAnalytics){
         y: {
           beginAtZero: true,
           // max: 8,
-          ticks: {
-            stepSize: 1,
-            callback: function(value) {
-              return value + "h"
-            }
-          }
+          // ticks: {
+          //   stepSize: 1,
+          //   callback: function(value) {
+          //     return value + "h"
+          //   }
+          // }
         }
       }
     }
@@ -786,7 +847,6 @@ function renderTaskChart(taskAnalytics){
 
 
 //////////////////////// to do soon ///////////
-
 // associate date with the task.
 // end date -- when user manually enter status done.
 // if status is done, get the end date, and also dont allow the user to further work on it.
@@ -832,17 +892,9 @@ function renderTaskChart(taskAnalytics){
 // his main concern is to keep recorde of what we have done, like a graph he wanna see, were our time went.
 // example he is saying is slack.
 // believe you can do this.
-
-
 // what are we doing daily in slack .
 // updating our status rihgt?
 // includes code times, 
 // includes line of code.
 
-
-
-// //////////////////////////next important thing you wanna do, super higher priority////////////////
-// 1) associate user with tasks, 
-// ------- match user with there tasks ...
-// what to do for it?
 
