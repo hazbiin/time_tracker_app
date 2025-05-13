@@ -9,7 +9,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-
     
     <section id="auth-section">
         <div id="login-form">
@@ -27,7 +26,6 @@
             <p>Have an account? <a href="#" id="show-login">Login</a></p>
         </div>
     </section>
-
 
     <section class="main-page" style="display: none;">
         <div class="container">
@@ -111,20 +109,14 @@
                             </div>
                         </div>
     
+                        
                          <!-- ------------------create new task pop up ------------------------ -->
                          <div class="create-new-task-popup-container">
                             <div class="task-input-container">
                                 <input id="task-name" type="text" placeholder="enter task name..."/>
                                 <textarea id="task-desc" placeholder="enter description" id=""></textarea>
                                 <input id="task-tag" type="text" placeholder="set a tag ..."/>
-        
-                                <!-- <select id="task-status">
-                                    <option value="" selected>🔽 set task status</option>
-                                    <option value="pending"> 🕒 To do</option>
-                                    <option value="in-progress">🔄 In Progress</option>
-                                    <option value="done"> ✅ Done</option>
-                                </select> -->
-        
+                                
                                 <button id="create-task-button">CREATE TASK</button>
                             </div>
         
@@ -143,6 +135,25 @@
                         <div class="tasks-management-container">
                             <div class="tasks-list-section">
                                 <ul id="daily-tasks-list" class="new-tasks-list">
+
+                                    <li class="list-category">
+                                        <h3>To do</h3>
+                                        <ul class="todo-tasks list-sub-category">
+                                          
+                                        </ul>
+                                    </li>
+                                    <li class="list-category">
+                                        <h3>In-progress</h3>
+                                        <ul class="inprogress-tasks list-sub-category">
+                                           
+                                        </ul>
+                                    </li>
+                                    <li class="list-category">
+                                        <h3>Done</h3>
+                                        <ul class="done-tasks list-sub-category">
+                                        
+                                        </ul>
+                                    </li>
                                     
                                 </ul>
                             </div>
@@ -175,6 +186,7 @@
                     </div>
                 </section>
 
+                
                 <!-- -------------------all tasks section----------------------------- -->
                 <section id="all-tasks-section" style="display: none;">
                     <div class="main-section-top">
@@ -255,7 +267,7 @@
                                 <h3>Hours Per Day, Week, Month</h3>
                             </div>
                             <div class="analytics-bottom-row-right-section">
-                                <h3>Hours Per Task (Top Tasks)</h3>
+                                <h3>Daily Tasks Summary Hours Per Task (Top Tasks)</h3>
                                 <div class="daily-task-chart">
                                     <input id="datePicker" type="date"/>
                                     <div class="chart-container" style="position: relative; height: 50vh; width: 50vw;">
