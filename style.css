@@ -187,7 +187,6 @@ button{
     border-radius: 15px;
     list-style-type:none;
 }
-
 .task-info {
     display: flex;
     justify-content: space-between;
@@ -295,7 +294,6 @@ button{
     right: 10px;
     top: 10px;
 }
-
 .time-container{
     display: flex;
     flex-direction: column;
@@ -319,7 +317,7 @@ button{
 }
 .list-category h3 {
     background-color: lightgrey;
-    padding: 10px;
+    padding: 5px;
     border-radius: 5px;
     margin-bottom: 5px;
 }

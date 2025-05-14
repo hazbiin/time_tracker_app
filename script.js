@@ -50,11 +50,25 @@ document.querySelector('#signup-btn').addEventListener("click", () => {
   localStorage.setItem("users", JSON.stringify(users));
   localStorage.setItem("currentUser", username);
 
-  const currentUser = localStorage.getItem('currentUser');
-  if(currentUser) {
+  // when the user is logged in
+  const currentUserName = localStorage.getItem('currentUser');
+  if(currentUserName) {
     document.querySelector("#auth-section").style.display = "none";
     document.querySelector(".main-page").style.display = "block"
-  }else {
+
+    const currentUser = users.find(u => u.username === currentUserName);
+    const tasks = currentUser?.tasks;
+
+    if(tasks.length === 0) {
+      console.log("here")
+      const dailyTasksList = document.querySelector("#daily-tasks-list");
+      const listCategories = dailyTasksList.querySelectorAll(".list-category");
+      listCategories.forEach(lc => {
+        lc.style.display = "none";
+      })
+    }
+
+  } else {
     document.querySelector("#auth-section").style.display = "block";
     document.querySelector(".main-page").style.display = "none"
   }
@@ -77,94 +91,106 @@ document.querySelector("#login-btn").addEventListener("click", () => {
 });
 
 
-
-
 // loading page based on if user is logged in or not.
 document.addEventListener("DOMContentLoaded", () => {
 
   // making changes on new day
   scheduleMidnightUpdate();
 
-  const currentUser = localStorage.getItem('currentUser');
+  const currentUserName = localStorage.getItem('currentUser');
 
-  if(currentUser) {
+  if(currentUserName) {
     document.querySelector("#auth-section").style.display = "none";
     document.querySelector(".main-page").style.display = "block"
+
+    const currentUser = users.find(u => u.username === currentUserName);
+    const tasks = currentUser?.tasks;
+
+    if(tasks.length === 0) {
+      console.log("here")
+      const dailyTasksList = document.querySelector("#daily-tasks-list");
+      const listCategories = dailyTasksList.querySelectorAll(".list-category");
+      listCategories.forEach(lc => {
+        lc.style.display = "none";
+      })
+    }
+    
   }else {
     document.querySelector("#auth-section").style.display = "block";
     document.querySelector(".main-page").style.display = "none"
   }
 
   // restoring any active timers on page reloads
-  const activeTimer = JSON.parse(localStorage.getItem("activeTimer"));
+  // const activeTimer = JSON.parse(localStorage.getItem("activeTimer"));
 
-  if(activeTimer){
-    const taskId = activeTimer.taskId;
-    startTime = new Date(activeTimer.startTime);
+  // if(activeTimer){
+  //   const taskId = activeTimer.taskId;
+  //   startTime = new Date(activeTimer.startTime);
 
-    const currentUserName = localStorage.getItem('currentUser');
-    const currentUser = users.find(u => u.username === currentUserName);
-    const tasks = currentUser?.tasks;
+  //   const currentUserName = localStorage.getItem('currentUser');
+  //   const currentUser = users.find(u => u.username === currentUserName);
+  //   const tasks = currentUser?.tasks;
 
-    const taskToUpdate = tasks.find(task => task.taskId === taskId);
+  //   const taskToUpdate = tasks.find(task => task.taskId === taskId);
 
-    if(taskToUpdate) {
-      currentTaskItem = document.querySelector(`[data-task-id= '${taskId}']`);
-      ongoingTaskName.textContent = taskToUpdate.taskName;
+  //   if(taskToUpdate) {
+  //     currentTaskItem = document.querySelector(`[data-task-id= '${taskId}']`);
+  //     ongoingTaskName.textContent = taskToUpdate.taskName;
 
-      if(!timerSection.classList.contains('show')) {
-        timerSection.classList.add('show');
-      }
+  //     if(!timerSection.classList.contains('show')) {
+  //       timerSection.classList.add('show');
+  //     }
       
-      // restore timer variables.
-      hours = activeTimer.hours;
-      minutes = activeTimer.minutes;
-      seconds = activeTimer.seconds;
+  //     // restore timer variables.
+  //     hours = activeTimer.hours;
+  //     minutes = activeTimer.minutes;
+  //     seconds = activeTimer.seconds;
   
-      const elapsedSeconds = Math.floor((Date.now() - startTime.getTime()) / 1000);
+  //     const elapsedSeconds = Math.floor((Date.now() - startTime.getTime()) / 1000);
       
-      //converting excess seconds into minutes, and minutes into hours.
-      seconds += elapsedSeconds;
+  //     //converting excess seconds into minutes, and minutes into hours.
+  //     seconds += elapsedSeconds;
       
-      if(seconds >= 60){
-        minutes += Math.floor(seconds / 60);
-        seconds = seconds % 60;
-      }
-      if(minutes >= 60){
-        hours += Math.floor(minutes / 60);
-        minutes = minutes % 60;
-      }
+  //     if(seconds >= 60){
+  //       minutes += Math.floor(seconds / 60);
+  //       seconds = seconds % 60;
+  //     }
+  //     if(minutes >= 60){
+  //       hours += Math.floor(minutes / 60);
+  //       minutes = minutes % 60;
+  //     }
       
-      hoursText.innerText = `${formatWithLeadingZeros(hours)} h`;
-      minutesText.innerText = `${formatWithLeadingZeros(minutes)} m`;
-      secondsText.innerText = `${formatWithLeadingZeros(seconds)} s`;
+  //     hoursText.innerText = `${formatWithLeadingZeros(hours)} h`;
+  //     minutesText.innerText = `${formatWithLeadingZeros(minutes)} m`;
+  //     secondsText.innerText = `${formatWithLeadingZeros(seconds)} s`;
   
-      // start timer form where it was paused
-      timerStatus = 'started';
-      timerBtn.textContent = 'stop';
+  //     // start timer form where it was paused
+  //     timerStatus = 'started';
+  //     timerBtn.textContent = 'stop';
 
-      intervalId = setInterval(() => {
-        seconds++;
-        if(seconds === 60) {
-          seconds = 0;
-          minutes ++;
-          if(minutes === 60) {
-            minutes = 0;
-            hours++
-          }
-        }
+  //     intervalId = setInterval(() => {
+  //       seconds++;
+  //       if(seconds === 60) {
+  //         seconds = 0;
+  //         minutes ++;
+  //         if(minutes === 60) {
+  //           minutes = 0;
+  //           hours++
+  //         }
+  //       }
   
-        hoursText.innerText = `${formatWithLeadingZeros(hours)} h`;
-        minutesText.innerText = `${formatWithLeadingZeros(minutes)} m`;
-        secondsText.innerText = `${formatWithLeadingZeros(seconds)} s`;
+  //       hoursText.innerText = `${formatWithLeadingZeros(hours)} h`;
+  //       minutesText.innerText = `${formatWithLeadingZeros(minutes)} m`;
+  //       secondsText.innerText = `${formatWithLeadingZeros(seconds)} s`;
   
-      }, 1000);
+  //     }, 1000);
 
-      // const dailyTasksList = document.getElementById("daily-tasks-list");
-      // renderTask(taskToUpdate, dailyTasksList);
-    }
-  }
+  //     // const dailyTasksList = document.getElementById("daily-tasks-list");
+  //     // renderTask(taskToUpdate, dailyTasksList);
+  //   }
+  // }
 })
+
 
 
 // inital loading of daily tasks list from local storage.
@@ -179,6 +205,7 @@ function displayTasks() {
   doneTasksList.innerHTML = "";
 
   const today = new Date().toLocaleDateString();
+  // const formatedTodayDate = formateDate(new Date());
   const formatedTodayDate = new Date().toLocaleString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -194,9 +221,16 @@ function displayTasks() {
   tasks.forEach((task) => {
 
     // for those task which has not yet started, means for those that does not has current day timelogs.
-    const taskCreatedDate = task.startDate;
+    const taskCreatedDate = task.createdAt;
     if(taskCreatedDate === formatedTodayDate) {
-      tasksSectionDescription.classList.add("hide");
+
+        const dailyTasksList = document.getElementById("daily-tasks-list");
+        const listCategories = dailyTasksList.querySelectorAll(".list-category");
+        listCategories.forEach(lc => {
+          lc.style.display = "block";
+        });
+
+        tasksSectionDescription.classList.add("hide");
       if(task.taskStatus === "to-do") {
         renderTask(task, todoTasksList);
       }
@@ -219,6 +253,7 @@ function displayTasks() {
   });
 }
 
+// jjk
 // -------------------------------creating new tasks -----------------------------------------
 createTaskPopupButton.addEventListener("click", () => {
   taskInputpopup.classList.add("show");
@@ -248,7 +283,8 @@ if(createTaskButton) {
 
     const newTask = {
       taskId: Date.now(),
-      startDate: dateCreated,
+      createdAt: dateCreated,
+      startDate: "",
       endDate: "",
       taskName: taskName,
       taskDesc: taskDesc,
@@ -257,7 +293,6 @@ if(createTaskButton) {
       timeLogs: [],
       taskTotalDuration: "",
     };
-
 
     // storing to local Storage
     const currentUserName = localStorage.getItem('currentUser');
@@ -270,8 +305,15 @@ if(createTaskButton) {
     taskInputpopup.classList.remove("show");
 
 
+    // change midnight changes
     if(tasksSectionDescription) {
       tasksSectionDescription.classList.add("hide");
+
+      const dailyTasksList = document.getElementById("daily-tasks-list");
+        const listCategories = dailyTasksList.querySelectorAll(".list-category");
+        listCategories.forEach(lc => {
+          lc.style.display = "block";
+        });
     }
 
     // render newly created task.
@@ -283,13 +325,16 @@ if(createTaskButton) {
 
 exisistingTaskBtn.addEventListener("click", renderAllTasksList);
 
+
 //-------------------- task rendering function ------------------------
 function renderTask(task, containerElement) {
   // skip if task name is empty
   if(!task.taskName) return;
 
   // skip if task already exists in the list
-  if(containerElement.querySelector(`[data-task-id="${task.taskId}"]`)) return;
+  if(containerElement.querySelector(`[data-task-id="${task.taskId}"]`)) {
+    return;
+  }
 
   // removing exisiting tasks from other lists if the status is changed.
   const mainTaskList = document.querySelector('.main-tasks-list');
@@ -303,6 +348,7 @@ function renderTask(task, containerElement) {
       }
     }
   });
+
 
   // create task list item
   const li = document.createElement("li");
@@ -331,7 +377,36 @@ function renderTask(task, containerElement) {
   let timerBtn;
   let selectBox;
 
-  if(task.taskStatus === "done") {
+  if(task.taskStatus === "to-do") {
+    totalTimeText = `time spent until now: ${totalTimeToDisplay}`;
+    timerBtn = `
+      <button class="start-timer-btn">
+        ${buttonLabel}
+      </button>
+    `;
+
+    selectBox = `
+      <select id="task-status" style="display:none" >
+        <option value="" selected>change status</option>
+        <option value="done"> ✅ Done</option>
+      </select>
+    `;
+  } else if(task.taskStatus === "in-progress") {
+    totalTimeText = `time spent until now: ${totalTimeToDisplay}`;
+    timerBtn = `
+      <button class="start-timer-btn">
+        ${buttonLabel}
+      </button>
+    `;
+
+    selectBox = `
+      <select id="task-status">
+        <option value="" selected>change status</option>
+        <option value="done"> ✅ Done</option>
+      </select>
+    `;
+
+  } else {
     totalTimeText = `total task duration: ${totalTimeToDisplay}`;
 
     timerBtn = `
@@ -346,22 +421,8 @@ function renderTask(task, containerElement) {
         <option value="done"> ✅ Done</option>
       </select>
     `;
-    
-  }else {
-    totalTimeText = `time spent until now: ${totalTimeToDisplay}`;
-    timerBtn = `
-      <button class="start-timer-btn">
-        ${buttonLabel}
-      </button>
-    `;
-
-    selectBox = `
-      <select id="task-status">
-        <option value="" selected>change status</option>
-        <option value="done"> ✅ Done</option>
-      </select>
-    `;
   }
+
 
   // setting innerHTML
   li.innerHTML = `
@@ -386,9 +447,10 @@ function renderTask(task, containerElement) {
   showTimer(li);
 
   // change task status 
-  updateTaskStatus(li)
+  updateTaskStatus(li);
 }
 
+// ----------------------task status updation------------------------
 function updateTaskStatus(taskItem) {
   const statusSelectBox = taskItem.querySelector("#task-status");
 
@@ -396,6 +458,13 @@ function updateTaskStatus(taskItem) {
     const updatedTaskStatus = statusSelectBox.value;
     if(updatedTaskStatus === "done") {
       
+      if(statusSelectBox.closest(".main-tasks-list")) {
+        if(document.querySelector("#all-tasks-section").style.display = "flex") {
+            document.querySelector("#all-tasks-section").style.display = "none";
+        }
+        document.querySelector("#today-tasks-section").style.display = "flex";
+      }
+
       // setting current task to update
       currentTaskItem = taskItem;
     
@@ -409,6 +478,8 @@ function updateTaskStatus(taskItem) {
 
 
       if(taskToUpdate.taskStatus !== "done") {
+
+        taskToUpdate.endDate = `${formateDate(new Date())}`;
         taskToUpdate.taskStatus = "done";
         currentUser.tasks = tasks;
         localStorage.setItem("users", JSON.stringify(users));
@@ -420,12 +491,53 @@ function updateTaskStatus(taskItem) {
 
         displayTotalTaskDuration(taskToUpdate, taskId);
 
+        const dailyTasksList = document.getElementById("daily-tasks-list");
+        const doneTasksList = dailyTasksList.querySelector('.done-tasks');
+        addUpdatedAndRemoveExisitingTaskItem(doneTasksList, currentTaskItem);
+          
+        // removing timerbtn and status select box
         const timerBtn = currentTaskItem.querySelector('.start-timer-btn');
         timerBtn.remove();
         statusSelectBox.remove();
       }
     }
   })
+}
+
+
+function addUpdatedAndRemoveExisitingTaskItem(container, taskItem) {
+
+  console.log("callllllllllled meeeeeeee")
+  const dailyTasksList = container.closest('#daily-tasks-list');
+  const taskId = Number(taskItem.dataset.taskId);
+
+  const currentUserName = localStorage.getItem('currentUser');
+  const currentUser = users.find(u => u.username === currentUserName);
+  const tasks = currentUser?.tasks;
+
+  const taskToUpdate = tasks.find(task => task.taskId === taskId);
+
+  if(taskToUpdate.taskStatus === "in-progress") {
+    taskItem.querySelector('#task-status').style.display = "inline-block";
+  }else if(taskToUpdate.taskStatus === "done") {
+    taskItem.querySelector('#task-status').style.display = "none";
+  }
+
+  // appending to appropriate list
+  if(!container.querySelector(`[data-task-id="${taskId}"]`)) {
+    container.append(currentTaskItem);
+  }
+
+  // removing exisiting one from other lists
+  const listSubCategories = dailyTasksList.querySelectorAll('.list-sub-category');
+  listSubCategories.forEach(subCat => {
+    if(subCat !== container) {
+      const existingItem = subCat.querySelector(`[data-task-id="${taskId}"]`);
+      if(existingItem) {
+        existingItem.remove();
+      }
+    }
+  });
 }
 
 function displayTotalTaskDuration(taskToUpdate, taskId) {
@@ -523,6 +635,7 @@ timerSectionCloseBtn.addEventListener("click", () => {
 });
 
 
+
 // main timer functionality
 timerBtn.addEventListener("click", (e) => {
 
@@ -546,7 +659,7 @@ timerBtn.addEventListener("click", (e) => {
 
       // getting start time.
       startTime = new Date();
-      
+
       // storing active timer incase of page refresh
       localStorage.setItem("activeTimer", JSON.stringify({
         taskId: taskToUpdate.taskId,
@@ -555,6 +668,11 @@ timerBtn.addEventListener("click", (e) => {
         minutes,
         seconds
       }))
+
+      
+      if(taskToUpdate.startDate === "") {
+        taskToUpdate.startDate = `${formateDate(new Date())}`;
+      }
 
       taskToUpdate.taskStatus = "in-progress";
       currentUser.tasks = tasks;
@@ -581,9 +699,11 @@ timerBtn.addEventListener("click", (e) => {
       timerStatus = "started";
       timerBtn.textContent = "stop";
 
-      // appending to daily tasks list if an exisisting task is resumed.
+
+      // dom changes 
       const dailyTasksList = document.getElementById("daily-tasks-list");
-      renderTask(taskToUpdate, dailyTasksList);
+      const inProgressTasksList = dailyTasksList.querySelector('.inprogress-tasks');
+      addUpdatedAndRemoveExisitingTaskItem(inProgressTasksList, currentTaskItem);
 
     }else {
 
@@ -644,6 +764,14 @@ timerBtn.addEventListener("click", (e) => {
   });
 
 
+function formateDate(date) {
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = String(date.getFullYear()).slice(-2);
+
+  return `${day}-${month}-${year}`;
+}
+
 function convertSecondsToTimeFormat(totalSeconds) {
   let hrs = Math.floor(totalSeconds / 3600); // becuase 1 hr == 3600 seconds
   let mins = Math.floor((totalSeconds % 3600) / 60); // we wanna check how many seconds is left from total seconds after substracting hours, then we check how many full minutes we get form the reminaing seconds.
@@ -665,6 +793,7 @@ const today = new Date().toLocaleString("en-US", {
   day: "numeric"
 });
 currentDate.textContent = today;
+
 
 // //////////////////////////////// new day function //////////////////////////
 function onNewDay() {
@@ -701,6 +830,11 @@ function onNewDay() {
     todoTasksList.innerHTML = "";
     inProgressTasksList.innerHTML = "";
     doneTasksList.innerHTML = "";
+    
+    const listCategories = dailyTasksList.querySelectorAll(".list-category");
+    listCategories.forEach(lc => {
+      lc.style.display = "none";
+    })
 
     tasksSectionDescription.classList.remove("hide");
   }
