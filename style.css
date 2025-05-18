@@ -243,6 +243,8 @@ button{
 }
 
 
+
+
 /* ---------------tasks details section------------------------ */
 .tasks-details-section {
     height: 100%;
@@ -262,6 +264,30 @@ button{
     transform:  translateX(0);
     margin-left: 10px;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* --------------------------timer section---------------------------- */
 .timer-section{
     background-color: rgb(241, 241, 241);
     height: 100%;
@@ -299,6 +325,9 @@ button{
     flex-direction: column;
     gap: 20px;
     font-size: 25px;
+}
+.time-container h3{
+    font-size: 40px;
 }
 
 /* ---------------all tasks page styles ------------------- */
