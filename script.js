@@ -1120,21 +1120,147 @@ function renderAllTasksList(){
 }
 
 
+// -----------------getting duration worked on each day and week(implentation withour chartjs)---------------------
+function getWorkingHoursForDay() {
+  const workHoursPerDay = {};
+
+  const currentUserName = localStorage.getItem("currentUser");
+  const currentUser = users.find(u => u.username === currentUserName);
+  const tasks = currentUser?.tasks;
+
+  tasks.forEach(task => {
+    task.timeLogs.forEach(log => {
+      const currentDateKey = formateDate(new Date(log.startTime));
+      const [h, m, s] = log.totalTime.split(":");
+      const totalSeconds = Number(h) * 3600 + Number(m) * 60 + Number(s);
+      
+      if(!workHoursPerDay[currentDateKey]) {
+        workHoursPerDay[currentDateKey] = 0;
+      }
+
+      workHoursPerDay[currentDateKey] += totalSeconds;
+    })
+  });
+
+  Object.keys(workHoursPerDay).forEach(date => {
+    workHoursPerDay[date] =  Math.round((workHoursPerDay[date] / 3600) * 100) / 100;;
+  });
+
+  return workHoursPerDay;
+}
+const workHoursPerDay = getWorkingHoursForDay();
+const gridContainer = document.querySelector('.grid-container');
+
+function getMaxYFromData(workHoursPerDay) {
+  const allhours = Object.values(workHoursPerDay);
+  const maxHours = Math.max(...allhours, 0);
+  const withBuffer = Math.ceil(maxHours + 4);
+
+  return Math.max(withBuffer,8);
+}
+
+const maxY = getMaxYFromData(workHoursPerDay);
+
+function plotGraph(gridContainer, maxY, maxX = 14){
+  gridContainer.style.gridTemplateRows = `repeat(${maxY}, minmax(10px, 60px))`;
+  gridContainer.style.gridTemplateColumns = `repeat(${maxX},  minmax(10px, 60px))`;
+  gridContainer.style.columnGap = '1px';
+  gridContainer.innerHTML = "";
+
+  for(let y = maxY - 1; y >= 0; y--) {
+    for(let x = 0; x < maxX; x++) {
+      const cell = document.createElement('div');
+      cell.classList.add('block');
+      cell.dataset.xy = `${x},${y}`;
+      gridContainer.appendChild(cell);
+    }
+  }
+}
+plotGraph(gridContainer, maxY, 14);
+console.log(workHoursPerDay)
+
+const SCALING_FACTOR = 50; // only in development mode;
+
+// sort the dates in increasing order and only take the frist 
+const allDates = Object.keys(workHoursPerDay).sort().slice(-14);
+
+allDates.forEach((date, x) => {
+  const hours = workHoursPerDay[date];
+  const height = Math.floor(hours * SCALING_FACTOR);
+
+  console.log(height)
+
+  for(let y = 0; y <= height; y++) {
+
+    setTimeout(() => {
+      const styleObj = {
+        backgroundColor: "black",
+        opacity: "0.7",
+        width: "75%"
+      }
+
+      if( y === height) {
+        Object.assign(styleObj, {
+          borderTopLeftRadius: "4px",
+          borderTopRightRadius: "4px",
+          marginTop: "5px"
+        })
+      }
+      createMarker(x, y, gridContainer, styleObj);
+    }, y * 1000)
+  }
+})
+
+function createMarker(x, y, container, styleObj) {
+  const cell = container.querySelector(`[data-xy='${x},${y}']`);
+  if(!cell) return;
+
+  const marker = document.createElement("div");
+  marker.classList.add('marker-block');
+  Object.assign(marker.style, styleObj);
+  cell.appendChild(marker);
+}
+
+function renderYAxisLabels(maxY) {
+  const container = document.querySelector('.y-axis-labels');
+  container.innerHTML = '';
+
+  for(let i = maxY; i >= 0; i--) {
+    const label = document.createElement('div');
+    label.textContent = `${i}h`;
+    container.appendChild(label);
+  }
+}
+renderYAxisLabels(maxY);
+
+function renderXAxisLabels(dates) {
+  const container = document.querySelector('.x-axis-labels');
+  container.innerHTML = '';
+
+  dates.forEach(date => {
+    const label = document.createElement('div');
+    label.textContent = date;
+    container.appendChild(label);
+  });
+}
+renderXAxisLabels(allDates);
+
+
+
 ////////////////////////////////////////////////analytics///////////////////////////////////////////////
 const showAnalyticsBtn = document.querySelector("#analytics-btn");
 
 // adding listener for date changes
-document.getElementById("datePicker").addEventListener("change", function () {
-  const currentUserName = localStorage.getItem('currentUser');
-  const currentUser = users.find(u => u.username === currentUserName);
-  const tasks = currentUser?.tasks || [];
+// document.getElementById("datePicker").addEventListener("change", function () {
+//   const currentUserName = localStorage.getItem('currentUser');
+//   const currentUser = users.find(u => u.username === currentUserName);
+//   const tasks = currentUser?.tasks || [];
 
-  // getting data to render chart
-  const selectedDate = this.value;
-  const newData = getTaskDurationForDate(tasks, selectedDate);
-  renderTaskChart(newData);
-});
-
+//   // getting data to render chart
+//   const selectedDate = this.value;
+//   const newData = getTaskDurationForDate(tasks, selectedDate);
+//   renderTaskChart(newData);
+// });
 
 showAnalyticsBtn.addEventListener("click", () => {
 
@@ -1156,9 +1282,8 @@ showAnalyticsBtn.addEventListener("click", () => {
 
   // getting data to render chart
   const initialData = getTaskDurationForDate(tasks, today);
-  renderTaskChart(initialData);
+  // renderTaskChart(initialData);
 })
-
 
 // -------------------getting duration worked for each task by date--------------
 function getTaskDurationForDate(tasks, selectedDate) {
@@ -1186,40 +1311,6 @@ function getTaskDurationForDate(tasks, selectedDate) {
     seconds: secs
   }))
 }
-
-
-// -----------------getting duration worked on each day and week(implentation withour chartjs)---------------------
-function getWorkingHoursForDay() {
-  const workHoursPerDay = {};
-
-  const currentUserName = localStorage.getItem("currentUser");
-  const currentUser = users.find(u => u.username === currentUserName);
-  const tasks = currentUser?.tasks;
-
-  tasks.forEach(task => {
-    task.timeLogs.forEach(log => {
-      const currentDateKey = formateDate(new Date(log.startTime));
-      const [h, m, s] = log.totalTime.split(":");
-      const totalSeconds = Number(h) * 3600 + Number(m) * 60 + Number(s);
-      
-      if(!workHoursPerDay[currentDateKey]) {
-        workHoursPerDay[currentDateKey] = 0;
-      }
-
-      workHoursPerDay[currentDateKey] += totalSeconds;
-    })
-  })
-
-  return workHoursPerDay;
-}
-console.log(getWorkingHoursForDay());
-
-const gridContainer = document.querySelector('.grid-container')
-function plotGraph(gridContainer, ){
-
-}
-
-
 
 // -----------chart rendering-----------------------
 let dailyTaskChart = null;
@@ -1266,7 +1357,7 @@ function renderTaskChart(taskAnalytics){
     }
   })
 }
-// ///////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////analytics///////////////////////////////////////////////
 
 
 
