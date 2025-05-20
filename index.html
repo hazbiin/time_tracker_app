@@ -127,7 +127,8 @@
                             </button> -->
                             
                         </div>
-                        
+                    
+
 
                         <div id="tasks-section-desc" class="tasks-section-desc">
                             <h3>Your tasks will be listed here.</h3>
@@ -182,7 +183,7 @@
                                         <div class="task-detail-group">
                                             <label>Status:</label>
                                             <span id="task-details-task-status">to-do</span>
-                                            <select id="task-status">
+                                            <select id="task-status" disabled>
                                                 <option value="" selected>change status</option>
                                                 <option value="done"> ✅ Done</option>
                                             </select>
@@ -197,14 +198,18 @@
                                                 <span id="task-details-task-enddate">YYYY-MM-DD</span>
                                             </div>
                                         </div>
-                
-                                        
+                                        <!-- <div class="task-detail-group">
+                                            <label>Task tags:</label>
+                                            <ul id="task-details-task-tags">
+                                                <li></li>
+                                            </ul>
+                                        </div> -->
                                         <div class="task-detail-group">
                                             <label>Time-log-list:</label>
                                             <button class="time-log-toggler-btn">view more</button>
                                             
                                             <div class="time-log-list-contianer">
-                                                <div style="display: flex; gap:10px;">
+                                                <div style="display: flex; gap:10px; justify-content: space-evenly;">
                                                     <div>Log Date</div>
                                                     <div>start time</div>
                                                     <div>end time</div>
@@ -224,15 +229,16 @@
                                     </div>
 
                                     <!-- sticky save/cancel -->
-                                    <div class="task-edit-actions">
-                                        <button>save changes</button>
-                                        <button>Cancel</button>
+                                    <div class="task-edit-actions" style="display: none;">
+                                        <button class="btn save-changes-btn">save changes</button>
+                                        <button class="btn cancel-edit-btn">Cancel</button>
                                     </div>
 
                                 </div>
                                 <button class="tasks-details-section-close-btn">x</button>
                             </div>
-                            
+
+
                             <div class="timer-section">
                                 <div class="time-container">
                                     <div>
@@ -254,7 +260,7 @@
                     </div>
                 </section>
 
-                
+
                 <!-- -------------------all tasks section----------------------------- -->
                 <section id="all-tasks-section" style="display: none;">
                     <div class="main-section-top">
@@ -293,69 +299,7 @@
 
                             <div class="tasks-details-section">
                                 <div class="tasks-details-container">
-
-                                    <div class="task-details-header">
-                                        <h3>Your Task Details</h3>
-                                        <button class="edit-toggle-btn">Edit mode</button>
-                                    </div>
-
-                                    <!-- scrollabel content -->
-                                    <div class="task-details-content">
-                                        <div class="task-detail-group">
-                                            <label>Name:</label>
-                                            <input type="text" id="task-details-task-name" value="task-name" readonly>
-                                        </div>
-                                        <div class="task-detail-group">
-                                            <label>Description:</label>
-                                            <textarea id="task-details-task-desc" readonly>task description</textarea>
-                                        </div>
-                                        <div class="task-detail-group">
-                                            <label>Status:</label>
-                                            <span id="task-details-task-status">to-do</span>
-                                            <select id="task-status">
-                                                <option value="" selected>change status</option>
-                                                <option value="done"> ✅ Done</option>
-                                            </select>
-                                        </div>
-                                        <div class="task-detail-group">
-                                            <div>
-                                                <label>Start-date:</label>
-                                                <span id="task-details-task-startdate">YYYY-MM-DD</span>
-                                            </div>
-                                            <div>
-                                                <label>End-date:</label>
-                                                <span id="task-details-task-enddate">YYYY-MM-DD</span>
-                                            </div>
-                                        </div>
-                                        <div class="task-detail-group">
-                                            <label>Time-log-list:</label>
-                                            <ul id="task-details-task-timeloglist">
-                                                <li style="display: flex; gap:10px;">
-                                                    <div>Log Date</div>
-                                                    <div>start time</div>
-                                                    <div>end time</div>
-                                                    <div>total time</div>
-                                                </li>
-                                                <li style="display: flex; gap:10px;">
-                                                    <div>01-05-25</div>
-                                                    <div>11:00:00</div>
-                                                    <div>12:30:00</div>
-                                                    <div>01:30:00</div>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div class="task-detail-group">
-                                            <label>Total-task-duration:</label>
-                                            <span id="task-details-task-totalduration">00h 00m 00s</span>
-                                        </div>
-                                    </div>
-
-                                    <!-- sticky save/cancel -->
-                                    <div class="task-edit-actions">
-                                        <button>save changes</button>
-                                        <button>Cancel</button>
-                                    </div>
-
+                                    <h3>task details</h3>
                                 </div>
                                 <button class="tasks-details-section-close-btn">x</button>
                             </div>
@@ -395,6 +339,16 @@
                         <div class="analytics-bottom-row">
                             <div class="analytics-bottom-row-left-section">
                                 <h3>Hours Per Day, Week, Month</h3>
+                                <div class="grid-scrollable-container">
+                                    <div class="grid-container">
+                                        
+                                    </div>
+                                </div>
+
+
+
+
+
                             </div>
                             <div class="analytics-bottom-row-right-section">
                                 <h3>Daily Tasks Summary Hours Per Task (Top Tasks)</h3>

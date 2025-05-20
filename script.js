@@ -93,16 +93,7 @@ document.querySelector("#login-btn").addEventListener("click", () => {
 
 // loading page based on if user is logged in or not.
 document.addEventListener("DOMContentLoaded", () => {
-
   console.log("doc loaded");
-  // const tasksDetailSection = document.querySelector('.tasks-details-section');
-  // console.log(tasksDetailSection)
-  // if(!tasksDetailSection.classList.contains("show")) {
-  //     tasksDetailSection.classList.add('show');
-  //   }
-  
-    
-  
   
   // making changes on new day
   scheduleMidnightUpdate();
@@ -250,7 +241,7 @@ function displayTasks() {
           tasksSectionDescription.classList.add("hide");
 
           if(task.taskStatus === "to-do") {
-            renderTask(task, todoTasksList)
+            renderTask(task, todoTasksList);
           }else if(task.taskStatus === "in-progress") {
             renderTask(task, inProgressTasksList)
           }else if(task.taskStatus === "done") {
@@ -455,7 +446,7 @@ function renderTask(task, containerElement) {
   showTimer(li);
 
   // show taskDetails 
-  showTaskDetaitls(li)
+  showTaskDetaitls(li);
 
   // change task status 
   updateTaskStatus(li);
@@ -471,7 +462,7 @@ function updateTaskStatus(taskItem) {
     if(updatedTaskStatus === "done") {
       
       if(statusSelectBox.closest(".main-tasks-list")) {
-        if(document.querySelector("#all-tasks-section").style.display = "flex") {
+        if(document.querySelector("#all-tasks-section").style.display === "flex") {
             document.querySelector("#all-tasks-section").style.display = "none";
         }
         document.querySelector("#today-tasks-section").style.display = "flex";
@@ -568,6 +559,227 @@ function displayTotalTaskDuration(taskToUpdate, taskId) {
 }
 
 
+let isEditMode = false;
+// ----------------- show task details -------------------------
+function showTaskDetaitls(taskItem) {
+
+  const taskDetailsBtn = taskItem.querySelector(".task-details-btn");
+  const tasksDetailSection = taskDetailsBtn.closest('.tasks-management-container').querySelector('.tasks-details-section');
+  taskDetailsBtn.addEventListener("click", () => {
+    if(!tasksDetailSection.classList.contains("show")) {
+      tasksDetailSection.classList.add('show');
+    }
+
+    // setting current task to update
+    currentTaskItem = taskItem;
+    
+    // getting tasks of current user form local storage
+    const currentUserName = localStorage.getItem('currentUser');
+    const currentUser = users.find(u => u.username === currentUserName);
+    const tasks = currentUser?.tasks;
+
+    const taskId = Number(taskItem.dataset.taskId);
+    const taskToUpdate = tasks.find(task => task.taskId === taskId);
+
+    // populating the task details 
+
+    if(!isEditMode) {
+      populateTaskDetails(tasksDetailSection,taskToUpdate);
+    }else {
+      alert("switch form edit mode, to view further task details!");
+    }
+  })
+
+  // task details close 
+  const tasksDetailSectionCloseBtn = tasksDetailSection.querySelector(".tasks-details-section-close-btn");
+  tasksDetailSectionCloseBtn.addEventListener("click", () => {
+    tasksDetailSection.classList.remove('show');
+  })
+}
+
+
+// ------------ populate task details ---------
+function populateTaskDetails(tasksDetailsContainer, taskData){
+ 
+  // only show status changing option when the task status is in-progress.
+  const taskStatusField = tasksDetailsContainer.querySelector('#task-status');
+  if(taskData.taskStatus === "in-progress") {
+    taskStatusField.style.display = "inline-block"
+  }else {
+     taskStatusField.style.display = "none"
+  }
+
+  // populate basic fields
+  tasksDetailsContainer.querySelector("#task-details-task-name").value = taskData.taskName;
+  tasksDetailsContainer.querySelector("#task-details-task-desc").value = taskData.taskDesc;
+  tasksDetailsContainer.querySelector("#task-details-task-status").textContent = taskData.taskStatus;
+  tasksDetailsContainer.querySelector("#task-details-task-startdate").textContent = taskData.startDate;
+  tasksDetailsContainer.querySelector("#task-details-task-enddate").textContent = taskData.endDate;
+  tasksDetailsContainer.querySelector("#task-details-task-totalduration").textContent = taskData.taskTotalDuration;
+
+  // populating time logs 
+  const timeLogList = tasksDetailsContainer.querySelector('#task-details-task-timeloglist');
+  const logTogglerBtn = tasksDetailsContainer.querySelector('.time-log-toggler-btn');
+
+  timeLogList.innerHTML = "";
+  const logs = taskData.timeLogs;
+  const logItems = logs.map(tl => {
+    const logDate = new Date(tl.startTime).toLocaleDateString('en-CA');
+    const logStartTime = new Date(tl.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12:false});
+    const logEndTime = new Date(tl.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12:false});
+
+    const li = document.createElement("li");
+    li.style.display = "flex";
+    li.style.gap = "10px";
+    li.style.justifyContent = "space-evenly"
+    li.innerHTML = `
+      <div class="task-details-logdate">${logDate}</div>
+      <div class="task-details-starttime">${logStartTime}</div>
+      <div class="task-details-endtime">${logEndTime}</div>
+      <div class="task-details-totaltime">${tl.totalTime}</div>
+    `;
+
+    return li;
+  })
+
+  // initially show only first 3 logs 
+  logItems.forEach((li, i) => {
+    if(i < 3){
+      li.style.display = "flex";
+    }else {
+      li.style.display = "none"
+    }
+
+    // append each li
+    timeLogList.appendChild(li)
+  })
+
+
+  if(logItems.length === 0) {
+    const li = document.createElement("li");
+    li.style.display = "flex";
+    li.style.gap = "10px";
+    li.style.justifyContent = "space-evenly"
+    li.innerHTML = `
+      <div class="task-details-logdate">--</div>
+      <div class="task-details-starttime">--</div>
+      <div class="task-details-endtime">--</div>
+      <div class="task-details-totaltime">--</div>
+    `;
+    timeLogList.append(li);
+  }
+
+  // only show the toggler btn if the logs are greater than 3
+  if(logItems.length <= 3) {
+    logTogglerBtn.style.display = "none";
+  }else {
+    logTogglerBtn.style.display = "inline-block"
+  }
+
+  // reset button text and toggle state
+  logTogglerBtn.textContent = "View more +";
+  logTogglerBtn.dataset.expanded = "false";
+
+  // show more btn functionality
+  logTogglerBtn.addEventListener("click", () => {
+    const isExpanded = logTogglerBtn.dataset.expanded === "true";
+
+    logItems.forEach((li, i) => {
+      if(!isExpanded || i < 3) {
+        li.style.display = "flex";
+      }
+      else {
+        li.style.display = "none";
+      }
+    })
+
+    logTogglerBtn.dataset.expanded = isExpanded ? "false" : "true";
+    logTogglerBtn.textContent = isExpanded ? "View more +" : "View less -";
+  })
+
+  
+  // enabling edit mode for the task details 
+  const editModeBtn = tasksDetailsContainer.querySelector('.edit-toggle-btn');
+
+  // creating a new cloned btn to remove all the previous event handlers.
+  const clonedBtn = editModeBtn.cloneNode(true);
+  editModeBtn.replaceWith(clonedBtn);
+
+  const newEditButton = tasksDetailsContainer.querySelector(".edit-toggle-btn");
+  newEditButton.addEventListener("click", () => {
+    isEditMode = true;
+    enableEditing(tasksDetailsContainer, taskData);
+  })
+}
+
+
+// task edit mode enabling ---
+function enableEditing(tasksDetailsContainer, taskData){
+  const editActionContainer = tasksDetailsContainer.querySelector('.task-edit-actions');
+  editActionContainer.style.display = "block";
+
+  // editable fields 
+  const nameField = tasksDetailsContainer.querySelector('#task-details-task-name');
+  const descField = tasksDetailsContainer.querySelector('#task-details-task-desc');
+  const statusField = tasksDetailsContainer.querySelector("#task-status");
+
+  nameField.readOnly = false;
+  nameField.focus();
+  descField.readOnly = false;
+  statusField.disabled = false;
+
+
+  // --------------cancel edit btn ------------------
+  const oldCancelBtn = tasksDetailsContainer.querySelector('.cancel-edit-btn');
+  const newCancelBtn = oldCancelBtn.cloneNode(true);
+  oldCancelBtn.replaceWith(newCancelBtn);
+
+  newCancelBtn.addEventListener("click", () => {
+
+    isEditMode = false;
+    nameField.readOnly = true;
+    descField.readOnly = true;
+    statusField.disabled = true;
+
+    editActionContainer.style.display = "none";
+
+    // resetting values
+    if(nameField.value !== taskData.taskName) {
+      nameField.value = taskData.taskName;
+    }
+    if(descField.value !== taskData.taskDesc) {
+      descField.value = taskData.taskDesc;
+    }
+    if(statusField.value !== taskData.taskStatus) {
+      statusField.value = "";
+    }
+
+  });
+
+
+  // ------------save edit btn ---------------------
+  const oldSaveChangesBtn = tasksDetailsContainer.querySelector('.save-changes-btn');
+  const newSaveChangesBtn  = oldSaveChangesBtn.cloneNode(true);
+  oldSaveChangesBtn.replaceWith(newSaveChangesBtn);
+
+  newSaveChangesBtn.addEventListener("click", () => {
+    isEditMode = false;
+
+    const newTaskName = nameField.value;
+    const newTaskDesc = descField.value;
+    const newTaskStatus = statusField.value;
+    console.log(newTaskName, newTaskDesc, newTaskStatus);
+
+    // update local storage
+
+    nameField.readOnly = true;
+    descField.readOnly = true;
+    statusField.disabled = true;
+
+    editActionContainer.style.display = "none";
+  })
+}
+
 // ---------------------show timer details ---------------------
 function showTimer(taskItem) {
   const startTimerBtn = taskItem.querySelector(".start-timer-btn");
@@ -632,81 +844,6 @@ timerSectionCloseBtn.addEventListener("click", () => {
     timerSection.classList.remove('show');
   }
 });
-
-
-// -----------------show task details -------------------------
-function showTaskDetaitls(taskItem) {
-  const taskDetailsBtn = taskItem.querySelector(".task-details-btn");
-  const tasksDetailSection = taskDetailsBtn.closest('.tasks-management-container').querySelector('.tasks-details-section');
-  taskDetailsBtn.addEventListener("click", () => {
-    if(!tasksDetailSection.classList.contains("show")) {
-      tasksDetailSection.classList.add('show');
-    }
-
-    // setting current task to update
-    currentTaskItem = taskItem;
-    
-    // getting tasks of current user form local storage
-    const currentUserName = localStorage.getItem('currentUser');
-    const currentUser = users.find(u => u.username === currentUserName);
-    const tasks = currentUser?.tasks;
-
-    const taskId = Number(taskItem.dataset.taskId);
-    const taskToUpdate = tasks.find(task => task.taskId === taskId);
-    populateTaskDetails(tasksDetailSection,taskToUpdate);
-  })
-
-  // task details close 
-  const tasksDetailSectionCloseBtn = tasksDetailSection.querySelector(".tasks-details-section-close-btn");
-  tasksDetailSectionCloseBtn.addEventListener("click", () => {
-    tasksDetailSection.classList.remove('show');
-  })
-}
-
-
-// ------------populate task details ---------
-function populateTaskDetails(tasksDetailsContainer, taskData){
-  console.log(taskData);
-
-  tasksDetailsContainer.querySelector("#task-details-task-name").value = taskData.taskName;
-  tasksDetailsContainer.querySelector("#task-details-task-desc").value = taskData.taskDesc;
-  tasksDetailsContainer.querySelector("#task-details-task-status").textContent = taskData.taskStatus;
-  tasksDetailsContainer.querySelector("#task-details-task-startdate").textContent = taskData.startDate;
-  tasksDetailsContainer.querySelector("#task-details-task-enddate").textContent = taskData.endDate;
-  tasksDetailsContainer.querySelector("#task-details-task-totalduration").textContent = taskData.taskTotalDuration;
-
-  const timeLogList = tasksDetailsContainer.querySelector('#task-details-task-timeloglist');
-  timeLogList.innerHTML = "";
-
-
-  const logTogglerBtn = tasksDetailsContainer.querySelector('.time-log-toggler-btn');
-  logTogglerBtn.addEventListener("click", () => {
-    
-  });
-
-  taskData.timeLogs.forEach(tl => {
-
-    renderTimeLogs(tl);
-    const logDate = new Date(tl.startTime).toLocaleDateString('en-CA');
-    const logStartTime = new Date(tl.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12:false});
-    const logEndTime = new Date(tl.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12:false});
-
-    const li = document.createElement("li");
-    li.style.display = "flex";
-    li.style.gap = "10px";
-    li.innerHTML = `
-      <div class="task-details-logdate">${logDate}</div>
-      <div class="task-details-starttime">${logStartTime}</div>
-      <div class="task-details-endtime">${logEndTime}</div>
-      <div class="task-details-totaltime">${tl.totalTime}</div>
-    `;
-    timeLogList.append(li);
-  })
-}
-
-function renderTimeLogs(log) {
-
-}
 
 // main timer functionality
 timerBtn.addEventListener("click", (e) => {
@@ -1051,7 +1188,7 @@ function getTaskDurationForDate(tasks, selectedDate) {
 }
 
 
-// -----------------getting duration worked on each day and week---------------------
+// -----------------getting duration worked on each day and week(implentation withour chartjs)---------------------
 function getWorkingHoursForDay() {
   const workHoursPerDay = {};
 
@@ -1061,20 +1198,27 @@ function getWorkingHoursForDay() {
 
   tasks.forEach(task => {
     task.timeLogs.forEach(log => {
-      const logDate =  new Date(log.startTime);
-      console.log(logDate);
+      const currentDateKey = formateDate(new Date(log.startTime));
+      const [h, m, s] = log.totalTime.split(":");
+      const totalSeconds = Number(h) * 3600 + Number(m) * 60 + Number(s);
+      
+      if(!workHoursPerDay[currentDateKey]) {
+        workHoursPerDay[currentDateKey] = 0;
+      }
+
+      workHoursPerDay[currentDateKey] += totalSeconds;
     })
   })
+
+  return workHoursPerDay;
 }
-// getWorkingHoursForDay();
+console.log(getWorkingHoursForDay());
 
+const gridContainer = document.querySelector('.grid-container')
+function plotGraph(gridContainer, ){
 
+}
 
-
-
-
-
-// fffffffffffff
 
 
 // -----------chart rendering-----------------------
