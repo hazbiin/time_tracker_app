@@ -383,7 +383,7 @@ button{
     flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    /* align-items: center; */
     justify-content: center;
 }
 
@@ -392,49 +392,32 @@ button{
 }
 
 .grid-scrollable-container{
-    flex: 1;
     height: 100%;
     width: 100%;
+    width: 600px;
+    height: 600px;
 }
-.graph-container{
-    position: relative;
-    width: fit-content;
-}
+
 .grid-container {
     display: grid;
-    /* height: 100%; */
-    /* width: 100%; */
-    position: relative;
-    z-index: 1;
-   
-}
-.x-axis-labels{
-    position: absolute;
-    bottom: -20px;
-    left: 0;
-    display: grid;
-    grid-template-columns: repeat(14, minmax(10px, 60px));
+    height: 100%; 
     width: 100%;
-    font-size: 12px;
-    text-align: center;
-    border-top: 1px solid #000;
-
 }
-.y-axis-labels{
-    position: absolute;
-    /* left: -40px; */
-    top: 0;
-    bottom: 0;
+.y-label{
+    font-size: 12px;
+    font-weight: bold;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-    width: 35px;
-    font-size: 12px;
-    text-align: right;
-    border-left: 1px solid #000;
+    /* align-items: center; */
+    justify-content: flex-end;
+    padding-right: 10px;
+    border-right: 2px solid black;
 }
-
+.x-label{
+    border-top: 2px solid black;
+    font-size: 10px;
+    text-align: center;
+    white-space: nowrap;
+}
 .block{
     position: relative;
     display: flex;
@@ -449,7 +432,7 @@ button{
     /* animation styles----- */
     transform-origin: bottom;
     animation-name: growFromBottom;
-    animation-duration: 0.2s;
+    animation-duration: 0.1s;
     animation-timing-function: ease-out;
     animation-fill-mode: forwards; 
 }

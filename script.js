@@ -120,77 +120,75 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // restoring any active timers on page reloads
-  // const activeTimer = JSON.parse(localStorage.getItem("activeTimer"));
+  const activeTimer = JSON.parse(localStorage.getItem("activeTimer"));
 
-  // if(activeTimer){
-  //   const taskId = activeTimer.taskId;
-  //   startTime = new Date(activeTimer.startTime);
+  if(activeTimer){
+    const taskId = activeTimer.taskId;
+    startTime = new Date(activeTimer.startTime);
 
-  //   const currentUserName = localStorage.getItem('currentUser');
-  //   const currentUser = users.find(u => u.username === currentUserName);
-  //   const tasks = currentUser?.tasks;
+    const currentUserName = localStorage.getItem('currentUser');
+    const currentUser = users.find(u => u.username === currentUserName);
+    const tasks = currentUser?.tasks;
 
-  //   const taskToUpdate = tasks.find(task => task.taskId === taskId);
+    const taskToUpdate = tasks.find(task => task.taskId === taskId);
 
-  //   if(taskToUpdate) {
-  //     currentTaskItem = document.querySelector(`[data-task-id= '${taskId}']`);
-  //     ongoingTaskName.textContent = taskToUpdate.taskName;
+    if(taskToUpdate) {
+      currentTaskItem = document.querySelector(`[data-task-id= '${taskId}']`);
+      ongoingTaskName.textContent = taskToUpdate.taskName;
 
-  //     if(!timerSection.classList.contains('show')) {
-  //       timerSection.classList.add('show');
-  //     }
+      if(!timerSection.classList.contains('show')) {
+        timerSection.classList.add('show');
+      }
       
-  //     // restore timer variables.
-  //     hours = activeTimer.hours;
-  //     minutes = activeTimer.minutes;
-  //     seconds = activeTimer.seconds;
+      // restore timer variables.
+      hours = activeTimer.hours;
+      minutes = activeTimer.minutes;
+      seconds = activeTimer.seconds;
   
-  //     const elapsedSeconds = Math.floor((Date.now() - startTime.getTime()) / 1000);
+      const elapsedSeconds = Math.floor((Date.now() - startTime.getTime()) / 1000);
       
-  //     //converting excess seconds into minutes, and minutes into hours.
-  //     seconds += elapsedSeconds;
+      //converting excess seconds into minutes, and minutes into hours.
+      seconds += elapsedSeconds;
       
-  //     if(seconds >= 60){
-  //       minutes += Math.floor(seconds / 60);
-  //       seconds = seconds % 60;
-  //     }
-  //     if(minutes >= 60){
-  //       hours += Math.floor(minutes / 60);
-  //       minutes = minutes % 60;
-  //     }
+      if(seconds >= 60){
+        minutes += Math.floor(seconds / 60);
+        seconds = seconds % 60;
+      }
+      if(minutes >= 60){
+        hours += Math.floor(minutes / 60);
+        minutes = minutes % 60;
+      }
       
-  //     hoursText.innerText = `${formatWithLeadingZeros(hours)} h`;
-  //     minutesText.innerText = `${formatWithLeadingZeros(minutes)} m`;
-  //     secondsText.innerText = `${formatWithLeadingZeros(seconds)} s`;
+      hoursText.innerText = `${formatWithLeadingZeros(hours)} h`;
+      minutesText.innerText = `${formatWithLeadingZeros(minutes)} m`;
+      secondsText.innerText = `${formatWithLeadingZeros(seconds)} s`;
   
-  //     // start timer form where it was paused
-  //     timerStatus = 'started';
-  //     timerBtn.textContent = 'stop';
+      // start timer form where it was paused
+      timerStatus = 'started';
+      timerBtn.textContent = 'stop';
 
-  //     intervalId = setInterval(() => {
-  //       seconds++;
-  //       if(seconds === 60) {
-  //         seconds = 0;
-  //         minutes ++;
-  //         if(minutes === 60) {
-  //           minutes = 0;
-  //           hours++
-  //         }
-  //       }
+      intervalId = setInterval(() => {
+        seconds++;
+        if(seconds === 60) {
+          seconds = 0;
+          minutes ++;
+          if(minutes === 60) {
+            minutes = 0;
+            hours++
+          }
+        }
   
-  //       hoursText.innerText = `${formatWithLeadingZeros(hours)} h`;
-  //       minutesText.innerText = `${formatWithLeadingZeros(minutes)} m`;
-  //       secondsText.innerText = `${formatWithLeadingZeros(seconds)} s`;
+        hoursText.innerText = `${formatWithLeadingZeros(hours)} h`;
+        minutesText.innerText = `${formatWithLeadingZeros(minutes)} m`;
+        secondsText.innerText = `${formatWithLeadingZeros(seconds)} s`;
   
-  //     }, 1000);
+      }, 1000);
 
-  //     // const dailyTasksList = document.getElementById("daily-tasks-list");
-  //     // renderTask(taskToUpdate, dailyTasksList);
-  //   }
-  // }
+      // const dailyTasksList = document.getElementById("daily-tasks-list");
+      // renderTask(taskToUpdate, dailyTasksList);
+    }
+  }
 })
-
-
 
 // inital loading of daily tasks list from local storage.
 displayTasks();
@@ -1080,6 +1078,7 @@ todayTaskListBtn.addEventListener("click", () =>{
 })
 
 
+
 const listAllTasksBtn = document.querySelector("#list-all-tasks-btn");
 listAllTasksBtn.addEventListener("click", renderAllTasksList);
 
@@ -1146,73 +1145,116 @@ function getWorkingHoursForDay() {
     workHoursPerDay[date] =  Math.round((workHoursPerDay[date] / 3600) * 100) / 100;;
   });
 
+
   return workHoursPerDay;
 }
+
+const SCALING_FACTOR = 20; // only in development mode;
+
 const workHoursPerDay = getWorkingHoursForDay();
+console.log(workHoursPerDay);
+
+const allDates = Object.keys(workHoursPerDay).sort();
 const gridContainer = document.querySelector('.grid-container');
 
+
+// getting maxY according to the exisiting max hours of any day
 function getMaxYFromData(workHoursPerDay) {
   const allhours = Object.values(workHoursPerDay);
   const maxHours = Math.max(...allhours, 0);
-  const withBuffer = Math.ceil(maxHours + 4);
 
+  // only in development mode
+  // const scaledMaxHeight = maxHours * SCALING_FACTOR;
+  // const withBuffer = scaledMaxHeight + 3;
+
+  const withBuffer = Math.ceil(maxHours + 3);
   return Math.max(withBuffer,8);
 }
 
 const maxY = getMaxYFromData(workHoursPerDay);
+createGraph(gridContainer, maxY, 14);
 
-function plotGraph(gridContainer, maxY, maxX = 14){
-  gridContainer.style.gridTemplateRows = `repeat(${maxY}, minmax(10px, 60px))`;
-  gridContainer.style.gridTemplateColumns = `repeat(${maxX},  minmax(10px, 60px))`;
-  gridContainer.style.columnGap = '1px';
+function createGraph(gridContainer, maxY, maxX = 14){
+
+  // taking on extra row and column for labels
+  maxX = maxX + 1;
+  maxY = maxY + 1;
+
+  gridContainer.style.gridTemplateRows = `repeat(${maxY}, minmax(10px, 50px))`;
+  gridContainer.style.gridTemplateColumns = `repeat(${maxX},  minmax(10px, 50px))`;
   gridContainer.innerHTML = "";
 
-  for(let y = maxY - 1; y >= 0; y--) {
-    for(let x = 0; x < maxX; x++) {
+  for(let y = maxY - 1; y >= 0; y--) {  //row-wise(from top to bottom)
+    for(let x = 0; x < maxX; x++) {    //col-wise(from left to right)
       const cell = document.createElement('div');
-      cell.classList.add('block');
-      cell.dataset.xy = `${x},${y}`;
+      // cell.classList.add('block');
+      // cell.dataset.xy = `${x},${y}`;
+      // gridContainer.appendChild(cell);
+      
+
+      // -----------y-axis-label ------------
+      if(x === 0 && y !== 0) { 
+        cell.textContent = `${y.toString()}h`;
+        cell.classList.add("y-label");
+      }else if (x === 0 && y === 0){ 
+        cell.textContent = "0m";
+        cell.classList.add("y-label")
+        cell.style.borderRight = "unset"
+
+      // -----------x-axis-label ------------
+      }else if(y === 0 && x !== 0){ 
+        const dateIndex = x - 1;
+        const label = allDates[dateIndex] || "";
+        cell.textContent = label
+
+        cell.classList.add("x-label");
+
+      
+      // ---------actual block -------------
+      } else if (x !== 0 && y !== 0) {
+        cell.classList.add("block");
+        cell.dataset.xy = `${x},${y}`;
+      }
+
+
       gridContainer.appendChild(cell);
     }
   }
+
+  // ---------graph ploting logic ---------------------------------
+  allDates.forEach((date, x) => {
+    const hours = workHoursPerDay[date];
+    
+    // only in dev mode
+    // const height = Math.floor(hours * SCALING_FACTOR);
+    
+    const height = Math.floor(hours);
+    console.log(height);
+
+    for(let y = 0; y <= height; y++) {
+
+      setTimeout(() => {
+        const styleObj = {
+          backgroundColor: "black",
+          opacity: "0.7",
+          width: "75%"
+        }
+
+        if( y === height) {
+          Object.assign(styleObj, {
+            borderTopLeftRadius: "4px",
+            borderTopRightRadius: "4px",
+          })
+        }
+        createMarker(x, y, gridContainer, styleObj);
+      }, y * 1000)
+    }
+  })
+
 }
-plotGraph(gridContainer, maxY, 14);
-console.log(workHoursPerDay)
-
-const SCALING_FACTOR = 50; // only in development mode;
-
-// sort the dates in increasing order and only take the frist 
-const allDates = Object.keys(workHoursPerDay).sort().slice(-14);
-
-allDates.forEach((date, x) => {
-  const hours = workHoursPerDay[date];
-  const height = Math.floor(hours * SCALING_FACTOR);
-
-  console.log(height)
-
-  for(let y = 0; y <= height; y++) {
-
-    setTimeout(() => {
-      const styleObj = {
-        backgroundColor: "black",
-        opacity: "0.7",
-        width: "75%"
-      }
-
-      if( y === height) {
-        Object.assign(styleObj, {
-          borderTopLeftRadius: "4px",
-          borderTopRightRadius: "4px",
-          marginTop: "5px"
-        })
-      }
-      createMarker(x, y, gridContainer, styleObj);
-    }, y * 1000)
-  }
-})
 
 function createMarker(x, y, container, styleObj) {
-  const cell = container.querySelector(`[data-xy='${x},${y}']`);
+  const cell = container.querySelector(`[data-xy='${x + 1},${y + 1}']`);
   if(!cell) return;
 
   const marker = document.createElement("div");
@@ -1221,29 +1263,7 @@ function createMarker(x, y, container, styleObj) {
   cell.appendChild(marker);
 }
 
-function renderYAxisLabels(maxY) {
-  const container = document.querySelector('.y-axis-labels');
-  container.innerHTML = '';
 
-  for(let i = maxY; i >= 0; i--) {
-    const label = document.createElement('div');
-    label.textContent = `${i}h`;
-    container.appendChild(label);
-  }
-}
-renderYAxisLabels(maxY);
-
-function renderXAxisLabels(dates) {
-  const container = document.querySelector('.x-axis-labels');
-  container.innerHTML = '';
-
-  dates.forEach(date => {
-    const label = document.createElement('div');
-    label.textContent = date;
-    container.appendChild(label);
-  });
-}
-renderXAxisLabels(allDates);
 
 
 
