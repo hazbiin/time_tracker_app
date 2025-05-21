@@ -392,13 +392,12 @@ button{
 }
 
 .grid-scrollable-container{
-    height: 100%;
-    width: 100%;
-    width: 600px;
-    height: 600px;
+    width: 900px;
+    height: 500px;
 }
 
 .grid-container {
+    /* background-color: rgb(216, 221, 221); */
     display: grid;
     height: 100%; 
     width: 100%;
@@ -410,10 +409,10 @@ button{
     /* align-items: center; */
     justify-content: flex-end;
     padding-right: 10px;
-    border-right: 2px solid black;
+    /* border-right: 1px solid black; */
 }
 .x-label{
-    border-top: 2px solid black;
+    /* border-top: 1px solid black; */
     font-size: 10px;
     text-align: center;
     white-space: nowrap;
@@ -423,11 +422,15 @@ button{
     display: flex;
     align-items: center;
     justify-content: center;
+    /* border-bottom: 0.2px solid lightgray; */
+    border: 1px solid gray;
 }
 .marker-block{
     position: absolute;
-    top: 0;
     bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
 
     /* animation styles----- */
     transform-origin: bottom;
@@ -477,13 +480,6 @@ button{
 .task-input-container.show{
     display: flex;
 }
-
-
-
-
-
-
-
 
 
 /* /////////////////time logs list/////////////////// */

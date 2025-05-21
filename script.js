@@ -1120,6 +1120,9 @@ function renderAllTasksList(){
 
 
 // -----------------getting duration worked on each day and week(implentation withour chartjs)---------------------
+// const SCALING_FACTOR = 10; // only in development mode;
+
+
 function getWorkingHoursForDay() {
   const workHoursPerDay = {};
 
@@ -1149,7 +1152,6 @@ function getWorkingHoursForDay() {
   return workHoursPerDay;
 }
 
-const SCALING_FACTOR = 20; // only in development mode;
 
 const workHoursPerDay = getWorkingHoursForDay();
 console.log(workHoursPerDay);
@@ -1162,20 +1164,16 @@ const gridContainer = document.querySelector('.grid-container');
 function getMaxYFromData(workHoursPerDay) {
   const allhours = Object.values(workHoursPerDay);
   const maxHours = Math.max(...allhours, 0);
-
-  // only in development mode
-  // const scaledMaxHeight = maxHours * SCALING_FACTOR;
-  // const withBuffer = scaledMaxHeight + 3;
-
   const withBuffer = Math.ceil(maxHours + 3);
-  return Math.max(withBuffer,8);
+  return Math.max(withBuffer,13);
 }
 
 const maxY = getMaxYFromData(workHoursPerDay);
 createGraph(gridContainer, maxY, 14);
 
-function createGraph(gridContainer, maxY, maxX = 14){
 
+function createGraph(gridContainer, maxY, maxX = 14){
+  
   // taking on extra row and column for labels
   maxX = maxX + 1;
   maxY = maxY + 1;
@@ -1185,6 +1183,8 @@ function createGraph(gridContainer, maxY, maxX = 14){
   gridContainer.innerHTML = "";
 
   for(let y = maxY - 1; y >= 0; y--) {  //row-wise(from top to bottom)
+    // console.log(y)
+
     for(let x = 0; x < maxX; x++) {    //col-wise(from left to right)
       const cell = document.createElement('div');
       // cell.classList.add('block');
@@ -1198,14 +1198,14 @@ function createGraph(gridContainer, maxY, maxX = 14){
         cell.classList.add("y-label");
       }else if (x === 0 && y === 0){ 
         cell.textContent = "0m";
-        cell.classList.add("y-label")
-        cell.style.borderRight = "unset"
+        cell.classList.add("y-label");
+        cell.style.borderRight = "unset";
 
       // -----------x-axis-label ------------
       }else if(y === 0 && x !== 0){ 
         const dateIndex = x - 1;
         const label = allDates[dateIndex] || "";
-        cell.textContent = label
+        cell.textContent = label;
 
         cell.classList.add("x-label");
 
@@ -1216,41 +1216,51 @@ function createGraph(gridContainer, maxY, maxX = 14){
         cell.dataset.xy = `${x},${y}`;
       }
 
-
       gridContainer.appendChild(cell);
     }
   }
-
+  
   // ---------graph ploting logic ---------------------------------
   allDates.forEach((date, x) => {
-    const hours = workHoursPerDay[date];
-    
-    // only in dev mode
-    // const height = Math.floor(hours * SCALING_FACTOR);
-    
-    const height = Math.floor(hours);
-    console.log(height);
+    // console.log("-------------------new date --------------------");
 
-    for(let y = 0; y <= height; y++) {
+    const totalHours = workHoursPerDay[date];
+    // console.log("totalhours",totalHours);
+
+    // dev mode testing
+    // const actualHours = totalHours * SCALING_FACTOR;
+    // console.log(actualHours)
+    // const fullBlocks = Math.ceil(actualHours);
+
+    // getting full bar lenght, we have to loop untill this height
+    const fullBlocks = Math.ceil(totalHours); 
+    // console.log("fullblocks",fullBlocks);
+
+    for(let y = 0; y < fullBlocks; y++) {
+      // console.log("y value", y);
+
+      let fillRatio = 1;
+
+      // handle partial fill in lastblock
+      if(y === fullBlocks - 1 && totalHours % 1 !== 0) {
+        fillRatio = totalHours % 1; // remainder here will be the fill ratio
+        console.log("fillratio", `${fillRatio * 100}%`)
+      }
+
+      const styleObj = {
+        backgroundColor:"blueviolet",
+        opacity: "0.7",
+        width: "75%",
+        height: `${fillRatio * 100}%`,
+        borderTopLeftRadius: fillRatio === 1 ? "0px" : "4px",
+        borderTopRightRadius: fillRatio === 1 ? "0px" : "4px"
+      }
 
       setTimeout(() => {
-        const styleObj = {
-          backgroundColor: "black",
-          opacity: "0.7",
-          width: "75%"
-        }
-
-        if( y === height) {
-          Object.assign(styleObj, {
-            borderTopLeftRadius: "4px",
-            borderTopRightRadius: "4px",
-          })
-        }
         createMarker(x, y, gridContainer, styleObj);
-      }, y * 1000)
+      }, y * 1000);
     }
   })
-
 }
 
 function createMarker(x, y, container, styleObj) {
@@ -1262,6 +1272,12 @@ function createMarker(x, y, container, styleObj) {
   Object.assign(marker.style, styleObj);
   cell.appendChild(marker);
 }
+
+
+
+
+
+
 
 
 
