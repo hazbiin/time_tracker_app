@@ -6,7 +6,6 @@ const taskInputpopup = document.querySelector(".task-input-container");
 const createTaskButton = document.getElementById("create-task-button");
 
 const exisistingTaskBtn = document.getElementById("existing-task-btn");
-
 const tasksSectionDescription = document.getElementById("tasks-section-desc");
 
 // timer section 
@@ -106,13 +105,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const currentUser = users.find(u => u.username === currentUserName);
     const tasks = currentUser?.tasks;
-
-    // const dailyTasksList = document.querySelector("#daily-tasks-list");
-    //   const listCategories = dailyTasksList.querySelectorAll(".list-category");
-    //   listCategories.forEach(lc => {
-    //     lc.style.display = "none";
-    //   })
-
     
   }else {
     document.querySelector("#auth-section").style.display = "block";
@@ -456,8 +448,13 @@ function updateTaskStatus(taskItem) {
   const statusSelectBox = taskItem.querySelector("#task-status");
 
   statusSelectBox.addEventListener("change", () => {
+
+    if(timerStatus === "started") {
+      return;
+    }
+
     const updatedTaskStatus = statusSelectBox.value;
-    if(updatedTaskStatus === "done") {
+    if(updatedTaskStatus === "done" && timerStatus !== "started") {
       
       if(statusSelectBox.closest(".main-tasks-list")) {
         if(document.querySelector("#all-tasks-section").style.display === "flex") {
@@ -604,7 +601,7 @@ function populateTaskDetails(tasksDetailsContainer, taskData){
   if(taskData.taskStatus === "in-progress") {
     taskStatusField.style.display = "inline-block"
   }else {
-     taskStatusField.style.display = "none"
+    taskStatusField.style.display = "none"
   }
 
   // populate basic fields
@@ -777,6 +774,9 @@ function enableEditing(tasksDetailsContainer, taskData){
     editActionContainer.style.display = "none";
   })
 }
+
+
+
 
 // ---------------------show timer details ---------------------
 function showTimer(taskItem) {
@@ -1122,7 +1122,6 @@ function renderAllTasksList(){
 // -----------------getting duration worked on each day and week(implentation withour chartjs)---------------------
 // const SCALING_FACTOR = 10; // only in development mode;
 
-
 function getWorkingHoursForDay() {
   const workHoursPerDay = {};
 
@@ -1165,7 +1164,7 @@ function getMaxYFromData(workHoursPerDay) {
   const allhours = Object.values(workHoursPerDay);
   const maxHours = Math.max(...allhours, 0);
   const withBuffer = Math.ceil(maxHours + 3);
-  return Math.max(withBuffer,13);
+  return Math.max(withBuffer,8);
 }
 
 const maxY = getMaxYFromData(workHoursPerDay);
@@ -1197,9 +1196,9 @@ function createGraph(gridContainer, maxY, maxX = 14){
         cell.textContent = `${y.toString()}h`;
         cell.classList.add("y-label");
       }else if (x === 0 && y === 0){ 
-        cell.textContent = "0m";
-        cell.classList.add("y-label");
-        cell.style.borderRight = "unset";
+        // cell.textContent = "0m";
+        // cell.classList.add("y-label");
+        // cell.style.borderRight = "unset";
 
       // -----------x-axis-label ------------
       }else if(y === 0 && x !== 0){ 
@@ -1272,6 +1271,36 @@ function createMarker(x, y, container, styleObj) {
   Object.assign(marker.style, styleObj);
   cell.appendChild(marker);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
