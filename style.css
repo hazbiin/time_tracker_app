@@ -87,9 +87,10 @@ button{
     align-items: center;
     justify-content: space-between;
 }
-#all-tasks-section .main-section-bottom{
+/* #all-tasks-section .main-section-bottom{
    padding: 20px;
-}
+
+} */
 
 .main-section-bottom{
     border: 1px solid rgb(217, 217, 217);
@@ -102,7 +103,6 @@ button{
     overflow-y: auto;
     overflow-x: hidden;
 }
-
 
 .current-day-details-section{
     display: flex;
@@ -160,13 +160,17 @@ button{
     overflow-y: auto;
     overflow-x: hidden;
 }
+.main-tasks-management-container .tasks-list-section{
+    overflow-y: auto;
+    overflow-x: hidden;
+}   
 
 /* ---------------------tasks list section--------------------------*/
 .tasks-list-section{
     /* background-color: rgb(241, 241, 241); */
-    /* border: 1px solid lightgrey;
-    border-radius: 15px; */
-    /* padding: 10px; */
+    padding: 10px;
+    border: 1px solid lightgrey;
+    border-radius: 15px;
     flex: 1;
     transition: flex 0.5s ease;
 }
@@ -243,15 +247,13 @@ button{
 }
 
 
-
-
 /* ---------------tasks details section------------------------ */
 .tasks-details-section {
     height: 100%;
     background-color: rgb(241, 241, 241);
     border-radius: 15px;
     position: relative;
-
+    
     flex-basis: 0;
     max-width: 0;
     overflow: hidden;
@@ -265,31 +267,15 @@ button{
     margin-left: 10px;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* --------------------------timer section---------------------------- */
 .timer-section{
-    background-color: rgb(241, 241, 241);
+    /* background-color: rgb(241, 241, 241); */
+
+    border: 1px solid rgb(217, 217, 217);
+    border-radius: 10px;
+
+    /* background-color: blueviolet;
+    opacity: 0.5; */
     height: 100%;
     border-radius: 15px;
     display: flex;
@@ -297,19 +283,24 @@ button{
     justify-content: center;
     position: relative;
 
+    overflow: hidden;
+    /* flex-basis: 25%;
+    max-width: 25%;
+    margin-left: 10px; */
+
     flex-basis: 0;
     max-width: 0;
-    overflow: hidden;
     transform: translateX(100%);
     transition: transform 0.5s ease, max-width 0.5s ease, flex-basis 0.5s ease;
 }
 .timer-section.show{
-    /* background-color: rgb(150, 144, 155); */
+    background-color: rgb(150, 144, 155);
     flex-basis: 25%;
     max-width: 25%;
     transform:  translateX(0);
     margin-left: 10px;
 }
+
 .timer-section-close-btn {
     position: absolute;
     right: 10px;
@@ -331,9 +322,6 @@ button{
 }
 
 /* ---------------all tasks page styles ------------------- */
-#all-tasks-section .tasks-management-container {
-    margin-top: 30px;
-}
 .main-tasks-list{
     display: flex;
     flex-direction: column;
@@ -341,7 +329,7 @@ button{
     /* gap: 15px; */
 }
 .list-category{
-    padding: 10px;
+    padding-bottom: 10px;
     /* background-color: rgb(160, 159, 160); */
 }
 .list-category h3 {
@@ -383,8 +371,9 @@ button{
     flex: 1;
     display: flex;
     flex-direction: column;
-    /* align-items: center; */
+    align-items: center;
     justify-content: center;
+    gap: 20px;
 }
 
 .analytics-bottom-row-right-section {
@@ -421,7 +410,7 @@ button{
     display: flex;
     align-items: center;
     justify-content: center;
-    border-bottom: 0.2px solid lightgray;
+    /* border-bottom: 0.2px solid lightgray; */
     /* border: 1px solid gray; */
 }
 .marker-block{
@@ -432,11 +421,11 @@ button{
     margin: 0 auto;
 
     /* animation styles----- */
-    transform-origin: bottom;
+    /* transform-origin: bottom;
     animation-name: growFromBottom;
     animation-duration: 0.1s;
     animation-timing-function: ease-out;
-    animation-fill-mode: forwards; 
+    animation-fill-mode: forwards;  */
 }
 
 @keyframes growFromBottom {
@@ -453,110 +442,59 @@ button{
 }
 
 
-/* ////////////////////create new task popup ////////////////// */
-.create-new-task-popup-container{
+
+/* ---------------------create new task popup-------------------------- */
+.new-task-popup{
     position: absolute;
-    bottom:15px;
-    left: 15px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 40%;
+    right: 10px;
+    top: 60px;
     border-radius: 20px;
     background-color:#ececec;
     z-index: 10;
+    padding: 30px;
+    width: 500px;
+    max-height: 400px;
+    display: none;
 }
-.task-input-container {
+.new-task-popup.show{
+    display: block;
+}
+.task-inputs-container{
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    padding: 30px;
-    height: 400px;
-    display: none;
-    max-height: 400px;
-    overflow-y: auto;
+    gap: 30px;
 }
-.task-input-container.show{
+.popup-inputs{
     display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-bottom: 1px solid lightgray;
 }
-
-
-/* /////////////////time logs list/////////////////// */
-
-/* .time-log-btn{
-    border: none;
+.popup-control-btns{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
-    background: none;
-    font-family: Poppins;
-    font-weight: 300;
-    font-size: 14px;
+}
+.btn{
+    background: black;
+    color: #f6f6f6;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: start;
     border-radius: 5px;
-    padding: 5px 5px;
+    padding: 10px 8px;
+    font-size: 14px;
     cursor: pointer;
-
+    white-space: nowrap;
+    letter-spacing: 1px;
 }
-.time-log-btn:hover{
-    background-color: #e2e2e2;
+#task-desc{
+  height: 120px; 
+  resize: vertical;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
-.time-log-btn{
-    display: none;
-}
-.time-log-btn.show{
-    display: flex;
-}
-.time-log{
-    display: none;
-}
-.time-log.show{
-    display: block;
-}
-.time-log-list{
-    list-style: none;
-} */
-
-
-
-
-
-/* .create-new-task-popup{
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 30px;
-    background-color: #f4f4f4;
-    border-radius: 20px;
-    display: flex;
-    flex-direction: column;
-    height: 90vh;
-    transform: translateY(100%);
-    transition: transform 0.5s ease;
-    z-index: 2;
-}
-.create-new-task-popup.show{
-    transform: translateY(0);
-} */
-
-/* .close-create-task-pop-up-btn{
-    position: absolute;
-    top:10px;
-    right: 10px;
-} */
-
-/* .daily-summary-tab{
-    margin-bottom: 60px;
-    background-color: #f6f6f6;
-    padding: 10px;
-    border-radius: 10px;
-    text-align: center;
-    position: relative;
-}
-.summary-close-btn{
-    position: absolute;
-    top: 0;
-    right: 0;
-} */

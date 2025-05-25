@@ -10,25 +10,32 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    
-    <section id="auth-section">
-        <div id="login-form">
-            <h3>Login</h3>
-            <input type="text" id="login-username" placeholder="Username" />
-            <input type="password" id="login-password" placeholder="Password"/ >
-            <button id="login-btn">Login</button>
-            <p>No account? <a href="#" id="show-signup">Signup</a> </p>
-        </div>
-        <div id="signup-form">
-            <h3>Signup</h3>
-            <input type="text" id="signup-username" placeholder="Username" />
-            <input type="password" id="signup-password" placeholder="Password" />
-            <button id="signup-btn">Create Account</button>
-            <p>Have an account? <a href="#" id="show-login">Login</a></p>
-        </div>
-    </section>
 
-    <section class="main-page" style="display: none;">
+
+    <!-- ---------------signup section------------------ -->
+    <div id="signup-section">
+        <h2>Sign Up</h2>
+        <form id="signup-form">
+            <input type="text" id="signup-username" placeholder="Username" required />
+            <input type="password" id="signup-password" placeholder="Password" required />
+            <button type="submit">Sign Up</button>
+        </form>
+        <p>Already have an account? <a href="#" id="to-login">Log in</a></p>
+    </div>
+
+    <!-- ------------login section--------------------- -->
+    <div id="login-section" style="display: none;">
+        <h2>Log In</h2>
+        <form id="login-form">
+            <input type="text" id="login-username" placeholder="Username" required />
+            <input type="password" id="login-password" placeholder="Password" required />
+            <button type="submit">Log In</button>
+        </form>
+        <p>Don't have an account? <a href="#" id="to-signup">Sign up</a></p>
+    </div>
+
+    <!-- -------------------main-app-section------------- -->
+    <section id="app-section" class="main-page" style="display: none;">
         <div class="container">
             <nav class="sidebar">
                 <ul class="main-nav-links">
@@ -39,33 +46,14 @@
                        </button>
                     </li>
                     <li>
-                        <!-- <a href="tasks-lists.html">
-                            <img src="assets/svgs/view_list_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
-                            <span>My Tasks List</span>
-                        </a> -->
                         <button id="today-task-list-btn" class="nav-link">Track Today</button>
-                        <!--jj  -->
                     </li>
                     <li>
-                        <!-- <a href="tasks-lists.html">
-                            <img src="assets/svgs/view_list_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
-                            <span>My Tasks List</span>
-                        </a> -->
                         <button id="list-all-tasks-btn" class="nav-link">My Tasks List</button>
                     </li>
                     <li>
                         <button id="analytics-btn" class="nav-link">See Analytics</button>
-                        <!-- <a href="analytics.html">
-                            <img src="assets/svgs/analytics_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
-                            <span>Analytics</span>
-                        </a> -->
                     </li>
-                    <!-- <li>
-                        <a href="calendar.html">
-                            <img src="assets/svgs/calendar_month_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
-                            <span>Calendar</span>
-                        </a>
-                    </li> -->
                 </ul>
     
                 <ul class="profile-settings">
@@ -79,10 +67,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="">
-                            <img src="assets/svgs/logout_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" />
-                            <span>Logout</span>
-                        </a>
+                        <button id="logout-btn">Logout</button>
                     </li>
                 </ul>
             </nav>
@@ -92,13 +77,9 @@
 
                 <!-- ---------------------task -management- section --------------------- -->
                 <section id="today-tasks-section">
-                    <!-- <div class="main-section-top">
-                        <div class="main-section-top-left-section">
-                            <h3>Hello, Username!</h3>
-                            <p>Let's keep track of your time..</p>
-                        </div>
-                    </div> -->
+                   
                     <div class="main-section-bottom">
+
                         <div class="current-day-details-section">
                             <div>
                                 <h3>Today's Tasks </h3>
@@ -109,31 +90,28 @@
                                 <button class="create-task-btn" id="existing-task-btn">Work on Existing tasks ?</button>
                             </div>
                         </div>
-    
                         
-                         <!-- ------------------create new task pop up ------------------------ -->
-                         <div class="create-new-task-popup-container">
-                            <div class="task-input-container">
-                                <input id="task-name" type="text" placeholder="enter task name..."/>
-                                <textarea id="task-desc" placeholder="enter description" id=""></textarea>
-                                <input id="task-tag" type="text" placeholder="set a tag ..."/>
-                                
-                                <button id="create-task-button">CREATE TASK</button>
+                        
+                        <!-- ------------------create new task pop up ------------------------ -->
+                        <div class="new-task-popup">
+                            <div class="task-inputs-container">
+                                <div class="popup-inputs">
+                                    <input id="task-name" type="text" placeholder="enter task name..."/>
+                                    <textarea id="task-desc" placeholder="enter description" id=""></textarea>
+                                    <input id="task-tag" type="text" placeholder="set a tag ..."/>
+                                </div>
+                                <div class="popup-control-btns">
+                                    <button id="create-task-btn" class="btn">Create task</button>
+                                    <button id="close-popup-btn" class="btn">Cancel</button>
+                                </div>
                             </div>
-        
-                            <!-- <button class="create-task-btn" id="create-task-popup-btn">
-                                <img src="assets/svgs/add_task_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg">
-                                <span>Working on a new Task?</span>
-                            </button> -->
-                            
                         </div>
-                    
-
-
-                        <div id="tasks-section-desc" class="tasks-section-desc">
+                        
+                        <!-- --------------section description----------------- -->
+                        <!-- <div id="tasks-section-desc" class="tasks-section-desc">
                             <h3>Your tasks will be listed here.</h3>
                             <p>Track your time on tasks and organize them using any tags.. its all up to you!</p>
-                        </div>
+                        </div> -->
 
                         <div class="tasks-management-container">
                             <div class="tasks-list-section">
@@ -198,12 +176,12 @@
                                                 <span id="task-details-task-enddate">YYYY-MM-DD</span>
                                             </div>
                                         </div>
-                                        <!-- <div class="task-detail-group">
+                                        <div class="task-detail-group">
                                             <label>Task tags:</label>
                                             <ul id="task-details-task-tags">
                                                 <li></li>
                                             </ul>
-                                        </div> -->
+                                        </div>
                                         <div class="task-detail-group">
                                             <label>Time-log-list:</label>
                                             <button class="time-log-toggler-btn">view more</button>
@@ -256,6 +234,8 @@
                                 </div>
                                 <button class="timer-section-close-btn">x</button>
                             </div>  
+
+
                         </div>
                     </div>
                 </section>
@@ -267,12 +247,10 @@
                         <div class="main-section-top-left-section">
                             <input type="text" placeholder="search by tags"/>
                         </div>
-                        <div class="main-section-top-right-section">
-                            <!-- <button class="create-task-btn" id="create-task-popup-btn"> + Create New Task </button> -->
-                        </div>
                     </div>
                     <div class="main-section-bottom">
                         <h3>Your Tasks List</h3>
+
                         <div class="tasks-management-container">
                             <div class="tasks-list-section">
                                 <ul class="main-tasks-list">
@@ -299,7 +277,75 @@
 
                             <div class="tasks-details-section">
                                 <div class="tasks-details-container">
-                                    <h3>task details</h3>
+                                    <div class="task-details-header">
+                                        <h3>Your Task Details</h3>
+                                        <button class="edit-toggle-btn">Edit mode</button>
+                                    </div>
+
+                                  
+                                    <div class="task-details-content">
+                                        <div class="task-detail-group">
+                                            <label>Name:</label>
+                                            <input type="text" id="task-details-task-name" value="task-name" readonly>
+                                        </div>
+                                        <div class="task-detail-group">
+                                            <label>Description:</label>
+                                            <textarea id="task-details-task-desc" readonly>task description</textarea>
+                                        </div>
+                                        <div class="task-detail-group">
+                                            <label>Status:</label>
+                                            <span id="task-details-task-status">to-do</span>
+                                            <select id="task-status" disabled>
+                                                <option value="" selected>change status</option>
+                                                <option value="done"> ✅ Done</option>
+                                            </select>
+                                        </div>
+                                        <div class="task-detail-group">
+                                            <div>
+                                                <label>Start-date:</label>
+                                                <span id="task-details-task-startdate">YYYY-MM-DD</span>
+                                            </div>
+                                            <div>
+                                                <label>End-date:</label>
+                                                <span id="task-details-task-enddate">YYYY-MM-DD</span>
+                                            </div>
+                                        </div>
+                                        <div class="task-detail-group">
+                                            <label>Task tags:</label>
+                                            <ul id="task-details-task-tags">
+                                                <li></li>
+                                            </ul>
+                                        </div>
+                                        <div class="task-detail-group">
+                                            <label>Time-log-list:</label>
+                                            <button class="time-log-toggler-btn">view more</button>
+                                            
+                                            <div class="time-log-list-contianer">
+                                                <div style="display: flex; gap:10px; justify-content: space-evenly;">
+                                                    <div>Log Date</div>
+                                                    <div>start time</div>
+                                                    <div>end time</div>
+                                                    <div>total time</div>
+                                                </div>
+                                                <ul id="task-details-task-timeloglist">
+                                                    <li style="display: flex; gap:10px;">
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="task-detail-group">
+                                            <label>Total-task-duration:</label>
+                                            <span id="task-details-task-totalduration">00h 00m 00s</span>
+                                        </div>
+                                    </div>
+
+                                   
+                                    <div class="task-edit-actions" style="display: none;">
+                                        <button class="btn save-changes-btn">save changes</button>
+                                        <button class="btn cancel-edit-btn">Cancel</button>
+                                    </div>
+
                                 </div>
                                 <button class="tasks-details-section-close-btn">x</button>
                             </div>
@@ -320,25 +366,26 @@
                             <div class="analytics-top-column">
                                 <span>total time spend today</span>
                                 <h4>00h 00m</h4>
-                                <!-- <button>change date</button> -->
+                               
                                 <input type="date">
                             </div>
                             <div class="analytics-top-column">
                                 <span>total time spend this week</span>
                                 <h4>00h 00m</h4>
-                                <!-- <button>change week</button> -->
+                             
                                 <input type="week">
                             </div>
                             <div class="analytics-top-column">
                                 <span>total time spend this month</span>
                                 <h4>00h 00m</h4>
-                                <!-- <button>change month</button> -->
+                             
                                 <input type="month"/>
                             </div>
                         </div>
+
                         <div class="analytics-bottom-row">
                             <div class="analytics-bottom-row-left-section">
-                                <h3>Hours Per Day, Week, Month</h3>
+                                <h3>Time spent per day</h3>
                                 <div class="grid-scrollable-container">
                                     <div class="grid-container">
                                     </div>
@@ -358,8 +405,11 @@
                     </div>
                 </section>
             </main>
+
+
         </div>
     </section>
+
     <script src="script.js"></script>
 </body>
 </html>
