@@ -113,6 +113,8 @@
                         </div> -->
 
                         <div class="tasks-management-container">
+
+                            <!-- -------------------------tasks list section----------------------- -->
                             <div class="tasks-list-section">
                                 <ul id="daily-tasks-list" class="new-tasks-list">
 
@@ -138,13 +140,20 @@
                                 </ul>
                             </div>
 
-                            <!-- -----------------task details-section------------------- -->
-                            <div class="tasks-details-section">
+                            <!-- -----------------------task details-section------------------------------ -->
+                            <div class="tasks-details-section">  <!-- common section -->
+
+                                
                                 <div class="tasks-details-container">
 
                                     <div class="task-details-header">
-                                        <h3>Your Task Details</h3>
-                                        <button class="edit-toggle-btn">Edit mode</button>
+                                        <div class="header-desc">
+                                            <h4>Your Task Details</h4>
+                                        </div>
+                                        <div class="header-btns">
+                                            <button class="edit-toggle-btn btn">Edit mode</button>
+                                            <button class="btn tasks-details-section-close-btn">x</button>
+                                        </div>
                                     </div>
 
                                     <!-- scrollabel content -->
@@ -212,10 +221,12 @@
                                     </div>
 
                                 </div>
-                                <button class="tasks-details-section-close-btn">x</button>
+
+
+                                <!-- <button class="tasks-details-section-close-btn">x</button> -->
                             </div>
 
-
+                            <!-- ------------------------timer-section---------------------------- -->
                             <div class="timer-section">
                                 <div class="time-container">
                                     <div>
@@ -233,8 +244,6 @@
                                 </div>
                                 <button class="timer-section-close-btn">x</button>
                             </div>  
-
-
                         </div>
                     </div>
                 </section>
@@ -242,11 +251,6 @@
 
                 <!-- -------------------all tasks section----------------------------- -->
                 <section id="all-tasks-section" style="display: none;">
-                    <!-- <div class="main-section-top">
-                        <div class="main-section-top-left-section">
-                            <input type="text" placeholder="search by tags"/>
-                        </div>
-                    </div> -->
 
                     <div class="main-section-bottom">
                         <div style="display: flex; justify-content: space-between;">
@@ -278,14 +282,16 @@
                                 </ul>
                             </div>
 
-                            <div class="tasks-details-section">
+                            <div class="tasks-details-section">  <!-- common section -->
+
                                 <div class="tasks-details-container">
+
                                     <div class="task-details-header">
                                         <h3>Your Task Details</h3>
                                         <button class="edit-toggle-btn">Edit mode</button>
                                     </div>
 
-                                  
+                                    
                                     <div class="task-details-content">
                                         <div class="task-detail-group">
                                             <label>Name:</label>
@@ -356,13 +362,9 @@
                     </div>
                 </section>
 
+
                 <!-- ---------------analytics-section------------------- -->
                 <section id="analytics-section" style="display: none;">
-                    <!-- <div class="main-section-top">
-                        <div class="main-section-top-left-section">
-                            <h3>Analytics Dashboard</h3>
-                        </div>
-                    </div> -->
 
                     <div class="main-section-bottom">
                         <h3>Analytics Dashboard</h3>

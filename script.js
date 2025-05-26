@@ -516,8 +516,6 @@ function showTimer(taskItem) {
         hours = Number(hrs);
       }
     }
-
-    console.log("current taskItem", currentTaskItem)
   });
 }
 
@@ -529,8 +527,6 @@ timerSectionCloseBtn.addEventListener("click", () => {
 
 ////////////////////////////////////////////////////////////////////////main timer btn functionality////
 timerBtn.addEventListener("click", (e) => {
-
-  console.log("current task item", currentTaskItem);
 
   const currentUserName = localStorage.getItem('currentUser');
   const currentUser = users.find(u => u.username === currentUserName);
@@ -784,10 +780,8 @@ function displayTotalTaskDuration(taskToUpdate, taskId) {
 }
 
 
-////////////////////////////////////////////////////////////////////////////////////////show task details////
 
-
-let isEditMode = false;
+// /////////////////////////////////////////////////////////////////////////new code for showing task details 
 function showTaskDetaitls(taskItem) {
 
   const taskDetailsBtn = taskItem.querySelector(".task-details-btn");
@@ -797,215 +791,266 @@ function showTaskDetaitls(taskItem) {
       tasksDetailSection.classList.add('show');
     }
 
-    // setting current task to update
-    currentTaskItem = taskItem;
-    
-    // getting tasks of current user form local storage
+    // getting the task from local storage.
     const currentUserName = localStorage.getItem('currentUser');
     const currentUser = users.find(u => u.username === currentUserName);
     const tasks = currentUser?.tasks;
 
     const taskId = Number(taskItem.dataset.taskId);
-    const taskToUpdate = tasks.find(task => task.taskId === taskId);
+    const currentTask = tasks.find(task => task.taskId === taskId);
+    
+    // tasksDetailSection.innerHTML = "";
+   
+    console.log(tasksDetailSection);
 
-    // populating the task details l;l;
-    if(!isEditMode) {
-      populateTaskDetails(tasksDetailSection,taskToUpdate);
-    }else {
-      alert("switch form edit mode, to view further task details!");
-    }
+  });
 
-  })
+
 
   // task details close 
   const tasksDetailSectionCloseBtn = tasksDetailSection.querySelector(".tasks-details-section-close-btn");
   tasksDetailSectionCloseBtn.addEventListener("click", () => {
     tasksDetailSection.classList.remove('show');
-  })
+  });
 }
 
-// ------------ populate task details ---------
-function populateTaskDetails(tasksDetailsContainer, taskData){
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////show task details////
+// let isEditMode = false;
+// function showTaskDetaitls(taskItem) {
+
+//   const taskDetailsBtn = taskItem.querySelector(".task-details-btn");
+//   const tasksDetailSection = taskDetailsBtn.closest('.tasks-management-container').querySelector('.tasks-details-section');
+//   taskDetailsBtn.addEventListener("click", () => {
+//     if(!tasksDetailSection.classList.contains("show")) {
+//       tasksDetailSection.classList.add('show');
+//     }
+
+//     // setting current task to update
+//     // currentTaskItem = taskItem;
+    
+//     // getting tasks of current user form local storage
+//     const currentUserName = localStorage.getItem('currentUser');
+//     const currentUser = users.find(u => u.username === currentUserName);
+//     const tasks = currentUser?.tasks;
+
+//     const taskId = Number(taskItem.dataset.taskId);
+//     const taskToUpdate = tasks.find(task => task.taskId === taskId);
+
+//     // populating the task details
+//     if(!isEditMode) {
+//       populateTaskDetails(tasksDetailSection,taskToUpdate);
+//     }else {
+//       alert("switch form edit mode, to view further task details!");
+//     }
+
+//   })
+
+
+//   // task details close 
+//   const tasksDetailSectionCloseBtn = tasksDetailSection.querySelector(".tasks-details-section-close-btn");
+//   tasksDetailSectionCloseBtn.addEventListener("click", () => {
+//     tasksDetailSection.classList.remove('show');
+//   })
+// }
+
+// // ------------ populate task details ---------
+// function populateTaskDetails(tasksDetailsContainer, taskData){
  
-  // only show status changing option when the task status is in-progress.
-  const taskStatusField = tasksDetailsContainer.querySelector('#task-status');
-  if(taskData.taskStatus === "in-progress") {
-    taskStatusField.style.display = "inline-block"
-  }else {
-    taskStatusField.style.display = "none"
-  }
+//   // only show status changing option when the task status is in-progress.
+//   const taskStatusField = tasksDetailsContainer.querySelector('#task-status');
+//   if(taskData.taskStatus === "in-progress") {
+//     taskStatusField.style.display = "inline-block"
+//   }else {
+//     taskStatusField.style.display = "none"
+//   }
 
-  // populate basic fields
-  tasksDetailsContainer.querySelector("#task-details-task-name").value = taskData.taskName;
-  tasksDetailsContainer.querySelector("#task-details-task-desc").value = taskData.taskDesc;
-  tasksDetailsContainer.querySelector("#task-details-task-status").textContent = taskData.taskStatus;
-  tasksDetailsContainer.querySelector("#task-details-task-startdate").textContent = taskData.startDate;
-  tasksDetailsContainer.querySelector("#task-details-task-enddate").textContent = taskData.endDate;
-  tasksDetailsContainer.querySelector("#task-details-task-totalduration").textContent = taskData.taskTotalDuration;
+//   // populate basic fields
+//   tasksDetailsContainer.querySelector("#task-details-task-name").value = taskData.taskName;
+//   tasksDetailsContainer.querySelector("#task-details-task-desc").value = taskData.taskDesc;
+//   tasksDetailsContainer.querySelector("#task-details-task-status").textContent = taskData.taskStatus;
+//   tasksDetailsContainer.querySelector("#task-details-task-startdate").textContent = taskData.startDate;
+//   tasksDetailsContainer.querySelector("#task-details-task-enddate").textContent = taskData.endDate;
+//   tasksDetailsContainer.querySelector("#task-details-task-totalduration").textContent = taskData.taskTotalDuration;
 
-  // populating time logs 
-  const timeLogList = tasksDetailsContainer.querySelector('#task-details-task-timeloglist');
-  const logTogglerBtn = tasksDetailsContainer.querySelector('.time-log-toggler-btn');
+//   // populating time logs 
+//   const timeLogList = tasksDetailsContainer.querySelector('#task-details-task-timeloglist');
+//   const logTogglerBtn = tasksDetailsContainer.querySelector('.time-log-toggler-btn');
 
-  timeLogList.innerHTML = "";
-  const logs = taskData.timeLogs;
-  const logItems = logs.map(tl => {
-    const logDate = new Date(tl.startTime).toLocaleDateString('en-CA');
-    const logStartTime = new Date(tl.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12:false});
-    const logEndTime = new Date(tl.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12:false});
+//   timeLogList.innerHTML = "";
+//   const logs = taskData.timeLogs;
+//   const logItems = logs.map(tl => {
+//     const logDate = new Date(tl.startTime).toLocaleDateString('en-CA');
+//     const logStartTime = new Date(tl.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12:false});
+//     const logEndTime = new Date(tl.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12:false});
 
-    const li = document.createElement("li");
-    li.style.display = "flex";
-    li.style.gap = "10px";
-    li.style.justifyContent = "space-evenly"
-    li.innerHTML = `
-      <div class="task-details-logdate">${logDate}</div>
-      <div class="task-details-starttime">${logStartTime}</div>
-      <div class="task-details-endtime">${logEndTime}</div>
-      <div class="task-details-totaltime">${tl.totalTime}</div>
-    `;
+//     const li = document.createElement("li");
+//     li.style.display = "flex";
+//     li.style.gap = "10px";
+//     li.style.justifyContent = "space-evenly"
+//     li.innerHTML = `
+//       <div class="task-details-logdate">${logDate}</div>
+//       <div class="task-details-starttime">${logStartTime}</div>
+//       <div class="task-details-endtime">${logEndTime}</div>
+//       <div class="task-details-totaltime">${tl.totalTime}</div>
+//     `;
 
-    return li;
-  })
+//     return li;
+//   })
 
-  // initially show only first 3 logs 
-  logItems.forEach((li, i) => {
-    if(i < 3){
-      li.style.display = "flex";
-    }else {
-      li.style.display = "none"
-    }
+//   // initially show only first 3 logs 
+//   logItems.forEach((li, i) => {
+//     if(i < 3){
+//       li.style.display = "flex";
+//     }else {
+//       li.style.display = "none"
+//     }
 
-    // append each li
-    timeLogList.appendChild(li)
-  })
+//     // append each li
+//     timeLogList.appendChild(li)
+//   })
 
 
-  if(logItems.length === 0) {
-    const li = document.createElement("li");
-    li.style.display = "flex";
-    li.style.gap = "10px";
-    li.style.justifyContent = "space-evenly"
-    li.innerHTML = `
-      <div class="task-details-logdate">--</div>
-      <div class="task-details-starttime">--</div>
-      <div class="task-details-endtime">--</div>
-      <div class="task-details-totaltime">--</div>
-    `;
-    timeLogList.append(li);
-  }
+//   if(logItems.length === 0) {
+//     const li = document.createElement("li");
+//     li.style.display = "flex";
+//     li.style.gap = "10px";
+//     li.style.justifyContent = "space-evenly"
+//     li.innerHTML = `
+//       <div class="task-details-logdate">--</div>
+//       <div class="task-details-starttime">--</div>
+//       <div class="task-details-endtime">--</div>
+//       <div class="task-details-totaltime">--</div>
+//     `;
+//     timeLogList.append(li);
+//   }
 
-  // only show the toggler btn if the logs are greater than 3
-  if(logItems.length <= 3) {
-    logTogglerBtn.style.display = "none";
-  }else {
-    logTogglerBtn.style.display = "inline-block"
-  }
+//   // only show the toggler btn if the logs are greater than 3
+//   if(logItems.length <= 3) {
+//     logTogglerBtn.style.display = "none";
+//   }else {
+//     logTogglerBtn.style.display = "inline-block"
+//   }
 
-  // reset button text and toggle state
-  logTogglerBtn.textContent = "View more +";
-  logTogglerBtn.dataset.expanded = "false";
+//   // reset button text and toggle state
+//   logTogglerBtn.textContent = "View more +";
+//   logTogglerBtn.dataset.expanded = "false";
 
-  // show more btn functionality
-  logTogglerBtn.addEventListener("click", () => {
-    const isExpanded = logTogglerBtn.dataset.expanded === "true";
+//   // show more btn functionality
+//   logTogglerBtn.addEventListener("click", () => {
+//     const isExpanded = logTogglerBtn.dataset.expanded === "true";
 
-    logItems.forEach((li, i) => {
-      if(!isExpanded || i < 3) {
-        li.style.display = "flex";
-      }
-      else {
-        console.log("here")
-        li.style.display = "none";
-      }
-    })
+//     logItems.forEach((li, i) => {
+//       if(!isExpanded || i < 3) {
+//         li.style.display = "flex";
+//       }
+//       else {
+//         console.log("here")
+//         li.style.display = "none";
+//       }
+//     })
 
-    logTogglerBtn.dataset.expanded = isExpanded ? "false" : "true";
-    logTogglerBtn.textContent = isExpanded ? "View more +" : "View less -";
-  })
+//     logTogglerBtn.dataset.expanded = isExpanded ? "false" : "true";
+//     logTogglerBtn.textContent = isExpanded ? "View more +" : "View less -";
+//   })
 
   
-  // enabling edit mode for the task details 
-  const editModeBtn = tasksDetailsContainer.querySelector('.edit-toggle-btn');
+//   // enabling edit mode for the task details 
+//   const editModeBtn = tasksDetailsContainer.querySelector('.edit-toggle-btn');
 
-  // creating a new cloned btn to remove all the previous event handlers.
-  const clonedBtn = editModeBtn.cloneNode(true);
-  editModeBtn.replaceWith(clonedBtn);
+//   // creating a new cloned btn to remove all the previous event handlers.
+//   const clonedBtn = editModeBtn.cloneNode(true);
+//   editModeBtn.replaceWith(clonedBtn);
 
-  const newEditButton = tasksDetailsContainer.querySelector(".edit-toggle-btn");
-  newEditButton.addEventListener("click", () => {
-    isEditMode = true;
-    enableEditing(tasksDetailsContainer, taskData);
-  })
-}
+//   const newEditButton = tasksDetailsContainer.querySelector(".edit-toggle-btn");
+//   newEditButton.addEventListener("click", () => {
+//     isEditMode = true;
+//     enableEditing(tasksDetailsContainer, taskData);
+//   })
+// }
 
+// // task edit mode enabling ---
+// function enableEditing(tasksDetailsContainer, taskData){
+//   const editActionContainer = tasksDetailsContainer.querySelector('.task-edit-actions');
+//   editActionContainer.style.display = "block";
 
-// task edit mode enabling ---
-function enableEditing(tasksDetailsContainer, taskData){
-  const editActionContainer = tasksDetailsContainer.querySelector('.task-edit-actions');
-  editActionContainer.style.display = "block";
+//   // editable fields 
+//   const nameField = tasksDetailsContainer.querySelector('#task-details-task-name');
+//   const descField = tasksDetailsContainer.querySelector('#task-details-task-desc');
+//   const statusField = tasksDetailsContainer.querySelector("#task-status");
 
-  // editable fields 
-  const nameField = tasksDetailsContainer.querySelector('#task-details-task-name');
-  const descField = tasksDetailsContainer.querySelector('#task-details-task-desc');
-  const statusField = tasksDetailsContainer.querySelector("#task-status");
-
-  nameField.readOnly = false;
-  nameField.focus();
-  descField.readOnly = false;
-  statusField.disabled = false;
-
-
-  // --------------cancel edit btn ------------------
-  const oldCancelBtn = tasksDetailsContainer.querySelector('.cancel-edit-btn');
-  const newCancelBtn = oldCancelBtn.cloneNode(true);
-  oldCancelBtn.replaceWith(newCancelBtn);
-
-  newCancelBtn.addEventListener("click", () => {
-
-    isEditMode = false;
-    nameField.readOnly = true;
-    descField.readOnly = true;
-    statusField.disabled = true;
-
-    editActionContainer.style.display = "none";
-
-    // resetting values
-    if(nameField.value !== taskData.taskName) {
-      nameField.value = taskData.taskName;
-    }
-    if(descField.value !== taskData.taskDesc) {
-      descField.value = taskData.taskDesc;
-    }
-    if(statusField.value !== taskData.taskStatus) {
-      statusField.value = "";
-    }
-
-  });
+//   nameField.readOnly = false;
+//   nameField.focus();
+//   descField.readOnly = false;
+//   statusField.disabled = false;
 
 
-  // ------------save edit btn ---------------------
-  const oldSaveChangesBtn = tasksDetailsContainer.querySelector('.save-changes-btn');
-  const newSaveChangesBtn  = oldSaveChangesBtn.cloneNode(true);
-  oldSaveChangesBtn.replaceWith(newSaveChangesBtn);
+//   // --------------cancel edit btn ------------------
+//   const oldCancelBtn = tasksDetailsContainer.querySelector('.cancel-edit-btn');
+//   const newCancelBtn = oldCancelBtn.cloneNode(true);
+//   oldCancelBtn.replaceWith(newCancelBtn);
 
-  newSaveChangesBtn.addEventListener("click", () => {
-    isEditMode = false;
+//   newCancelBtn.addEventListener("click", () => {
 
-    const newTaskName = nameField.value;
-    const newTaskDesc = descField.value;
-    const newTaskStatus = statusField.value;
-    console.log(newTaskName, newTaskDesc, newTaskStatus);
+//     isEditMode = false;
+//     nameField.readOnly = true;
+//     descField.readOnly = true;
+//     statusField.disabled = true;
 
-    // update local storage
+//     editActionContainer.style.display = "none";
 
-    nameField.readOnly = true;
-    descField.readOnly = true;
-    statusField.disabled = true;
+//     // resetting values
+//     if(nameField.value !== taskData.taskName) {
+//       nameField.value = taskData.taskName;
+//     }
+//     if(descField.value !== taskData.taskDesc) {
+//       descField.value = taskData.taskDesc;
+//     }
+//     if(statusField.value !== taskData.taskStatus) {
+//       statusField.value = "";
+//     }
 
-    editActionContainer.style.display = "none";
-  })
-}
+//   });
+
+
+//   // ------------save edit btn ---------------------
+//   const oldSaveChangesBtn = tasksDetailsContainer.querySelector('.save-changes-btn');
+//   const newSaveChangesBtn  = oldSaveChangesBtn.cloneNode(true);
+//   oldSaveChangesBtn.replaceWith(newSaveChangesBtn);
+
+//   newSaveChangesBtn.addEventListener("click", () => {
+//     isEditMode = false;
+
+//     const newTaskName = nameField.value;
+//     const newTaskDesc = descField.value;
+//     const newTaskStatus = statusField.value;
+//     console.log(newTaskName, newTaskDesc, newTaskStatus);
+
+//     // update local storage
+
+//     nameField.readOnly = true;
+//     descField.readOnly = true;
+//     statusField.disabled = true;
+
+//     editActionContainer.style.display = "none";
+//   })
+// }
 
 
 // ////////////////////////////////////////////////////////////////delete task function///////
