@@ -269,13 +269,10 @@ button{
 
 /* --------------------------timer section---------------------------- */
 .timer-section{
-    /* background-color: rgb(241, 241, 241); */
-
+    background-color: rgb(241, 241, 241);
     border: 1px solid rgb(217, 217, 217);
     border-radius: 10px;
 
-    /* background-color: blueviolet;
-    opacity: 0.5; */
     height: 100%;
     border-radius: 15px;
     display: flex;
@@ -294,7 +291,7 @@ button{
     transition: transform 0.5s ease, max-width 0.5s ease, flex-basis 0.5s ease;
 }
 .timer-section.show{
-    background-color: rgb(150, 144, 155);
+    /* background-color: rgb(150, 144, 155); */
     flex-basis: 25%;
     max-width: 25%;
     transform:  translateX(0);
@@ -429,7 +426,7 @@ button{
     animation-fill-mode: forwards;  */
 }
 
-@keyframes growFromBottom {
+/* @keyframes growFromBottom {
     0% {
         transform: scaleY(0);
         opacity: 0;
@@ -440,7 +437,7 @@ button{
         opacity: 0.7;
         transform-origin: bottom;
     }
-}
+} */
 
 
 /* ---------------------create new task popup-------------------------- */

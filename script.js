@@ -1,9 +1,6 @@
-
-// localStorage.clear();
-// // getting users form localStorage. 
+// getting users form localStorage. 
 const users = JSON.parse(localStorage.getItem("users")) || [];
 console.log("users",users);
-
 
 const signupSection = document.getElementById("signup-section");
 const loginSection = document.getElementById("login-section");
@@ -56,6 +53,7 @@ signupForm.addEventListener("submit", (e) => {
     if(currentUserName) {
       signupSection.style.display = "none";
       appSection.style.display = "block";
+      displayTasks();
     }
 });
 
@@ -77,6 +75,7 @@ loginForm.addEventListener("submit", (e) => {
 
     loginSection.style.display = "none";
     appSection.style.display = "block";
+    displayTasks();
 });
 
 // logout 
@@ -88,7 +87,7 @@ document.querySelector("#logout-btn").addEventListener("click", () => {
 })
 
 
-// // /////////////////////////////////////////////////////////////////////////////////////task management
+// /////////////////////////////////////////////////////////////////////////////////////task timer management////
 // creating new task pop up..
 const createTaskPopupButton = document.getElementById("create-task-popup-btn");
 const newTaskPopUp = document.querySelector('.new-task-popup');
@@ -112,17 +111,9 @@ let hours = 0;
 let startTime = null;
 let currentTaskItem = null;
 
-// loading page based on if user is logged in or not.
+
+// ////////////////////////////////////////////////////////////////////////doc reload funciton/////////////////
 document.addEventListener("DOMContentLoaded", () => {
-
-  //  if(document.querySelector("#all-tasks-section").style.display = "flex") {
-  //   document.querySelector("#all-tasks-section").style.display = "none";
-  // }
-  // if(document.querySelector("#today-tasks-section").style.display = "flex"){
-  //   document.querySelector("#today-tasks-section").style.display = "none"
-  // }
-  // document.querySelector("#analytics-section").style.display = "flex";
-
 
   const currentUserName = localStorage.getItem('currentUser');
   if(currentUserName) {
@@ -206,9 +197,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// inital loading of daily tasks list from local storage.
+// ////////////////////////////////////////////////////////////////////////////task displaying function from local storage on reloads/////////
 function displayTasks() {
-
   const dailyTasksList = document.getElementById("daily-tasks-list");
   const todoTasksList = dailyTasksList.querySelector('.todo-tasks');
   const inProgressTasksList = dailyTasksList.querySelector('.inprogress-tasks');
@@ -217,12 +207,9 @@ function displayTasks() {
   inProgressTasksList.innerHTML = "";
   doneTasksList.innerHTML = "";
 
+
+  // getting today date strings..
   const today = new Date().toLocaleDateString();
-  console.log("todayyy",today);
-
-  // jjjjjjjjk jkjk jkkjkkkk jjjkj
-
-
   const formatedTodayDate = new Date().toLocaleString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -230,40 +217,54 @@ function displayTasks() {
     day: "numeric",
   });
 
-  //getting saved tasks from localStorage.. 
+
+  // getting saved tasks from localStorage.. 
   const currentUserName = localStorage.getItem('currentUser');
   const currentUser = users.find(u => u.username === currentUserName);
   const tasks = currentUser?.tasks || [];
 
-  tasks.forEach((task) => {
 
-    // for those task which has not yet started, means for those that does not has current day timelogs.
-    const taskCreatedDate = task.createdAt;
-    if(taskCreatedDate === formatedTodayDate) {
-
-      if(task.taskStatus === "to-do") {
-        renderTask(task, todoTasksList);
-      }
-    }
-    
-    task.timeLogs.forEach(timeLog => {
-      const logDate = new Date(timeLog.startTime).toLocaleDateString();
-        if(logDate === today) {
-
-          if(task.taskStatus === "to-do") {
-            renderTask(task, todoTasksList);
-          }else if(task.taskStatus === "in-progress") {
-            renderTask(task, inProgressTasksList)
-          }else if(task.taskStatus === "done") {
-            renderTask(task, doneTasksList)
-          }
-        }
-    })
+  // filtering tasks created at today.
+  const createdTodayTasks = tasks.filter(task => {
+    return task.createdAt === formatedTodayDate;
   });
+  // console.log("task created today",createdTodayTasks);
+
+
+  // filtering tasks which is logged today.
+  const loggedTodayTasks = tasks.filter(task => {
+    const filteredTask = task.timeLogs.some(log => {
+      const logDate = new Date(log.startTime).toLocaleDateString();
+      return logDate === today;
+    });
+
+    return filteredTask;
+  })
+  // console.log("logged today tasks",loggedTodayTasks);
+
+
+  // getting unique tasks from both filtered tasks ..
+  const uniqueTasksObj = {};
+  const mergedTasks = [...createdTodayTasks, ...loggedTodayTasks];
+  mergedTasks.forEach(task => {
+    uniqueTasksObj[task.taskId] = task;
+  })
+
+
+  // convert object back to array and render
+  Object.values(uniqueTasksObj).forEach(task => {
+    if(task.taskStatus === "to-do") {
+      renderTask(task, todoTasksList);
+    }else if(task.taskStatus === "in-progress") {
+      renderTask(task, inProgressTasksList)
+    }else if(task.taskStatus === "done") {
+      renderTask(task, doneTasksList)
+    }
+  })
 }
 
 
-// -------------------------------creating new tasks -----------------------------------------
+// //////////////////////////////////////////////////////////////////////////////////////create new task function//////
 createTaskPopupButton.addEventListener("click", () => {
   newTaskPopUp.classList.add("show");
 });
@@ -327,7 +328,7 @@ if(closePopup) {
 }
 
 
-//-------------------- task rendering function ------------------------
+//////////////////////////////////////////////////////////////////////////////////////render task function//////////
 function renderTask(task, containerElement) {
   // skip if task name is empty
   if(!task.taskName) return;
@@ -446,7 +447,7 @@ function renderTask(task, containerElement) {
   // attach timers
   showTimer(li);
 
-  // // show taskDetails 
+  // show taskDetails 
   showTaskDetaitls(li);
 
   // change task status 
@@ -457,8 +458,7 @@ function renderTask(task, containerElement) {
 }
 
 
-
-// ---------------------show timer details ---------------------
+// /////////////////////////////////////////////////////////////////////////////////show timer ///////////
 function showTimer(taskItem) {
   const startTimerBtn = taskItem.querySelector(".start-timer-btn");
   startTimerBtn.addEventListener("click", (e) => {
@@ -516,6 +516,8 @@ function showTimer(taskItem) {
         hours = Number(hrs);
       }
     }
+
+    console.log("current taskItem", currentTaskItem)
   });
 }
 
@@ -525,8 +527,10 @@ timerSectionCloseBtn.addEventListener("click", () => {
   }
 });
 
-// main timer functionality
+////////////////////////////////////////////////////////////////////////main timer btn functionality////
 timerBtn.addEventListener("click", (e) => {
+
+  console.log("current task item", currentTaskItem);
 
   const currentUserName = localStorage.getItem('currentUser');
   const currentUser = users.find(u => u.username === currentUserName);
@@ -556,7 +560,7 @@ timerBtn.addEventListener("click", (e) => {
         hours,
         minutes,
         seconds
-      }))
+      }));
 
       
       if(taskToUpdate.startDate === "") {
@@ -587,7 +591,6 @@ timerBtn.addEventListener("click", (e) => {
 
       timerStatus = "started";
       timerBtn.textContent = "stop";
-
 
       // dom changes 
       const dailyTasksList = document.getElementById("daily-tasks-list");
@@ -660,7 +663,6 @@ function formateDate(date) {
 
   return `${day}-${month}-${year}`;
 }
-
 function convertSecondsToTimeFormat(totalSeconds) {
   let hrs = Math.floor(totalSeconds / 3600); // becuase 1 hr == 3600 seconds
   let mins = Math.floor((totalSeconds % 3600) / 60); // we wanna check how many seconds is left from total seconds after substracting hours, then we check how many full minutes we get form the reminaing seconds.
@@ -673,7 +675,7 @@ function formatWithLeadingZeros(val) {
 }
 
 
-// ----------------------task status updation------------------------
+// /////////////////////////////////////////////////////////////////////////////////task status updation////////
 function updateTaskStatus(taskItem) {
   const statusSelectBox = taskItem.querySelector("#task-status");
 
@@ -712,7 +714,6 @@ function updateTaskStatus(taskItem) {
         currentUser.tasks = tasks;
         localStorage.setItem("users", JSON.stringify(users));
 
-
         // dom updates
         const taskStatusLabel = currentTaskItem.querySelector('.task-status');
         taskStatusLabel.textContent = `task status: ${taskToUpdate.taskStatus}`;
@@ -731,7 +732,6 @@ function updateTaskStatus(taskItem) {
     }
   })
 }
-
 
 function addUpdatedAndRemoveExisitingTaskItem(container, taskItem) {
 
@@ -776,7 +776,7 @@ function displayTotalTaskDuration(taskToUpdate, taskId) {
     const [hrs,mins,secs] = taskToUpdate.taskTotalDuration.split(':');
 
     if(taskToUpdate.taskStatus === "in-progress") {
-      taskTotalContainer.textContent = `time-spent until now: ${hrs}h ${mins}m ${secs}s`;
+      taskTotalContainer.textContent = `time spent until now: ${hrs}h ${mins}m ${secs}s`;
     }else if(taskToUpdate.taskStatus === "done"){
       taskTotalContainer.textContent = `total task duration: ${hrs}h ${mins}m ${secs}s`;
     }
@@ -784,8 +784,9 @@ function displayTotalTaskDuration(taskToUpdate, taskId) {
 }
 
 
+////////////////////////////////////////////////////////////////////////////////////////show task details////
 
-// ----------------- show task details -------------------------
+
 let isEditMode = false;
 function showTaskDetaitls(taskItem) {
 
@@ -1006,7 +1007,8 @@ function enableEditing(tasksDetailsContainer, taskData){
   })
 }
 
-// ------------------------delete tasks------------------------------
+
+// ////////////////////////////////////////////////////////////////delete task function///////
 function deleteTask(taskItem){
   const deleteBtn = taskItem.querySelector('.task-delete-btn');
   deleteBtn.addEventListener("click", () => {
@@ -1031,13 +1033,12 @@ function deleteTask(taskItem){
     
     // updating dom
     taskItem.remove();
-
-    console.log(taskItem)
   })
 }
 
 
-// /////setting current date initially
+////////////////////////////////////////////////////////////////////// new day function /////
+// setting current date initially
 const currentDate = document.querySelector(".current-date");
 const today = new Date().toLocaleString("en-US", {
   weekday: "long",
@@ -1047,10 +1048,7 @@ const today = new Date().toLocaleString("en-US", {
 });
 currentDate.textContent = today;
 
-
-// //////////////////////////////// new day function //////////////////////////
 function onNewDay() {
-
   const currentUserName = localStorage.getItem("currentUser");
   const currentUser = users.find(u => u.username === currentUserName);
   const tasks = currentUser?.tasks;
@@ -1061,7 +1059,6 @@ function onNewDay() {
     month: "long",
     day: "numeric"
   });
-
 
   let taskCreatedToday = false
   tasks.forEach(task => {
@@ -1083,20 +1080,13 @@ function onNewDay() {
     todoTasksList.innerHTML = "";
     inProgressTasksList.innerHTML = "";
     doneTasksList.innerHTML = "";
-    
-    const listCategories = dailyTasksList.querySelectorAll(".list-category");
-    listCategories.forEach(lc => {
-      lc.style.display = "none";
-    })
 
-    tasksSectionDescription.classList.remove("hide");
   }
   
   // changing date.
   const currentDate = document.querySelector(".current-date");
   currentDate.textContent = today;
 }
-
 function scheduleMidnightUpdate() {
   const now = new Date();
   const tomorrow = new Date().setHours(24, 0, 0, 0); // getting 12:00 AM time.
@@ -1107,6 +1097,78 @@ function scheduleMidnightUpdate() {
     setInterval(onNewDay, 24 * 60 * 60* 1000); // repeat every 24 hours
   }, msUntilMidnight)
 }
+
+
+// /////////////////////////////////////////////////////////////////////////side bar navigations///
+const todayTaskListBtn = document.querySelector("#today-task-list-btn");
+todayTaskListBtn.addEventListener("click", () => {
+  // controling display
+  if(document.querySelector("#analytics-section").style.display === "flex") {
+    document.querySelector("#analytics-section").style.display = "none";
+  }
+  if(document.querySelector("#all-tasks-section").style.display = "flex") {
+    document.querySelector("#all-tasks-section").style.display = "none";
+  }
+  document.querySelector("#today-tasks-section").style.display = "flex";
+
+
+  // populating lists
+  displayTasks();
+});
+
+const listAllTasksBtn = document.querySelector("#list-all-tasks-btn");
+listAllTasksBtn.addEventListener("click", renderAllTasksList);
+
+function renderAllTasksList(){
+  // controling display
+  if(document.querySelector("#analytics-section").style.display === "flex") {
+    document.querySelector("#analytics-section").style.display = "none";
+  }
+  if(document.querySelector("#today-tasks-section").style.display = "flex"){
+    document.querySelector("#today-tasks-section").style.display = "none"
+  }
+  document.querySelector("#all-tasks-section").style.display = "flex";
+
+
+  // populating lists
+  const mainTasksList = document.querySelector('.main-tasks-list');
+  const todoTasksList = mainTasksList.querySelector('.todo-tasks');
+  const inProgressTasksList = mainTasksList.querySelector('.inprogress-tasks');
+  const doneTasksList = mainTasksList.querySelector('.done-tasks');
+
+  const currentUserName = localStorage.getItem('currentUser');
+  const currentUser = users.find(u => u.username === currentUserName);
+  const tasks = currentUser?.tasks;
+
+  todoTasksList.innerHTML = "";
+  inProgressTasksList.innerHTML = "";
+  doneTasksList.innerHTML = "";
+
+  tasks.forEach(task => {
+    if(task.taskStatus === "to-do") {
+      renderTask(task, todoTasksList)
+    }else if(task.taskStatus === "in-progress") {
+      renderTask(task, inProgressTasksList)
+    }else if(task.taskStatus === "done") {
+      renderTask(task, doneTasksList)
+    }
+  })
+}
+
+const showAnalyticsBtn = document.querySelector("#analytics-btn");
+showAnalyticsBtn.addEventListener("click", () => {
+
+  if(document.querySelector("#all-tasks-section").style.display = "flex") {
+    document.querySelector("#all-tasks-section").style.display = "none";
+  }
+  if(document.querySelector("#today-tasks-section").style.display = "flex"){
+    document.querySelector("#today-tasks-section").style.display = "none"
+  }
+  document.querySelector("#analytics-section").style.display = "flex"; 
+  createGraph(gridContainer, maxY, 14);
+})
+
+
 
 
 // -----------------getting duration worked on each day and week(implentation withour chartjs)---------------------
@@ -1158,8 +1220,7 @@ function getMaxYFromData(workHoursPerDay) {
 }
 
 const maxY = getMaxYFromData(workHoursPerDay);
-createGraph(gridContainer, maxY, 14);
-
+// createGraph(gridContainer, maxY, 14);
 
 function createGraph(gridContainer, maxY, maxX = 14){
   
@@ -1240,7 +1301,7 @@ function createGraph(gridContainer, maxY, maxX = 14){
 
       const styleObj = {
         backgroundColor:"blueviolet",
-        opacity: "0.7",
+        opacity: "0.5",
         width: "75%",
         height: `${fillRatio * 100}%`,
         borderTopLeftRadius: fillRatio === 1 ? "0px" : "4px",
@@ -1275,79 +1336,6 @@ function formateXAxisLabel(dateStr = "") {
     return `${monthNames[monthIndex]} ${parseInt(day, 10)}`;
   }
 }
-
-
-
-// /////////////////////////////////////////////////////////////////////////side bar navigations
-const todayTaskListBtn = document.querySelector("#today-task-list-btn");
-todayTaskListBtn.addEventListener("click", () => {
-  // controling display
-  if(document.querySelector("#analytics-section").style.display === "flex") {
-    document.querySelector("#analytics-section").style.display = "none";
-  }
-  if(document.querySelector("#all-tasks-section").style.display = "flex") {
-    document.querySelector("#all-tasks-section").style.display = "none";
-  }
-  document.querySelector("#today-tasks-section").style.display = "flex";
-
-
-  // populating lists
-  displayTasks();
-});
-
-const listAllTasksBtn = document.querySelector("#list-all-tasks-btn");
-listAllTasksBtn.addEventListener("click", renderAllTasksList);
-
-function renderAllTasksList(){
-  // controling display
-  if(document.querySelector("#analytics-section").style.display === "flex") {
-    document.querySelector("#analytics-section").style.display = "none";
-  }
-  if(document.querySelector("#today-tasks-section").style.display = "flex"){
-    document.querySelector("#today-tasks-section").style.display = "none"
-  }
-  document.querySelector("#all-tasks-section").style.display = "flex";
-
-
-  // populating lists
-  const mainTasksList = document.querySelector('.main-tasks-list');
-  const todoTasksList = mainTasksList.querySelector('.todo-tasks');
-  const inProgressTasksList = mainTasksList.querySelector('.inprogress-tasks');
-  const doneTasksList = mainTasksList.querySelector('.done-tasks');
-
-  const currentUserName = localStorage.getItem('currentUser');
-  const currentUser = users.find(u => u.username === currentUserName);
-  const tasks = currentUser?.tasks;
-
-  todoTasksList.innerHTML = "";
-  inProgressTasksList.innerHTML = "";
-  doneTasksList.innerHTML = "";
-
-  tasks.forEach(task => {
-    if(task.taskStatus === "to-do") {
-      renderTask(task, todoTasksList)
-    }else if(task.taskStatus === "in-progress") {
-      renderTask(task, inProgressTasksList)
-    }else if(task.taskStatus === "done") {
-      renderTask(task, doneTasksList)
-    }
-  })
-}
-
-const showAnalyticsBtn = document.querySelector("#analytics-btn");
-showAnalyticsBtn.addEventListener("click", () => {
-
-  if(document.querySelector("#all-tasks-section").style.display = "flex") {
-    document.querySelector("#all-tasks-section").style.display = "none";
-  }
-  if(document.querySelector("#today-tasks-section").style.display = "flex"){
-    document.querySelector("#today-tasks-section").style.display = "none"
-  }
-  document.querySelector("#analytics-section").style.display = "flex"; 
-  // createGraph(gridContainer, maxY, 14);
-
-})
-
 
 
 
