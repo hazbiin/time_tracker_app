@@ -1,4 +1,5 @@
 
+// localStorage.clear();
 // // getting users form localStorage. 
 const users = JSON.parse(localStorage.getItem("users")) || [];
 console.log("users",users);
@@ -41,15 +42,15 @@ signupForm.addEventListener("submit", (e) => {
     };
     users.push(newUser);
     
-    const user = users.find( u => u.username === username);
-    if(user) {
-        alert("user already exists!");
-        return;
-    }
+    // const user = users.find( u => u.username === username);
+    // if(user) {
+    //     alert("user already exists!");
+    //     return;
+    // }
 
     localStorage.setItem("users", JSON.stringify(users));
     localStorage.setItem("currentUser", username);
-
+    
     // when the user is logged in
     const currentUserName = localStorage.getItem('currentUser');
     if(currentUserName) {
@@ -87,18 +88,6 @@ document.querySelector("#logout-btn").addEventListener("click", () => {
 })
 
 
-document.addEventListener("DOMContentLoaded", () => {
-  const currentUserName = localStorage.getItem('currentUser');
-
-  if(currentUserName) {
-    appSection.style.display = "block";
-    loginSection.style.display = "none";
-    signupSection.style.display = "none";
-    // displayTasks();
-  }
-
-})
-
 // // /////////////////////////////////////////////////////////////////////////////////////task management
 // creating new task pop up..
 const createTaskPopupButton = document.getElementById("create-task-popup-btn");
@@ -125,8 +114,17 @@ let currentTaskItem = null;
 
 // loading page based on if user is logged in or not.
 document.addEventListener("DOMContentLoaded", () => {
-  const currentUserName = localStorage.getItem('currentUser');
 
+  //  if(document.querySelector("#all-tasks-section").style.display = "flex") {
+  //   document.querySelector("#all-tasks-section").style.display = "none";
+  // }
+  // if(document.querySelector("#today-tasks-section").style.display = "flex"){
+  //   document.querySelector("#today-tasks-section").style.display = "none"
+  // }
+  // document.querySelector("#analytics-section").style.display = "flex";
+
+
+  const currentUserName = localStorage.getItem('currentUser');
   if(currentUserName) {
     appSection.style.display = "block";
     loginSection.style.display = "none";
@@ -207,8 +205,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+
 // inital loading of daily tasks list from local storage.
 function displayTasks() {
+
   const dailyTasksList = document.getElementById("daily-tasks-list");
   const todoTasksList = dailyTasksList.querySelector('.todo-tasks');
   const inProgressTasksList = dailyTasksList.querySelector('.inprogress-tasks');
@@ -218,7 +218,11 @@ function displayTasks() {
   doneTasksList.innerHTML = "";
 
   const today = new Date().toLocaleDateString();
-  // const formatedTodayDate = formateDate(new Date());
+  console.log("todayyy",today);
+
+  // jjjjjjjjk jkjk jkkjkkkk jjjkj
+
+
   const formatedTodayDate = new Date().toLocaleString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -236,12 +240,6 @@ function displayTasks() {
     // for those task which has not yet started, means for those that does not has current day timelogs.
     const taskCreatedDate = task.createdAt;
     if(taskCreatedDate === formatedTodayDate) {
-
-        const dailyTasksList = document.getElementById("daily-tasks-list");
-        const listCategories = dailyTasksList.querySelectorAll(".list-category");
-        listCategories.forEach(lc => {
-          lc.style.display = "block";
-        });
 
       if(task.taskStatus === "to-do") {
         renderTask(task, todoTasksList);
@@ -439,6 +437,7 @@ function renderTask(task, containerElement) {
           <button class="task-details-btn" id="task-details-btn">
             view task details
           </button>
+          <button class="task-delete-btn">delete</button>
       </div>
     </div>
   `;
@@ -454,15 +453,13 @@ function renderTask(task, containerElement) {
   updateTaskStatus(li);
 
   // delete tasks 
-  // deleteTask(li);
+  deleteTask(li);
 }
 
 
 
 // ---------------------show timer details ---------------------
 function showTimer(taskItem) {
-  console.log("show timer function called");
-
   const startTimerBtn = taskItem.querySelector(".start-timer-btn");
   startTimerBtn.addEventListener("click", (e) => {
 
@@ -528,7 +525,6 @@ timerSectionCloseBtn.addEventListener("click", () => {
   }
 });
 
-console.log(currentTaskItem)
 // main timer functionality
 timerBtn.addEventListener("click", (e) => {
 
@@ -918,6 +914,7 @@ function populateTaskDetails(tasksDetailsContainer, taskData){
         li.style.display = "flex";
       }
       else {
+        console.log("here")
         li.style.display = "none";
       }
     })
@@ -1017,14 +1014,25 @@ function deleteTask(taskItem){
     // getting tasks of current user form local storage
     const currentUserName = localStorage.getItem('currentUser');
     const currentUser = users.find(u => u.username === currentUserName);
-    const tasks = currentUser?.tasks;
-
+    if(!currentUser) {
+      return;
+    }
+   
+    // removing task
+    const tasks = currentUser?.tasks || [];
     const taskId = Number(taskItem.dataset.taskId);
-    const taskToUpdate = tasks.find(task => task.taskId === taskId);
+    const updatedTasks = tasks.filter(task => task.taskId !== taskId);
 
-    console.log(taskToUpdate);
+    console.log(taskItem, updatedTasks)
 
+    // saving back to local storage
+    currentUser.tasks = updatedTasks;
+    localStorage.setItem("users", JSON.stringify(users));
+    
+    // updating dom
+    taskItem.remove();
 
+    console.log(taskItem)
   })
 }
 
@@ -1102,14 +1110,14 @@ function scheduleMidnightUpdate() {
 
 
 // -----------------getting duration worked on each day and week(implentation withour chartjs)---------------------
-const SCALING_FACTOR = 10; // only in development mode;
+// const SCALING_FACTOR = 10; // only in development mode;
 
 function getWorkingHoursForDay() {
   const workHoursPerDay = {};
 
   const currentUserName = localStorage.getItem("currentUser");
   const currentUser = users.find(u => u.username === currentUserName);
-  const tasks = currentUser?.tasks;
+  const tasks = currentUser?.tasks || [];
 
   tasks.forEach(task => {
     task.timeLogs.forEach(log => {
@@ -1135,7 +1143,7 @@ function getWorkingHoursForDay() {
 
 
 const workHoursPerDay = getWorkingHoursForDay();
-console.log(workHoursPerDay);
+// console.log(workHoursPerDay);
 
 const allDates = Object.keys(workHoursPerDay).sort();
 const gridContainer = document.querySelector('.grid-container');
@@ -1171,7 +1179,6 @@ function createGraph(gridContainer, maxY, maxX = 14){
       // cell.classList.add('block');
       // cell.dataset.xy = `${x},${y}`;
       // gridContainer.appendChild(cell);
-      
 
       // -----------y-axis-label ------------
       if(x === 0 && y !== 0) { 
@@ -1185,16 +1192,19 @@ function createGraph(gridContainer, maxY, maxX = 14){
       // -----------x-axis-label ------------
       }else if(y === 0 && x !== 0){ 
         const dateIndex = x - 1;
-        const label = allDates[dateIndex] || "";
-        cell.textContent = label;
+        const formatedXLabel = formateXAxisLabel(allDates[dateIndex]);
+
+        // const label = allDates[dateIndex] || "";
+
+        cell.textContent = formatedXLabel;
 
         cell.classList.add("x-label");
 
-      
       // ---------actual block -------------
       } else if (x !== 0 && y !== 0) {
         cell.classList.add("block");
         cell.dataset.xy = `${x},${y}`;
+        // cell.textContent = `${x},${y}`;
       }
 
       gridContainer.appendChild(cell);
@@ -1225,7 +1235,7 @@ function createGraph(gridContainer, maxY, maxX = 14){
       // handle partial fill in lastblock
       if(y === fullBlocks - 1 && totalHours % 1 !== 0) {
         fillRatio = totalHours % 1; // remainder here will be the fill ratio
-        console.log("fillratio", `${fillRatio * 100}%`)
+        // console.log("fillratio", `${fillRatio * 100}%`)
       }
 
       const styleObj = {
@@ -1252,20 +1262,38 @@ function createMarker(x, y, container, styleObj) {
   cell.appendChild(marker);
 }
 
+function formateXAxisLabel(dateStr = "") {
+  if(dateStr !== "") {
+    const [day, month] = dateStr.split("-");
+
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+
+    const monthIndex = parseInt(month, 10) - 1;
+    return `${monthNames[monthIndex]} ${parseInt(day, 10)}`;
+  }
+}
+
+
 
 // /////////////////////////////////////////////////////////////////////////side bar navigations
 const todayTaskListBtn = document.querySelector("#today-task-list-btn");
-todayTaskListBtn.addEventListener("click", () =>{
+todayTaskListBtn.addEventListener("click", () => {
+  // controling display
   if(document.querySelector("#analytics-section").style.display === "flex") {
     document.querySelector("#analytics-section").style.display = "none";
   }
-
   if(document.querySelector("#all-tasks-section").style.display = "flex") {
     document.querySelector("#all-tasks-section").style.display = "none";
   }
-
   document.querySelector("#today-tasks-section").style.display = "flex";
-})
+
+
+  // populating lists
+  displayTasks();
+});
 
 const listAllTasksBtn = document.querySelector("#list-all-tasks-btn");
 listAllTasksBtn.addEventListener("click", renderAllTasksList);
@@ -1275,11 +1303,11 @@ function renderAllTasksList(){
   if(document.querySelector("#analytics-section").style.display === "flex") {
     document.querySelector("#analytics-section").style.display = "none";
   }
-
   if(document.querySelector("#today-tasks-section").style.display = "flex"){
     document.querySelector("#today-tasks-section").style.display = "none"
   }
   document.querySelector("#all-tasks-section").style.display = "flex";
+
 
   // populating lists
   const mainTasksList = document.querySelector('.main-tasks-list');
@@ -1316,15 +1344,9 @@ showAnalyticsBtn.addEventListener("click", () => {
     document.querySelector("#today-tasks-section").style.display = "none"
   }
   document.querySelector("#analytics-section").style.display = "flex"; 
+  // createGraph(gridContainer, maxY, 14);
 
 })
-
-
-
-
-
-
-
 
 
 

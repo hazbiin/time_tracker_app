@@ -82,16 +82,6 @@ button{
     padding: 10px; */
 }
 
-#all-tasks-section .main-section-top{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-/* #all-tasks-section .main-section-bottom{
-   padding: 20px;
-
-} */
-
 .main-section-bottom{
     border: 1px solid rgb(217, 217, 217);
     border-radius: 15px;
@@ -99,6 +89,7 @@ button{
     flex: 2;
     display: flex;
     flex-direction: column;
+    gap: 20px;
     position: relative;
     overflow-y: auto;
     overflow-x: hidden;
@@ -109,7 +100,6 @@ button{
     align-items: center;
     justify-content: space-between;
     /* border-bottom: 1px solid rgb(217, 217, 217); */
-    margin-bottom: 10px;
 }
 
 .top-button-container{
@@ -160,10 +150,20 @@ button{
     overflow-y: auto;
     overflow-x: hidden;
 }
-.main-tasks-management-container .tasks-list-section{
+.tasks-management-container:nth-child(2)  {
+    display: flex;
+    justify-content: center;
+    overflow-y: unset;
+    overflow-x: hidden;
+}
+.tasks-management-container:nth-child(2) .tasks-list-section{
+    height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
-}   
+}
+.tasks-management-container:nth-child(2) .tasks-list-section::-webkit-scrollbar{
+    display: none;
+}
 
 /* ---------------------tasks list section--------------------------*/
 .tasks-list-section{
@@ -410,7 +410,7 @@ button{
     display: flex;
     align-items: center;
     justify-content: center;
-    /* border-bottom: 0.2px solid lightgray; */
+    border-bottom: 0.2px solid lightgray;
     /* border: 1px solid gray; */
 }
 .marker-block{
@@ -419,6 +419,7 @@ button{
     left: 0;
     right: 0;
     margin: 0 auto;
+    z-index: 100;
 
     /* animation styles----- */
     /* transform-origin: bottom;
@@ -440,7 +441,6 @@ button{
         transform-origin: bottom;
     }
 }
-
 
 
 /* ---------------------create new task popup-------------------------- */
