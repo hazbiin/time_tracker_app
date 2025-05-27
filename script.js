@@ -787,9 +787,18 @@ function showTaskDetaitls(taskItem) {
   const taskDetailsBtn = taskItem.querySelector(".task-details-btn");
   const tasksDetailSection = taskDetailsBtn.closest('.tasks-management-container').querySelector('.tasks-details-section');
   taskDetailsBtn.addEventListener("click", () => {
-    if(!tasksDetailSection.classList.contains("show")) {
-      tasksDetailSection.classList.add('show');
+
+    let isEditMode = false;
+    // task details open 
+    if(!isEditMode) {
+      console.log("hereeeeee,", isEditMode)
+      if(!tasksDetailSection.classList.contains("show")) {
+        tasksDetailSection.classList.add('show');
+      }
+    }else {
+      alert("you are currently editing a task, save or cancel to proceed!");
     }
+    
 
     // getting the task from local storage.
     const currentUserName = localStorage.getItem('currentUser');
@@ -799,35 +808,228 @@ function showTaskDetaitls(taskItem) {
     const taskId = Number(taskItem.dataset.taskId);
     const currentTask = tasks.find(task => task.taskId === taskId);
     
-    // tasksDetailSection.innerHTML = "";
-   
-    console.log(tasksDetailSection);
 
+    // populate with the current task details.
     const taskDetails = populateTaskDetails(currentTask);
-    console.log(taskDetails);
+    tasksDetailSection.innerHTML = "";
+    tasksDetailSection.appendChild(taskDetails);
 
-  });
+    // if(!isEditMode) {
+    // }
+    // else {
+    //   alert("you are currently editing a task, save or cancel to proceed!");
+    // }
 
 
-  // task details close 
-  const tasksDetailSectionCloseBtn = tasksDetailSection.querySelector(".tasks-details-section-close-btn");
-  tasksDetailSectionCloseBtn.addEventListener("click", () => {
-    tasksDetailSection.classList.remove('show');
+    // ----------------------managing buttons inside the task details section----------
+    const logTogglerBtn = tasksDetailSection.querySelector('.time-log-toggler-btn');
+    const logListItems = tasksDetailSection.querySelectorAll('.loglist-item');
+
+    // show only first 3 initially, hide the rest, control the btn display
+    if(logListItems.length > 3) {
+      logListItems.forEach((li, index) => {
+        if(index >= 3) li.style.display = "none";
+      });
+
+      logTogglerBtn.style.display = "inline-block";
+    }else {
+      logTogglerBtn.style.display = "none";
+    }
+
+    // log list toggler button
+    let isExpanded = false;
+    logTogglerBtn.addEventListener("click", () => {
+      if(!isExpanded) {
+        // Expand: show all items
+        logListItems.forEach(li => li.style.display = "grid");
+        logTogglerBtn.textContent = "- view less";
+        isExpanded = true;
+      }else {
+        // Collapse: show only first 3
+        logListItems.forEach((li, index) => {
+          li.style.display = index < 3 ? "grid" : "none";
+        });
+        logTogglerBtn.textContent = "+ view more";
+        isExpanded = false;
+      }
+    });
+
+    
+    // enable edit mode
+    const editBtn = tasksDetailSection.querySelector(".edit-toggle-btn");
+    editBtn.addEventListener("click", () => {
+      enableEditing(tasksDetailSection, currentTask, isEditMode);
+    });
+
+    // task details close 
+    const tasksDetailSectionCloseBtn = tasksDetailSection.querySelector(".tasks-details-section-close-btn");
+    tasksDetailSectionCloseBtn.addEventListener("click", () => {
+      tasksDetailSection.classList.remove('show');
+    });
   });
 }
-
-
 
 function populateTaskDetails(currentTask) {
+  console.log(currentTask);
 
+  // formatting totaltime
+  let totalTimeToDisplay;
+  if (currentTask.taskTotalDuration === "") {
+    totalTimeToDisplay = "00h 00m 00s";
+  } else {
+    const [hrs, mins, secs] = currentTask.taskTotalDuration.split(":");
+    totalTimeToDisplay = `${hrs}h ${mins}m ${secs}s`;
+  }
+
+  // formatting timelog list
+  function populateLogList(logs){
+    if(logs.length > 0){
+
+      const logItems = logs.map(tl => {
+      const logDate = formateDate(new Date(tl.startTime))
+      const logStartTime = new Date(tl.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12:false});
+      const logEndTime = new Date(tl.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12:false});
+
+      const li = document.createElement("li");
+      li.classList.add("loglist-item");
+      li.innerHTML = `
+        <div class="task-details-logdate">${logDate}</div>
+        <div class="task-details-starttime">${logStartTime}</div>
+        <div class="task-details-endtime">${logEndTime}</div>
+        <div class="task-details-totaltime">${tl.totalTime}</div>
+      `;
+      return li.outerHTML;
+      }).join("");
+      
+      return logItems;
+    }else {
+
+      const li = document.createElement("li");
+      li.classList.add("loglist-item");
+      li.innerHTML = `
+        <div class="task-details-logdate">-- -- --</div>
+        <div class="task-details-starttime">-- -- --</div>
+        <div class="task-details-endtime">-- -- --</div>
+        <div class="task-details-totaltime">-- -- --</div>
+      `;
+      
+      return li.outerHTML;
+    }
+  }
+
+  // populating whole task details
   const detailsWrapper = document.createElement("div");
-  detailsWrapper.classList.add(tasks-details-container);
+  detailsWrapper.classList.add("tasks-details-container");
   detailsWrapper.innerHTML = `
-    
+      <div class="task-details-header">
+        <div class="header-desc">
+          <h3>Your Task Details</h3>
+        </div>
+        <div class="header-btns">
+          <button class="edit-toggle-btn btn">Edit mode</button>
+          <button class="btn tasks-details-section-close-btn">x</button>
+        </div>
+      </div>
+      <div class="task-details-content">
+        <div class="task-detail-group">
+          <label>Name:</label>
+          <input type="text" class="input" id="task-details-task-name" value="${currentTask.taskName}" readonly>
+        </div>
+        <div class="task-detail-group">
+          <label>Description:</label>
+          <textarea class="input desc-input" id="task-details-task-desc" readonly>${currentTask.taskDesc}</textarea>
+        </div>
+        <div class="task-detail-group">
+          <label>Status:</label>
+          <div class="task-detail-status-group">
+            <span id="task-details-task-status" class="task-detail-text">${currentTask.taskStatus}</span>
+              <select class="task-status-select-box" id="task-status" style="display: none;">
+                <option value="" selected disabled >Mark as</option>
+                <option value="done"> ✅ Done</option>
+              </select>
+          </div>
+        </div>
+        <div class="task-detail-group">
+          <label>Created-at:</label>
+          <span id="task-details-task-createddate" class="task-detail-text">${currentTask.createdAt}</span>
+        </div>
+        <div class="task-detail-group">
+          <div class="task-detail-date-group">
+            <label>Start-date:</label>
+            <span id="task-details-task-startdate" class="task-detail-text">${currentTask.startDate === "" ? "-- -- --" : currentTask.startDate}</span>
+          </div>
+          <div class="task-detail-date-group">
+            <label>End-date:</label>
+            <span id="task-details-task-enddate" class="task-detail-text">${ currentTask.endDate === "" ? "-- -- --" : currentTask.endDate}</span>
+          </div>
+        </div>                              
+        <div class="task-detail-group">
+          <label>Tags:</label>
+          <ul id="task-details-task-tags" class="task-details-task-tags">
+            <li class="task-tag">Css</li>
+            <li class="task-tag">Grab project</li>
+          </ul>
+        </div>
+        <div class="task-detail-group time-log-group">
+          <label>Time-loglist:</label>
+          <div class="task-detail-loglist-group">
+            <button class="time-log-toggler-btn"> + view more</button>
+            <div class="time-log-list-container">
+              <div class="loglist-head">
+              <div>log Date</div>
+              <div>start time</div>
+              <div>end time</div>
+              <div>total time</div>
+            </div>
+            <ul id="task-details-task-timeloglist" class="loglist-list">
+              ${populateLogList(currentTask.timeLogs)}
+            </ul>
+          </div>
+        </div>
+        <div class="task-detail-group">
+          <label>Total-task-duration:</label>
+          <span id="task-details-task-totalduration" class="task-detail-text task-detail-total">${totalTimeToDisplay}</span>
+        </div>
+      </div>
+      </div>
+      <div class="task-edit-actions" style="display: none;">
+        <button class="btn w-100 save-changes-btn">save changes</button>
+        <button class="btn w-100 cancel-edit-btn">Cancel</button>
+      </div>
   `;
+
+  return detailsWrapper;
 }
 
 
+function enableEditing(tasksDetailsContainer, currentTask, isEditMode){
+  console.log(tasksDetailsContainer, currentTask);
+
+  isEditMode = true;
+
+  const editActionsContainer = tasksDetailsContainer.querySelector('.task-edit-actions');
+  const taskNameField = tasksDetailsContainer.querySelector("#task-details-task-name");
+  const taskDescField = tasksDetailsContainer.querySelector("#task-details-task-desc");
+  const taskStatusDropdown = tasksDetailsContainer.querySelector(".task-status-select-box");
+  const taskStatusField = tasksDetailsContainer.querySelector("#task-details-task-status");
+  const taskEndDateField = tasksDetailsContainer.querySelector("#task-details-task-enddate");
+
+  editActionsContainer.style.display = "flex";
+
+  taskNameField.readOnly = false;
+  taskNameField.classList.add("input-edit-mode");
+  taskNameField.focus();
+ 
+  taskDescField.readOnly = false;
+  taskDescField.classList.add("input-edit-mode");
+
+  taskStatusDropdown.style.display = "inline-block";
+  taskStatusDropdown.style.border = "1px solid lightsalmon"
+
+ 
+  
+
+  
 
 
 
@@ -836,6 +1038,26 @@ function populateTaskDetails(currentTask) {
 
 
 
+
+
+  // cancelbtn onclick updates
+  const cancelEditsBtn = tasksDetailsContainer.querySelector('.cancel-edit-btn');
+  cancelEditsBtn.addEventListener("click", () => {
+    isEditMode = false;
+    editActionsContainer.style.display = "none";
+
+    taskNameField.readOnly = true;
+    taskNameField.classList.remove("input-edit-mode");
+    taskNameField.focus();
+
+    taskDescField.readOnly = false;
+    taskDescField.classList.remove("input-edit-mode");
+
+    taskStatusDropdown.style.display = "none";
+    taskStatusDropdown.style.border = "1px solid #ccc";
+
+  });
+} 
 
 
 
@@ -978,6 +1200,22 @@ function populateTaskDetails(currentTask) {
 //     logTogglerBtn.dataset.expanded = isExpanded ? "false" : "true";
 //     logTogglerBtn.textContent = isExpanded ? "View more +" : "View less -";
 //   })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   
 //   // enabling edit mode for the task details 

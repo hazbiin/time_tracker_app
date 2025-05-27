@@ -141,124 +141,9 @@
                             </div>
 
                             <!-- -----------------------task details-section------------------------------ -->
-                            <div class="tasks-details-section">  <!-- common section -->
-                                
-                                
-                                <div class="tasks-details-container">
+                            <div class="tasks-details-section"> </div>
 
-                                    <div class="task-details-header">
-                                        <div class="header-desc">
-                                            <h3>Your Task Details</h3>
-                                        </div>
-                                        <div class="header-btns">
-                                            <button class="edit-toggle-btn btn">Edit mode</button>
-                                            <button class="btn tasks-details-section-close-btn">x</button>
-                                        </div>
-                                    </div>
-                                    <div class="task-details-content">
-                                        <div class="task-detail-group">
-                                            <label>Name:</label>
-                                            <input type="text" class="input" id="task-details-task-name" value="task name" readonly>
-                                        </div>
-
-                                        <div class="task-detail-group">
-                                            <label>Description:</label>
-                                            <textarea class="input" id="task-details-task-desc" readonly>task description</textarea>
-                                        </div>
-
-                                        <div class="task-detail-group">
-                                            <label>Status:</label>
-                                            <div class="task-detail-status-group">
-                                                <span id="task-details-task-status" class="task-detail-text">to-do</span>
-                                                <select class="task-status-select-box" id="task-status" style="display: none;">
-                                                    <option value="" selected disabled>Mark as</option>
-                                                    <option value="done"> ✅ Done</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="task-detail-group">
-                                            <label>Created-at:</label>
-                                            <span id="task-details-task-createddate" class="task-detail-text">YYYY-MM-DD</span>
-                                        </div>
-
-                                        <div class="task-detail-group">
-                                            <div class="task-detail-date-group">
-                                                <label>Start-date:</label>
-                                                <span id="task-details-task-startdate" class="task-detail-text">YYYY-MM-DD</span>
-                                            </div>
-                                            <div class="task-detail-date-group">
-                                                <label>End-date:</label>
-                                                <span id="task-details-task-enddate" class="task-detail-text">YYYY-MM-DD</span>
-                                            </div>
-                                        </div>
-
-                                        <div class="task-detail-group">
-                                            <label>Tags:</label>
-                                            <ul id="task-details-task-tags" class="task-details-task-tags">
-                                                <li class="task-tag">Css</li>
-                                                <li class="task-tag">Grab project</li>
-                                                <li class="task-tag">HTML</li>
-                                                <li class="task-tag">Bosch project</li>
-                                                <li class="task-tag">JS</li>
-                                                <li class="task-tag">TypeScript</li>
-                                            </ul>
-                                        </div>
-
-                                        <div class="task-detail-group time-log-group">
-                                            <label>Time-loglist:</label>
-
-                                            <div class="task-detail-loglist-group">
-                                                <button class="time-log-toggler-btn"> + view more</button>
-                                                
-                                                <div class="time-log-list-container">
-                                                    <div class="loglist-head">
-                                                        <div class="list-heading">log Date</div>
-                                                        <div class="list-heading">start time</div>
-                                                        <div class="list-heading">end time</div>
-                                                        <div class="list-heading">total time</div>
-                                                    </div>
-                                                    <ul id="task-details-task-timeloglist" class="loglist-list">
-
-                                                        <li class="loglist-item">
-                                                            <div class="task-details-logdate">2025-08-09</div>
-                                                            <div class="task-details-starttime">12:00:08</div>
-                                                            <div class="task-details-endtime">14:00:03</div>
-                                                            <div class="task-details-totaltime">02:07:11</div>
-                                                        </li>
-                                                        <li class="loglist-item">
-                                                            <div class="task-details-logdate">2025-08-09</div>
-                                                            <div class="task-details-starttime">12:00:08</div>
-                                                            <div class="task-details-endtime">14:00:03</div>
-                                                            <div class="task-details-totaltime">02:07:11</div>
-                                                        </li>
-                                                        <li class="loglist-item">
-                                                            <div class="task-details-logdate">2025-08-09</div>
-                                                            <div class="task-details-starttime">12:00:08</div>
-                                                            <div class="task-details-endtime">14:00:03</div>
-                                                            <div class="task-details-totaltime">02:07:11</div>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="task-detail-group">
-                                            <label>Total-task-duration:</label>
-                                            <span id="task-details-task-totalduration" class="task-detail-text task-detail-total">00h 00m 00s</span>
-                                        </div>
-
-                                    </div>
-                                    <div class="task-edit-actions" style="display: none;">
-                                        <button class="btn w-100 save-changes-btn">save changes</button>
-                                        <button class="btn w-100 cancel-edit-btn">Cancel</button>
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                            <!-- ------------------------timer-section---------------------------- -->
+                            <!-- ------------------------timer-section------------------------------------ -->
                             <div class="timer-section">
                                 <div class="time-container">
                                     <div>
@@ -280,7 +165,6 @@
                     </div>
                 </section>
 
-
                 <!-- -------------------all tasks section----------------------------- -->
                 <section id="all-tasks-section" style="display: none;">
 
@@ -291,6 +175,7 @@
                         </div>
                         
                         <div class="tasks-management-container">
+                            <!-- ---------------------task list section------------------------------- -->
                             <div class="tasks-list-section">
                                 <ul class="main-tasks-list">
                                     <li class="list-category">
@@ -314,86 +199,11 @@
                                 </ul>
                             </div>
 
-                            <div class="tasks-details-section">  <!-- common section -->
-
-                                <div class="tasks-details-container">
-
-                                    <div class="task-details-header">
-                                        <h3>Your Task Details</h3>
-                                        <button class="edit-toggle-btn">Edit mode</button>
-                                    </div>
-
-                                    
-                                    <div class="task-details-content">
-                                        <div class="task-detail-group">
-                                            <label>Name:</label>
-                                            <input type="text" id="task-details-task-name" value="task-name" readonly>
-                                        </div>
-                                        <div class="task-detail-group">
-                                            <label>Description:</label>
-                                            <textarea id="task-details-task-desc" readonly>task description</textarea>
-                                        </div>
-                                        <div class="task-detail-group">
-                                            <label>Status:</label>
-                                            <span id="task-details-task-status">to-do</span>
-                                            <select id="task-status" disabled>
-                                                <option value="" selected>change status</option>
-                                                <option value="done"> ✅ Done</option>
-                                            </select>
-                                        </div>
-                                        <div class="task-detail-group">
-                                            <div>
-                                                <label>Start-date:</label>
-                                                <span id="task-details-task-startdate">YYYY-MM-DD</span>
-                                            </div>
-                                            <div>
-                                                <label>End-date:</label>
-                                                <span id="task-details-task-enddate">YYYY-MM-DD</span>
-                                            </div>
-                                        </div>
-                                        <div class="task-detail-group">
-                                            <label>Task tags:</label>
-                                            <ul id="task-details-task-tags">
-                                                <li></li>
-                                            </ul>
-                                        </div>
-                                        <div class="task-detail-group">
-                                            <label>Time-log-list:</label>
-                                            <button class="time-log-toggler-btn">view more</button>
-                                            
-                                            <div class="time-log-list-contianer">
-                                                <div style="display: flex; gap:10px; justify-content: space-evenly;">
-                                                    <div>Log Date</div>
-                                                    <div>start time</div>
-                                                    <div>end time</div>
-                                                    <div>total time</div>
-                                                </div>
-                                                <ul id="task-details-task-timeloglist">
-                                                    <li style="display: flex; gap:10px;">
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            
-                                        </div>
-                                        <div class="task-detail-group">
-                                            <label>Total-task-duration:</label>
-                                            <span id="task-details-task-totalduration">00h 00m 00s</span>
-                                        </div>
-                                    </div>
-
-                                   
-                                    <div class="task-edit-actions" style="display: none;">
-                                        <button class="btn save-changes-btn">save changes</button>
-                                        <button class="btn cancel-edit-btn">Cancel</button>
-                                    </div>
-
-                                </div>
-                                <button class="tasks-details-section-close-btn">x</button>
-                            </div>
+                            <!-- ----------------task details section----------------------------------- -->
+                            <div class="tasks-details-section"> </div>
                         </div>
                     </div>
                 </section>
-
 
                 <!-- ---------------analytics-section------------------- -->
                 <section id="analytics-section" style="display: none;">
