@@ -387,8 +387,8 @@ function renderTask(task, containerElement) {
     `;
 
     selectBox = `
-      <select id="task-status" style="display:none" >
-        <option value="" selected>change status</option>
+      <select id="task-status" class="task-status-select-box" style="display:none" >
+        <option value="" selected>Mark as</option>
         <option value="done"> ✅ Done</option>
       </select>
     `;
@@ -401,8 +401,8 @@ function renderTask(task, containerElement) {
     `;
 
     selectBox = `
-      <select id="task-status">
-        <option value="" selected>change status</option>
+      <select id="task-status" class="task-status-select-box">
+        <option value="" selected>Mark as</option>
         <option value="done"> ✅ Done</option>
       </select>
     `;
@@ -417,8 +417,8 @@ function renderTask(task, containerElement) {
     `;
     
     selectBox = `
-      <select id="task-status" style="display:none" >
-        <option value="" selected>change status</option>
+      <select id="task-status" style="display:none" class="task-status-select-box">
+        <option value="" selected>Mark as</option>
         <option value="done"> ✅ Done</option>
       </select>
     `;
@@ -803,8 +803,10 @@ function showTaskDetaitls(taskItem) {
    
     console.log(tasksDetailSection);
 
-  });
+    const taskDetails = populateTaskDetails(currentTask);
+    console.log(taskDetails);
 
+  });
 
 
   // task details close 
@@ -816,7 +818,14 @@ function showTaskDetaitls(taskItem) {
 
 
 
+function populateTaskDetails(currentTask) {
 
+  const detailsWrapper = document.createElement("div");
+  detailsWrapper.classList.add(tasks-details-container);
+  detailsWrapper.innerHTML = `
+    
+  `;
+}
 
 
 
@@ -1051,6 +1060,7 @@ function showTaskDetaitls(taskItem) {
 //     editActionContainer.style.display = "none";
 //   })
 // }
+
 
 
 // ////////////////////////////////////////////////////////////////delete task function///////

@@ -264,9 +264,7 @@ button{
 .tasks-details-section {
     height: 100%;
     background-color: rgb(241, 241, 241);
-    border: 1px solid rgb(217, 217, 217);
-    border-radius: 10px;
-    position: relative;
+    border-radius: 15px;
     
     flex-basis: 0;
     max-width: 0;
@@ -274,7 +272,8 @@ button{
     transform: translateX(100%);
     transition: transform 0.5s ease, max-width 0.5s ease, flex-basis 0.5s ease;
 }
-.tasks-details-section.show{
+.tasks-details-section.show {
+    border: 1px solid rgb(217, 217, 217);
     flex-basis: 30%;
     max-width: 30%;
     transform:  translateX(0);
@@ -283,7 +282,6 @@ button{
 .tasks-details-container{
     display: flex;
     flex-direction: column;
-    gap: 30px;
     height: 100%;
 }
 .task-details-header{
@@ -300,26 +298,173 @@ button{
     gap: 5px;
 }
 .task-details-content{
+    padding: 30px 20px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 25px;
+    height: 100%;
+    overflow-y: auto;
+}
+.task-details-content::-webkit-scrollbar{
+    display: none;
+}
+.task-detail-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.task-detail-group label {
+    font-size: 17px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+.input{
+    padding: 8px;
+    background: none;
+    outline: none;
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    font-size: 17px;
+    width: 100%;
+    font-style: italic;
+}
+.input-edit-mode{
+    padding: 8px;
+    background: unset;
+    border: 1px solid lightgray;
+    border-radius: 8px;
+    outline: unset;
+    width: 100%;
+}
+.task-desc-edit-mode{
+    height: 100px; 
+    resize: vertical;
+}
+.task-detail-status-group{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.task-status-select-box{
+    padding: 5px;
+    padding-right: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    outline: none;
+}
+/* .task-status-select-box:hover{
+    border-color: #1a2b3d;
+} */
+
+.task-detail-text{
+    font-size: 16px;
+    font-style: italic;
+    white-space: nowrap;
+}
+.task-detail-date-group{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+.task-details-task-tags{
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+.task-tag{
+    list-style: none;
+    background-color: #ccc;
+    color: black;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
+/* ------------time log list----------- */
+.time-log-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    gap: 5px;
+}
 
+.task-detail-loglist-group{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.time-log-toggler-btn{
+    background-color: blueviolet;
+    opacity: 0.8;
+    color: #ccc;
+    border: none;
+    border-radius: 6px;
+    padding: 3px 10px;
+    margin-bottom: 5px;
+    align-self: flex-end;
+}
+.time-log-list-container{
+    display: flex;
+    flex-direction: column;
+    /* gap: 10px; */
+    width: 100%;
+    background-color: #ccc;
+    border-radius: 5px;
+}
+.loglist-head, .loglist-item{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 10px;
+    justify-items: center;
+    align-items: center;
+    white-space: nowrap;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    background-color: #706969;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    padding: 10px;
+}
+.loglist-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+.loglist-list::-webkit-scrollbar{
+    display: none;
+}
+.loglist-item{
+   border-radius: unset;
+   background-color: unset;
+   border-bottom: 1px solid darkgrey;
+}
+.loglist-item:last-child {
+    border-bottom: unset;
+}
+.w-100{
+    width: 100%;
+}
+.task-detail-total{
+    font-size: 25px;
+    font-weight: bold;
+}
+.task-edit-actions{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 20px;
+    border-top: 1px solid darkgray;
+}
 
 
 
@@ -532,7 +677,7 @@ button{
     padding: 0;
     display: flex;
     align-items: center;
-    justify-content: start;
+    justify-content: center;
     border-radius: 5px;
     padding: 10px 8px;
     font-size: 14px;
