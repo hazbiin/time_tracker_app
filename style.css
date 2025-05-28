@@ -322,7 +322,6 @@ button{
     padding: 8px;
     background: none;
     outline: none;
-    /* border: 1px solid lightgray; */
     border: none;
     border-radius: 8px;
     font-size: 17px;
@@ -336,7 +335,6 @@ button{
     width: 100%;
 }
 .input-edit-mode{
-    /* background: unset; */
     border: 1px solid lightsalmon;
     outline: unset;
 }
@@ -369,7 +367,7 @@ button{
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
+    gap: 10px;
     white-space: nowrap;
 }
 .task-details-task-tags{
