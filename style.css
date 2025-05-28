@@ -74,17 +74,21 @@ button{
     height: 100vh;
     overflow: hidden;
 }
-#today-tasks-section,#analytics-section,#all-tasks-section {
+.show-section {
     display: flex;
     flex-direction: column;
     gap: 10px;
     height: 100%;
 }
-.main-section-top{
-    /* border: 1px solid rgb(217, 217, 217);
-    border-radius: 15px;
-    padding: 10px; */
+.hide-section {
+    display: none;
 }
+
+/* .main-section-top{
+    border: 1px solid rgb(217, 217, 217);
+    border-radius: 15px;
+    padding: 10px;
+} */
 
 .main-section-bottom{
     border: 1px solid rgb(217, 217, 217);
@@ -196,7 +200,6 @@ button{
     justify-content: center;
     gap: 10px;
 }
-
 
 .task-list-item {
     padding: 5px;

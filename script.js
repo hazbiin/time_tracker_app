@@ -376,7 +376,7 @@ function renderTask(task, containerElement) {
   // formatting based on task status
   let totalTimeText; 
   let timerBtn;
-  let selectBox;
+  // let selectBox;
 
   if(task.taskStatus === "to-do") {
     totalTimeText = `time spent until now: ${totalTimeToDisplay}`;
@@ -386,12 +386,12 @@ function renderTask(task, containerElement) {
       </button>
     `;
 
-    selectBox = `
-      <select id="task-status" class="task-status-select-box" style="display:none" >
-        <option value="" selected>Mark as</option>
-        <option value="done"> ✅ Done</option>
-      </select>
-    `;
+    // selectBox = `
+    //   <select id="task-status" class="task-status-select-box" style="display:none" >
+    //     <option value="" selected>Mark as</option>
+    //     <option value="done"> ✅ Done</option>
+    //   </select>
+    // `;
   } else if(task.taskStatus === "in-progress") {
     totalTimeText = `time spent until now: ${totalTimeToDisplay}`;
     timerBtn = `
@@ -400,12 +400,12 @@ function renderTask(task, containerElement) {
       </button>
     `;
 
-    selectBox = `
-      <select id="task-status" class="task-status-select-box">
-        <option value="" selected>Mark as</option>
-        <option value="done"> ✅ Done</option>
-      </select>
-    `;
+    // selectBox = `
+    //   <select id="task-status" class="task-status-select-box">
+    //     <option value="" selected>Mark as</option>
+    //     <option value="done"> ✅ Done</option>
+    //   </select>
+    // `;
 
   } else {
     totalTimeText = `total task duration: ${totalTimeToDisplay}`;
@@ -416,12 +416,12 @@ function renderTask(task, containerElement) {
       </button>
     `;
     
-    selectBox = `
-      <select id="task-status" style="display:none" class="task-status-select-box">
-        <option value="" selected>Mark as</option>
-        <option value="done"> ✅ Done</option>
-      </select>
-    `;
+    // selectBox = `
+    //   <select id="task-status" style="display:none" class="task-status-select-box">
+    //     <option value="" selected>Mark as</option>
+    //     <option value="done"> ✅ Done</option>
+    //   </select>
+    // `;
   }
 
   // setting innerHTML
@@ -431,7 +431,6 @@ function renderTask(task, containerElement) {
           <h4 class="task-name">${task.taskName}</h4>
           <p class="task-total">${totalTimeText}</p>
           <p class="task-status">task status: ${task.taskStatus}</p>
-          ${selectBox}
       </div>
       <div class="list-item-buttons-section">
            ${timerBtn}
@@ -451,7 +450,7 @@ function renderTask(task, containerElement) {
   showTaskDetaitls(li);
 
   // change task status 
-  updateTaskStatus(li);
+  // updateTaskStatus(li);
 
   // delete tasks 
   deleteTask(li);
@@ -671,113 +670,113 @@ function formatWithLeadingZeros(val) {
 }
 
 
-// /////////////////////////////////////////////////////////////////////////////////task status updation////////
-function updateTaskStatus(taskItem) {
-  const statusSelectBox = taskItem.querySelector("#task-status");
+// /////////////////////////////////////////////////////////////////////////////////task status updation ----- this seems an unwanted code so do it later, ////////
+// function updateTaskStatus(taskItem) {
+//   const statusSelectBox = taskItem.querySelector("#task-status");
 
-  statusSelectBox.addEventListener("change", () => {
+//   statusSelectBox.addEventListener("change", () => {
 
-    if(timerStatus === "started") {
-      return;
-    }
+//     if(timerStatus === "started") {
+//       return;
+//     }
 
-    const updatedTaskStatus = statusSelectBox.value;
-    if(updatedTaskStatus === "done" && timerStatus !== "started") {
+//     const updatedTaskStatus = statusSelectBox.value;
+//     if(updatedTaskStatus === "done" && timerStatus !== "started") {
       
-      if(statusSelectBox.closest(".main-tasks-list")) {
-        if(document.querySelector("#all-tasks-section").style.display === "flex") {
-            document.querySelector("#all-tasks-section").style.display = "none";
-        }
-        document.querySelector("#today-tasks-section").style.display = "flex";
-      }
+//       if(statusSelectBox.closest(".main-tasks-list")) {
+//         if(document.querySelector("#all-tasks-section").style.display === "flex") {
+//             document.querySelector("#all-tasks-section").style.display = "none";
+//         }
+//         document.querySelector("#today-tasks-section").style.display = "flex";
+//       }
 
-      // setting current task to update
-      currentTaskItem = taskItem;
+//       // setting current task to update
+//       currentTaskItem = taskItem;
     
-      // getting tasks of current user form local storage
-      const currentUserName = localStorage.getItem('currentUser');
-      const currentUser = users.find(u => u.username === currentUserName);
-      const tasks = currentUser?.tasks;
+//       // getting tasks of current user form local storage
+//       const currentUserName = localStorage.getItem('currentUser');
+//       const currentUser = users.find(u => u.username === currentUserName);
+//       const tasks = currentUser?.tasks;
 
-      const taskId = Number(currentTaskItem.dataset.taskId);
-      const taskToUpdate = tasks.find(task => task.taskId === taskId);
+//       const taskId = Number(currentTaskItem.dataset.taskId);
+//       const taskToUpdate = tasks.find(task => task.taskId === taskId);
 
 
-      if(taskToUpdate.taskStatus !== "done") {
+//       if(taskToUpdate.taskStatus !== "done") {
 
-        taskToUpdate.endDate = `${formateDate(new Date())}`;
-        taskToUpdate.taskStatus = "done";
-        currentUser.tasks = tasks;
-        localStorage.setItem("users", JSON.stringify(users));
+//         taskToUpdate.endDate = `${formateDate(new Date())}`;
+//         taskToUpdate.taskStatus = "done";
+//         currentUser.tasks = tasks;
+//         localStorage.setItem("users", JSON.stringify(users));
 
-        // dom updates
-        const taskStatusLabel = currentTaskItem.querySelector('.task-status');
-        taskStatusLabel.textContent = `task status: ${taskToUpdate.taskStatus}`;
+//         // dom updates
+//         const taskStatusLabel = currentTaskItem.querySelector('.task-status');
+//         taskStatusLabel.textContent = `task status: ${taskToUpdate.taskStatus}`;
 
-        displayTotalTaskDuration(taskToUpdate, taskId);
+//         displayTotalTaskDuration(taskToUpdate, taskId);
 
-        const dailyTasksList = document.getElementById("daily-tasks-list");
-        const doneTasksList = dailyTasksList.querySelector('.done-tasks');
-        addUpdatedAndRemoveExisitingTaskItem(doneTasksList, currentTaskItem);
+//         const dailyTasksList = document.getElementById("daily-tasks-list");
+//         const doneTasksList = dailyTasksList.querySelector('.done-tasks');
+//         addUpdatedAndRemoveExisitingTaskItem(doneTasksList, currentTaskItem);
           
-        // removing timerbtn and status select box
-        const timerBtn = currentTaskItem.querySelector('.start-timer-btn');
-        timerBtn.remove();
-        statusSelectBox.remove();
-      }
-    }
-  })
-}
+//         // removing timerbtn and status select box
+//         const timerBtn = currentTaskItem.querySelector('.start-timer-btn');
+//         timerBtn.remove();
+//         statusSelectBox.remove();
+//       }
+//     }
+//   })
+// }
 
-function addUpdatedAndRemoveExisitingTaskItem(container, taskItem) {
+// function addUpdatedAndRemoveExisitingTaskItem(container, taskItem) {
 
-  console.log("callllllllllled meeeeeeee")
-  const dailyTasksList = container.closest('#daily-tasks-list');
-  const taskId = Number(taskItem.dataset.taskId);
+//   console.log("callllllllllled meeeeeeee")
+//   const dailyTasksList = container.closest('#daily-tasks-list');
+//   const taskId = Number(taskItem.dataset.taskId);
 
-  const currentUserName = localStorage.getItem('currentUser');
-  const currentUser = users.find(u => u.username === currentUserName);
-  const tasks = currentUser?.tasks;
+//   const currentUserName = localStorage.getItem('currentUser');
+//   const currentUser = users.find(u => u.username === currentUserName);
+//   const tasks = currentUser?.tasks;
 
-  const taskToUpdate = tasks.find(task => task.taskId === taskId);
+//   const taskToUpdate = tasks.find(task => task.taskId === taskId);
 
-  if(taskToUpdate.taskStatus === "in-progress") {
-    taskItem.querySelector('#task-status').style.display = "inline-block";
-  }else if(taskToUpdate.taskStatus === "done") {
-    taskItem.querySelector('#task-status').style.display = "none";
-  }
+//   if(taskToUpdate.taskStatus === "in-progress") {
+//     taskItem.querySelector('#task-status').style.display = "inline-block";
+//   }else if(taskToUpdate.taskStatus === "done") {
+//     taskItem.querySelector('#task-status').style.display = "none";
+//   }
 
-  // appending to appropriate list
-  if(!container.querySelector(`[data-task-id="${taskId}"]`)) {
-    container.append(currentTaskItem);
-  }
+//   // appending to appropriate list
+//   if(!container.querySelector(`[data-task-id="${taskId}"]`)) {
+//     container.append(currentTaskItem);
+//   }
 
-  // removing exisiting one from other lists
-  const listSubCategories = dailyTasksList.querySelectorAll('.list-sub-category');
-  listSubCategories.forEach(subCat => {
-    if(subCat !== container) {
-      const existingItem = subCat.querySelector(`[data-task-id="${taskId}"]`);
-      if(existingItem) {
-        existingItem.remove();
-      }
-    }
-  });
-}
+//   // removing exisiting one from other lists
+//   const listSubCategories = dailyTasksList.querySelectorAll('.list-sub-category');
+//   listSubCategories.forEach(subCat => {
+//     if(subCat !== container) {
+//       const existingItem = subCat.querySelector(`[data-task-id="${taskId}"]`);
+//       if(existingItem) {
+//         existingItem.remove();
+//       }
+//     }
+//   });
+// }
 
-function displayTotalTaskDuration(taskToUpdate, taskId) {
-  const allListItemToUpdate = document.querySelectorAll(`[data-task-id="${taskId}"]`);
+// function displayTotalTaskDuration(taskToUpdate, taskId) {
+//   const allListItemToUpdate = document.querySelectorAll(`[data-task-id="${taskId}"]`);
 
-  allListItemToUpdate.forEach(listItemToUpdate => {
-    const taskTotalContainer =  listItemToUpdate.querySelector('.task-total');
-    const [hrs,mins,secs] = taskToUpdate.taskTotalDuration.split(':');
+//   allListItemToUpdate.forEach(listItemToUpdate => {
+//     const taskTotalContainer =  listItemToUpdate.querySelector('.task-total');
+//     const [hrs,mins,secs] = taskToUpdate.taskTotalDuration.split(':');
 
-    if(taskToUpdate.taskStatus === "in-progress") {
-      taskTotalContainer.textContent = `time spent until now: ${hrs}h ${mins}m ${secs}s`;
-    }else if(taskToUpdate.taskStatus === "done"){
-      taskTotalContainer.textContent = `total task duration: ${hrs}h ${mins}m ${secs}s`;
-    }
-  })
-}
+//     if(taskToUpdate.taskStatus === "in-progress") {
+//       taskTotalContainer.textContent = `time spent until now: ${hrs}h ${mins}m ${secs}s`;
+//     }else if(taskToUpdate.taskStatus === "done"){
+//       taskTotalContainer.textContent = `total task duration: ${hrs}h ${mins}m ${secs}s`;
+//     }
+//   })
+// }
 
 
 // /////////////////////////////////////////////////////////////////////////////////////showing task details/////
@@ -944,14 +943,14 @@ function populateTaskDetails(currentTask) {
         </div>
         <div class="task-detail-group">
           <label>Description:</label>
-          <textarea class="input desc-input" id="task-details-task-desc" readonly>${currentTask.taskDesc === "" ? "No description provided!" : currentTask.taskDesc}</textarea>
+          <textarea class="input desc-input" id="task-details-task-desc" readonly>${currentTask.taskDesc}</textarea>
         </div>
         <div class="task-detail-group">
           <label>Status:</label>
           <div class="task-detail-status-group">
             <span id="task-details-task-status" class="task-detail-text">${currentTask.taskStatus}</span>
               <select class="task-status-select-box" id="task-status" style="display: none;">
-                <option value="" selected disabled >Mark as</option>
+                <option value="in-progress">🔄 In Progress</option>
                 <option value="done"> ✅ Done</option>
               </select>
           </div>
@@ -1045,8 +1044,15 @@ function enableEditing(tasksDetailsContainer, currentTask){
 
     // status change event
     taskStatusDropdown.addEventListener("change", () => {
-      taskStatusField.textContent = taskStatusDropdown.value;
-      taskEndDateField.textContent = formateDate(new Date());
+      const selectedValue = taskStatusDropdown.value;
+      taskStatusField.textContent = selectedValue;
+      
+      if(selectedValue === "done"){
+        taskEndDateField.textContent = formateDate(new Date());
+      }else {
+        taskEndDateField.textContent = "-- -- --";
+      }
+      
     });
   }
 
@@ -1057,40 +1063,62 @@ function enableEditing(tasksDetailsContainer, currentTask){
     isEditMode = false;
     editActionsContainer.style.display = "none";
 
-
+    // task name
     taskNameField.readOnly = true;
     taskNameField.classList.remove("input-edit-mode");
     taskNameField.blur();
-    currentTask.taskName = taskNameField.value;
 
-
+    if(taskNameField.value !== originalTaskData.taskName) {
+      currentTask.taskName = taskNameField.value;
+      console.log("name changed", currentTask)
+    }
+    
+    // task desc
     taskDescField.readOnly = true;
     taskDescField.classList.remove("input-edit-mode");
-    currentTask.taskDesc = taskDescField.value;
+    if(taskDescField.value !== originalTaskData.taskDesc) {
+      currentTask.taskDesc = taskDescField.value;
+      console.log("desc changed", currentTask)
+    }
+    
 
-
+    // task status
     if(originalTaskData.taskStatus === "in-progress") {
       taskStatusDropdown.style.display = "none";
       taskStatusDropdown.style.border = "1px solid #ccc";
       taskStatusDropdown.value = "";
 
-      currentTask.taskStatus = taskStatusField.textContent;
-      currentTask.endDate = taskEndDateField.textContent;
+      if(taskStatusField.value !== originalTaskData.taskStatus) {
+        currentTask.taskStatus = taskStatusField.textContent;
+        currentTask.endDate = taskEndDateField.textContent;
+        console.log("status changed", currentTask)
+      }
     }
 
+
     // saving to local Storage
-    localStorage.setItem("users", JSON.stringify(users));
-    alert("task is successfully updated");
+    if (
+      taskNameField.value !== originalTaskData.taskName ||
+      taskDescField.value !== originalTaskData.taskDesc ||
+      taskStatusField.textContent !== originalTaskData.taskStatus
+    ) {
 
+      localStorage.setItem("users", JSON.stringify(users));
+      console.log("new updated task",currentTask);
+      alert("task is successfully updated");
 
-    // check where we are updating and update the appropriate list./////////////
-    displayTasks();
-    renderAllTasksList();
-
-    
-
+      const allTasksSection = tasksDetailsContainer.closest("#all-tasks-section");
+      if(allTasksSection) {
+        renderAllTasksList();
+        // populateTaskDetails(currentTask);
+      }
+      const todayTasksSection = tasksDetailsContainer.closest("#today-tasks-section");
+      if(todayTasksSection) {
+        displayTasks();
+        // populateTaskDetails(currentTask)
+      }
+    }
   })
-  
   
 
   // cancelbtn onclick updates
@@ -1113,7 +1141,7 @@ function enableEditing(tasksDetailsContainer, currentTask){
     if(originalTaskData.taskStatus === "in-progress") {
       taskStatusDropdown.style.display = "none";
       taskStatusDropdown.style.border = "1px solid #ccc";
-      taskStatusDropdown.value = "";
+      taskStatusDropdown.value = "in-progress";
       taskStatusField.textContent = originalTaskData.taskStatus;
       taskEndDateField.textContent = "-- -- --";
     }
@@ -1147,6 +1175,12 @@ function deleteTask(taskItem){
     
     // updating dom
     taskItem.remove();
+
+
+    // also close any task details section if it is open while deleting.
+    
+
+
   })
 }
 
@@ -1214,37 +1248,40 @@ function scheduleMidnightUpdate() {
 
 
 // /////////////////////////////////////////////////////////////////////////side bar navigations///
+function showSection(sectionIdToShow) {
+  const allSections = document.querySelectorAll("main section");
+
+  allSections.forEach(section => {
+    if(section.id === sectionIdToShow) {
+      section.classList.add("show-section");
+      section.classList.remove("hide-section");
+    }else {
+      section.classList.remove("show-section");
+      section.classList.add("hide-section");
+    }
+  });
+
+}
 const todayTaskListBtn = document.querySelector("#today-task-list-btn");
 todayTaskListBtn.addEventListener("click", () => {
-  // controling display
-  if(document.querySelector("#analytics-section").style.display === "flex") {
-    document.querySelector("#analytics-section").style.display = "none";
-  }
-  if(document.querySelector("#all-tasks-section").style.display = "flex") {
-    document.querySelector("#all-tasks-section").style.display = "none";
-  }
-  document.querySelector("#today-tasks-section").style.display = "flex";
-
-
-  // populating lists
+  showSection("today-tasks-section");
   displayTasks();
 });
 
 const listAllTasksBtn = document.querySelector("#list-all-tasks-btn");
-listAllTasksBtn.addEventListener("click", renderAllTasksList);
+listAllTasksBtn.addEventListener("click", () => {
+  showSection("all-tasks-section");
+  renderAllTasksList();
+});
+
+const showAnalyticsBtn = document.querySelector("#analytics-btn");
+showAnalyticsBtn.addEventListener("click", () => {
+  showSection("analytics-section");
+  createGraph(gridContainer, maxY, 14);
+});
+
 
 function renderAllTasksList(){
-  // controling display
-  if(document.querySelector("#analytics-section").style.display === "flex") {
-    document.querySelector("#analytics-section").style.display = "none";
-  }
-  if(document.querySelector("#today-tasks-section").style.display === "flex"){
-    document.querySelector("#today-tasks-section").style.display = "none"
-  }
-  document.querySelector("#all-tasks-section").style.display = "flex";
-
-
-  // populating lists
   const mainTasksList = document.querySelector('.main-tasks-list');
   const todoTasksList = mainTasksList.querySelector('.todo-tasks');
   const inProgressTasksList = mainTasksList.querySelector('.inprogress-tasks');
@@ -1268,22 +1305,6 @@ function renderAllTasksList(){
     }
   })
 }
-
-const showAnalyticsBtn = document.querySelector("#analytics-btn");
-showAnalyticsBtn.addEventListener("click", () => {
-
-  if(document.querySelector("#all-tasks-section").style.display = "flex") {
-    document.querySelector("#all-tasks-section").style.display = "none";
-  }
-  if(document.querySelector("#today-tasks-section").style.display = "flex"){
-    document.querySelector("#today-tasks-section").style.display = "none"
-  }
-  document.querySelector("#analytics-section").style.display = "flex"; 
-  createGraph(gridContainer, maxY, 14);
-})
-
-
-
 
 // -----------------getting duration worked on each day and week(implentation withour chartjs)---------------------
 // const SCALING_FACTOR = 10; // only in development mode;
