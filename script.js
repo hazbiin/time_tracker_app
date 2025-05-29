@@ -199,7 +199,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // ////////////////////////////////////////////////////////////////////////////task displaying function from local storage on reloads/////////
 function displayTasks() {
-
   const dailyTasksList = document.getElementById("daily-tasks-list");
   const todoTasksList = dailyTasksList.querySelector('.todo-tasks');
   const inProgressTasksList = dailyTasksList.querySelector('.inprogress-tasks');
@@ -257,7 +256,6 @@ function displayTasks() {
     if(task.taskStatus === "to-do") {
       renderTask(task, todoTasksList);
     }else if(task.taskStatus === "in-progress") {
-      console.log("herere")
       renderTask(task, inProgressTasksList)
     }else if(task.taskStatus === "done") {
       renderTask(task, doneTasksList)
@@ -726,10 +724,13 @@ let isEditMode = false;
 // let currentDisplayedTaskId = null;
 
 function showTaskDetaitls(taskItem) {
+  // console.log("came back here again | came back here again | came back here again");
 
   const taskDetailsBtn = taskItem.querySelector(".task-details-btn");
   const tasksDetailSection = taskDetailsBtn.closest('.tasks-management-container').querySelector('.tasks-details-section');
   taskDetailsBtn.addEventListener("click", () => {
+
+    // console.log("called called called called callled ");
 
     // task details open 
     if(!tasksDetailSection.classList.contains("show")) {
@@ -809,7 +810,7 @@ function showTaskDetaitls(taskItem) {
           tasksDetailSection.classList.remove('show');
           // currentDisplayedTaskId = null;
         }else {
-          alert("you are currently editing a task, save or cancel to proceed!");
+          alert("you are currently editing a task, save changes made or cancel to proceed from edit mode!");
           return;
         }
       });
@@ -1007,6 +1008,18 @@ function enableEditing(tasksDetailsContainer, currentTask){
   saveChangesBtn.replaceWith(newSaveBtn);
   newSaveBtn.addEventListener("click", () => {
 
+    const hasChanged = 
+      taskNameField.value !== originalTaskData.taskName ||
+      taskDescField.value !== originalTaskData.taskDesc ||
+      taskStatusField.textContent !== originalTaskData.taskStatus;
+
+    // dont allow saving if no changes are made.
+    if(!hasChanged) {
+      alert("No changes made.");
+      return;
+    }
+
+    // proceed when updates are made.
     isEditMode = false;
     editActionsContainer.style.display = "none";
 
@@ -1014,7 +1027,6 @@ function enableEditing(tasksDetailsContainer, currentTask){
     taskNameField.readOnly = true;
     taskNameField.classList.remove("input-edit-mode");
     taskNameField.blur();
-
     if(taskNameField.value !== originalTaskData.taskName) {
       currentTask.taskName = taskNameField.value;
       console.log("name changed", currentTask)
@@ -1027,12 +1039,11 @@ function enableEditing(tasksDetailsContainer, currentTask){
       currentTask.taskDesc = taskDescField.value;
       console.log("desc changed", currentTask)
     }
-  
+    
     // task status
     if(originalTaskData.taskStatus === "in-progress") {
       taskStatusDropdown.style.display = "none";
       taskStatusDropdown.style.border = "1px solid #ccc";
-      // taskStatusDropdown.value = "";
 
       if(taskStatusField.textContent !== originalTaskData.taskStatus) {
         currentTask.taskStatus = taskStatusField.textContent;
@@ -1042,28 +1053,20 @@ function enableEditing(tasksDetailsContainer, currentTask){
     }
 
     // saving to local storage 
-    if (
-      taskNameField.value !== originalTaskData.taskName ||
-      taskDescField.value !== originalTaskData.taskDesc ||
-      taskStatusField.textContent !== originalTaskData.taskStatus
-    ) {
+    localStorage.setItem("users", JSON.stringify(users));
+    console.log("new updated task",currentTask);
+    alert("task is successfully updated");
 
-      localStorage.setItem("users", JSON.stringify(users));
-      console.log("new updated task",currentTask);
-      alert("task is successfully updated");
-
-      const allTasksSection = tasksDetailsContainer.closest("#all-tasks-section");
-      if(allTasksSection) {
-        renderAllTasksList();
-      }
-      const todayTasksSection = tasksDetailsContainer.closest("#today-tasks-section");
-      if(todayTasksSection) {
-        displayTasks();
-      }
+    const allTasksSection = tasksDetailsContainer.closest("#all-tasks-section");
+    if(allTasksSection) {
+      renderAllTasksList();
+    }
+    const todayTasksSection = tasksDetailsContainer.closest("#today-tasks-section");
+    if(todayTasksSection) {
+      displayTasks();
     }
 
-  })
-
+  });
 
   // cancelbtn onclick updates
   const cancelEditsBtn = tasksDetailsContainer.querySelector('.cancel-edit-btn');
@@ -1091,11 +1094,11 @@ function enableEditing(tasksDetailsContainer, currentTask){
       taskStatusField.textContent = originalTaskData.taskStatus;
       taskEndDateField.textContent = "-- -- --";
     }
-    
+
   });
 } 
 
-///////////////////////////////////////////////////////////////////delete task function///////
+////////////////////////////////////////////////////////////////delete task function///////
 function deleteTask(taskItem){
   const deleteBtn = taskItem.querySelector('.task-delete-btn');
   deleteBtn.addEventListener("click", () => {
