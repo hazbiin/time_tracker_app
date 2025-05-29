@@ -325,7 +325,8 @@ button{
     padding: 8px;
     background: none;
     outline: none;
-    border: none;
+    /* border: none; */
+    border: 1px solid #ccc;
     border-radius: 8px;
     font-size: 17px;
     width: 100%;
@@ -466,26 +467,6 @@ button{
     padding: 20px;
     border-top: 1px solid darkgray;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
