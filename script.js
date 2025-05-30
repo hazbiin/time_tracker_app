@@ -448,7 +448,7 @@ function renderTask(task, containerElement) {
   showTimer(li);
 
   // show taskDetails 
-  showTaskDetaitls(li);
+  showTaskDetails(li);
 
   // delete tasks 
   deleteTask(li);
@@ -479,7 +479,7 @@ function showTimer(taskItem) {
     const currentUser = users.find(u => u.username === currentUserName);
     const tasks = currentUser?.tasks;
 
-    const taskId = Number(currentTaskItem.dataset.taskId);
+    const taskId = Number(taskItem.dataset.taskId);
 
     const taskToUpdate = tasks.find(task => task.taskId === taskId);
 
@@ -519,6 +519,7 @@ function showTimer(taskItem) {
 timerSectionCloseBtn.addEventListener("click", () => {
   if(timerStatus !== "started"){
     timerSection.classList.remove('show');
+    currentTaskItem = null;
   }
 });
 
@@ -634,6 +635,7 @@ timerBtn.addEventListener("click", (e) => {
 
       if(timerSection.classList.contains("show")) {
         timerSection.classList.remove('show');
+        currentTaskItem = null;
       }
 
       seconds = 0;
@@ -688,7 +690,8 @@ function addUpdatedAndRemoveExisitingTaskItem(container, taskItem) {
 
   // appending to appropriate list
   if(!container.querySelector(`[data-task-id="${taskId}"]`)) {
-    container.append(currentTaskItem);
+    // container.append(currentTaskItem);
+    container.appendChild(taskItem);
   }
 
   // removing exisiting one from other lists
@@ -721,30 +724,35 @@ function displayTotalTaskDuration(taskToUpdate, taskId) {
 
 // /////////////////////////////////////////////////////////////////////////////////////showing task details/////
 let isEditMode = false;
-// let currentDisplayedTaskId = null;
-
-function showTaskDetaitls(taskItem) {
+let currentDisplayedTaskId = null;
+function showTaskDetails(taskItem) {
   // console.log("came back here again | came back here again | came back here again");
 
   const taskDetailsBtn = taskItem.querySelector(".task-details-btn");
   const tasksDetailSection = taskDetailsBtn.closest('.tasks-management-container').querySelector('.tasks-details-section');
   taskDetailsBtn.addEventListener("click", () => {
-
     // console.log("called called called called callled ");
 
-    // task details open 
-    if(!tasksDetailSection.classList.contains("show")) {
-      if(!isEditMode) {
-        tasksDetailSection.classList.add('show');
-      }
+    const taskId = Number(taskItem.dataset.taskId);
+
+    // returning early to avoid re-population of already shown task.
+    if(tasksDetailSection.classList.contains("show") && currentDisplayedTaskId === taskId && !isEditMode) {
+      // console.log("already shown");
+      return;
+    }
+
+    // setting current displayed task id
+    currentDisplayedTaskId = taskId;
+
+    // show the section 
+    if(!tasksDetailSection.classList.contains("show") && !isEditMode) {
+      tasksDetailSection.classList.add("show");
     }
 
     // getting the task from local storage.
     const currentUserName = localStorage.getItem('currentUser');
     const currentUser = users.find(u => u.username === currentUserName);
     const tasks = currentUser?.tasks;
-
-    const taskId = Number(taskItem.dataset.taskId);
     const currentTask = tasks.find(task => task.taskId === taskId);
 
 
@@ -753,10 +761,6 @@ function showTaskDetaitls(taskItem) {
       const taskDetails = populateTaskDetails(currentTask);
       tasksDetailSection.innerHTML = "";
       tasksDetailSection.appendChild(taskDetails);
-      currentDisplayedTaskId = currentTask.taskId;
-
-      // if(currentDisplayedTaskId !== currentTask.taskId) {
-      // }
     }
     else {
       alert("you are currently editing a task, save or cancel to proceed!");
@@ -808,7 +812,7 @@ function showTaskDetaitls(taskItem) {
       tasksDetailSectionCloseBtn.addEventListener("click", () => {
         if(!isEditMode) {
           tasksDetailSection.classList.remove('show');
-          // currentDisplayedTaskId = null;
+          currentDisplayedTaskId = null;
         }else {
           alert("you are currently editing a task, save changes made or cancel to proceed from edit mode!");
           return;
@@ -818,8 +822,7 @@ function showTaskDetaitls(taskItem) {
 }
 
 function populateTaskDetails(currentTask) {
-  console.log("func called")
-  console.log(currentTask);
+  console.log("func called", currentTask);
 
   // formatting totaltime
   let totalTimeToDisplay;
@@ -1031,7 +1034,8 @@ function enableEditing(tasksDetailsContainer, currentTask){
       currentTask.taskName = taskNameField.value;
       console.log("name changed", currentTask)
     }
-    
+
+
     // task desc
     taskDescField.readOnly = true;
     taskDescField.classList.remove("input-edit-mode");
@@ -1110,26 +1114,34 @@ function deleteTask(taskItem){
       return;
     }
    
-    // removing task
+    // // removing task
     const tasks = currentUser?.tasks || [];
     const taskId = Number(taskItem.dataset.taskId);
     const updatedTasks = tasks.filter(task => task.taskId !== taskId);
     console.log(taskItem, updatedTasks)
 
-    // saving back to local storage
+    // // saving back to local storage
     currentUser.tasks = updatedTasks;
     localStorage.setItem("users", JSON.stringify(users));
-    
-    // updating dom
-    taskItem.remove();
     alert("task deleted successfully!");
-
+    
+    //updating dom
     // also close any task details section if it is open while deleting.
-    // console.log(taskItem);
-    
-    
+    if(currentDisplayedTaskId === taskId) {
+      const tasksDetailSection = taskItem.closest(".tasks-management-container").querySelector(".tasks-details-section");
+      console.log(tasksDetailSection);
+
+      if(tasksDetailSection.classList.contains("show")) {
+        tasksDetailSection.classList.remove("show");
+        currentDisplayedTaskId = null;
+        isEditMode = false;
+      }
+    }
+
+    taskItem.remove();
   });
 }
+
 
 
 ////////////////////////////////////////////////////////////////////// new day function /////
@@ -1415,7 +1427,6 @@ function formateXAxisLabel(dateStr = "") {
     return `${monthNames[monthIndex]} ${parseInt(day, 10)}`;
   }
 }
-
 
 
 // ////////////////////////////////////////////analytics using chart.js///////////////////////////////////////////////
