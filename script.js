@@ -378,6 +378,7 @@ function renderTask(task, containerElement) {
   let totalTimeText; 
   let timerBtn;
   // let selectBox;
+  let taskTag;
 
   if(task.taskStatus === "to-do") {
     totalTimeText = `time spent until now: ${totalTimeToDisplay}`;
@@ -425,6 +426,23 @@ function renderTask(task, containerElement) {
     // `;
   }
 
+
+  if(task.taskTag === "") {
+    taskTag = `
+      <div class="task-tags-container">
+        <p>task-tag: </p>
+        <span>-- -- --</span>
+      </div>
+    `;
+  }else {
+    taskTag =  `
+      <div class="task-tags-container">
+        <p>task-tag: </p>
+        <span class="task-tag">${task.taskTag}</span>
+      </div>
+    `;
+  }
+
   // setting innerHTML
   li.innerHTML = `
     <div class="task-info">
@@ -432,10 +450,7 @@ function renderTask(task, containerElement) {
           <h4 class="task-name">${task.taskName}</h4>
           <p class="task-total">${totalTimeText}</p>
           <p class="task-status">task-status: ${task.taskStatus}</p>
-          <div class="task-tags-container">
-            <p>task-tag: </p>
-            <span class="task-tag">${task.taskTag}</span>
-          </div>
+          ${taskTag}
       </div>
       <div class="list-item-buttons-section ">
            ${timerBtn}
@@ -447,6 +462,7 @@ function renderTask(task, containerElement) {
     </div>
   `;
 
+  
   containerElement.appendChild(li);
 
   // attach timers
@@ -729,6 +745,12 @@ function displayTotalTaskDuration(taskToUpdate, taskId) {
   })
 }
 
+// 
+// tag edit, delete
+// task details open issue
+// graph. , show weekly grpah also. -- set grpah view then only you can move forward.
+// check logout , if there is any issue or not.
+
 
 // /////////////////////////////////////////////////////////////////////////////////////showing task details/////
 let isEditMode = false;
@@ -925,7 +947,9 @@ function populateTaskDetails(currentTask) {
         </div>                              
         <div class="task-detail-group">
           <label>Tags:</label>
-          <span class="task-tag">${currentTask.taskTag}</span>
+          <div class="task-detail-status-group">
+            ${currentTask.taskTag === "" ? `<span>-- -- --</span>` : `<span class="task-tag">${currentTask.taskTag}</span>` }
+          </div>
         </div>
         <div class="task-detail-group time-log-group">
           <label>Time-loglist:</label>
@@ -957,7 +981,6 @@ function populateTaskDetails(currentTask) {
 
   return detailsWrapper;
 }
-
 
 function enableEditing(tasksDetailsContainer, currentTask){
 
@@ -1007,7 +1030,6 @@ function enableEditing(tasksDetailsContainer, currentTask){
       
     });
   }
-
 
   // savebtn onclick updates 
   const saveChangesBtn = tasksDetailsContainer.querySelector('.save-changes-btn');
@@ -1203,7 +1225,6 @@ clearSearchBtn.addEventListener("click", () => {
 });
 
 
-
 ////////////////////////////////////////////////////////////////////// new day function /////
 // setting current date initially
 const currentDate = document.querySelector(".current-date");
@@ -1236,9 +1257,6 @@ function onNewDay() {
   })
 
   if(!taskCreatedToday) {
-    // updating todays tasks container
-    // const dailyTasksList = document.getElementById("daily-tasks-list");
-    // dailyTasksList.innerHTML = "";
 
     const dailyTasksList = document.getElementById("daily-tasks-list");
     const todoTasksList = dailyTasksList.querySelector('.todo-tasks');
@@ -1323,7 +1341,6 @@ function renderAllTasksList(){
     }
   })
 }
-
 
 // -----------------getting duration worked on each day and week(implentation withour chartjs)---------------------
 
