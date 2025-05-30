@@ -103,7 +103,10 @@ button{
     overflow-x: hidden;
 }
 
-
+.search-section {
+    display: flex;
+    gap: 10px;
+}
 /* //////////////////////////////////////////////////////current day///////////////////////////// */
 .current-day-details-section{
     display: flex;
@@ -177,7 +180,6 @@ button{
 .new-tasks-list::-webkit-scrollbar{
     display: none;
 }
-
 .main-tasks-list{
     display: flex;
     flex-direction: column;
@@ -200,7 +202,6 @@ button{
     justify-content: center;
     gap: 10px;
 }
-
 .task-list-item {
     padding: 5px;
     background-color: #f6f6f6;
@@ -379,6 +380,10 @@ button{
     gap: 5px;
     flex-wrap: wrap;
 }
+.task-tags-container{
+    display: flex;
+    gap: 10px;
+}
 .task-tag{
     list-style: none;
     background-color: #ccc;
@@ -517,7 +522,6 @@ button{
     flex-direction: column;
     gap: 20px;
     font-size: 25px;
-    
 }
 .time-container h3{
     font-size: 40px;

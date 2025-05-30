@@ -171,7 +171,12 @@
                     <div class="main-section-bottom">
                         <div style="display: flex; justify-content: space-between;">
                             <h3>Your Tasks List</h3>
-                            <input type="text" placeholder="search by tags" style="display: inline-block;"/>
+
+                            <div class="search-section">
+                                <input type="text" id="search-input" placeholder="search by tags" style="display: inline-block;"/>
+                                <button class="create-task-btn" id="search-btn">Search</button>
+                                <button class="create-task-btn" id="clear-search-btn">Clear</button>
+                            </div>
                         </div>
                         
                         <div class="tasks-management-container">

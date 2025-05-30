@@ -431,7 +431,11 @@ function renderTask(task, containerElement) {
       <div class="list-item-text-section">
           <h4 class="task-name">${task.taskName}</h4>
           <p class="task-total">${totalTimeText}</p>
-          <p class="task-status">task status: ${task.taskStatus}</p>
+          <p class="task-status">task-status: ${task.taskStatus}</p>
+          <div class="task-tags-container">
+            <p>task-tag: </p>
+            <span class="task-tag">${task.taskTag}</span>
+          </div>
       </div>
       <div class="list-item-buttons-section ">
            ${timerBtn}
@@ -442,6 +446,7 @@ function renderTask(task, containerElement) {
       </div>
     </div>
   `;
+
   containerElement.appendChild(li);
 
   // attach timers
@@ -590,10 +595,13 @@ timerBtn.addEventListener("click", (e) => {
       timerBtn.textContent = "stop";
 
       // dom changes 
-      const dailyTasksList = document.getElementById("daily-tasks-list");
-      const inProgressTasksList = dailyTasksList.querySelector('.inprogress-tasks');
-      addUpdatedAndRemoveExisitingTaskItem(inProgressTasksList, currentTaskItem);
+      // const dailyTasksList = document.getElementById("daily-tasks-list");
+      // const inProgressTasksList = dailyTasksList.querySelector('.inprogress-tasks');
+      // addUpdatedAndRemoveExisitingTaskItem(inProgressTasksList, currentTaskItem);
 
+      // render the current day tasks
+      displayTasks();
+      
     }else {
 
       clearInterval(intervalId);
@@ -767,7 +775,7 @@ function showTaskDetails(taskItem) {
       return;
     }
     
-    
+
     // ----------------------managing buttons inside the task details section----------
     const logTogglerBtn = tasksDetailSection.querySelector('.time-log-toggler-btn');
     const logListItems = tasksDetailSection.querySelectorAll('.loglist-item');
@@ -917,10 +925,7 @@ function populateTaskDetails(currentTask) {
         </div>                              
         <div class="task-detail-group">
           <label>Tags:</label>
-          <ul id="task-details-task-tags" class="task-details-task-tags">
-            <li class="task-tag">Css</li>
-            <li class="task-tag">Grab project</li>
-          </ul>
+          <span class="task-tag">${currentTask.taskTag}</span>
         </div>
         <div class="task-detail-group time-log-group">
           <label>Time-loglist:</label>
@@ -1002,6 +1007,7 @@ function enableEditing(tasksDetailsContainer, currentTask){
       
     });
   }
+
 
   // savebtn onclick updates 
   const saveChangesBtn = tasksDetailsContainer.querySelector('.save-changes-btn');
@@ -1141,6 +1147,60 @@ function deleteTask(taskItem){
     taskItem.remove();
   });
 }
+
+// /////////////////////////////////////////////////////////////////////////////////////////search functionality/////////
+const searchBtn = document.getElementById("search-btn");
+searchBtn.addEventListener("click", () => {
+
+  // getting the search value
+  const searchValue = document.getElementById("search-input").value.trim();
+
+
+  // If search input is empty, do nothing or optionally show all tasks
+  if (searchValue === "") {
+    alert("enter a seach value and continue!")
+    return;
+  }
+
+  // getting all tasks of current logged in user.
+  const currentUserName = localStorage.getItem('currentUser');
+  const currentUser = users.find(u => u.username === currentUserName);
+  const tasks = currentUser?.tasks || [];
+  
+  // filter tasks by tag
+  const filteredTasks = tasks.filter(task => {
+    return task.taskTag === searchValue;
+  })
+
+  // clearing the exisiting task ui
+  const mainTasksList = document.querySelector('.main-tasks-list');
+  const todoTasksList = mainTasksList.querySelector('.todo-tasks');
+  const inProgressTasksList = mainTasksList.querySelector('.inprogress-tasks');
+  const doneTasksList = mainTasksList.querySelector('.done-tasks');
+  todoTasksList.innerHTML = "";
+  inProgressTasksList.innerHTML = "";
+  doneTasksList.innerHTML = "";
+
+  // render only matching tasks
+  filteredTasks.forEach(task => {
+    if(task.taskStatus === "to-do") {
+      renderTask(task, todoTasksList)
+    }else if(task.taskStatus === "in-progress") {
+      renderTask(task, inProgressTasksList)
+    }else if(task.taskStatus === "done") {
+      renderTask(task, doneTasksList)
+    }
+  });
+
+});
+
+const clearSearchBtn = document.getElementById('clear-search-btn');
+clearSearchBtn.addEventListener("click", () => {
+
+  const searchInput = document.getElementById("search-input");
+  searchInput.value = "";
+  renderAllTasksList();
+});
 
 
 
