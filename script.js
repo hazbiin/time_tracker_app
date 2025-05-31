@@ -477,7 +477,9 @@ function renderTask(task, containerElement) {
           <button class="task-details-btn" id="task-details-btn">
             view task details
           </button>
-          <button class="task-delete-btn">delete</button>
+          <button class="task-delete-btn">
+            <i class="bi bi-trash3"></i>
+          </button>
       </div>
     </div>
   `;
