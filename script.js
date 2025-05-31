@@ -17,12 +17,12 @@ const logoutBtn = document.getElementById("logout-btn");
 // switch between login and signup
 toLoginLink.addEventListener("click", () => {
   signupSection.style.display = "none";
-  loginSection.style.display = "block";
+  loginSection.style.display = "flex";
 });
 
 toSignupLink.addEventListener("click", () => {
   loginSection.style.display = "none";
-  signupSection.style.display = "block";
+  signupSection.style.display = "flex";
 });
 
 // signup 

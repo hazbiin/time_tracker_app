@@ -11,29 +11,29 @@
 </head>
 <body>
 
+        <!-- ---------------signup section------------------ -->
+        <div id="signup-section">
+            <h3>Welcome Back!</h3>
+            <form id="signup-form" class="signup-form">
+                <input type="text" class="auth-input" id="signup-username" placeholder="Username" required />
+                <input type="password" class="auth-input" id="signup-password" placeholder="Password" required />
+                <button class="auth-btn" type="submit">Sign Up</button>
+            </form>
+            <p>Already have an account? <a href="#" id="to-login">Log in</a></p>
+        </div>
 
-    <!-- ---------------signup section------------------ -->
-    <div id="signup-section">
-        <h2>Sign Up</h2>
-        <form id="signup-form">
-            <input type="text" id="signup-username" placeholder="Username" required />
-            <input type="password" id="signup-password" placeholder="Password" required />
-            <button type="submit">Sign Up</button>
-        </form>
-        <p>Already have an account? <a href="#" id="to-login">Log in</a></p>
-    </div>
-
-    <!-- ------------login section--------------------- -->
-    <div id="login-section" style="display: none;">
-        <h2>Log In</h2>
-        <form id="login-form">
-            <input type="text" id="login-username" placeholder="Username" required />
-            <input type="password" id="login-password" placeholder="Password" required />
-            <button type="submit">Log In</button>
-        </form>
-        <p>Don't have an account? <a href="#" id="to-signup">Sign up</a></p>
-    </div>
-
+        <!-- ------------login section--------------------- -->
+        <div id="login-section" style="display: none;">
+            <h3>Log In</h3>
+            <form id="login-form" class="signup-form">
+                <input type="text" class="auth-input" id="login-username" placeholder="Username" required />
+                <input type="password"  class="auth-input" id="login-password" placeholder="Password" required />
+                <button class="auth-btn" type="submit">Log In</button>
+            </form>
+            <p>Don't have an account? <a href="#" id="to-signup">Sign up</a></p>
+        </div>
+    
+   
     <!-- -------------------main-app-section------------- -->
     <section id="app-section" class="main-page" style="display: none;">
         <div class="container">
@@ -259,10 +259,8 @@
                     </div>
                 </section>
             </main>
-
         </div>
     </section>
-
     <script src="script.js"></script>
 </body>
 </html>
