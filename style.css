@@ -73,7 +73,7 @@ button{
     padding: 15px 8px;
     width:100%;
     font-size: 16px;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
     font-weight: bold;
     cursor: pointer;
     outline: none;
@@ -90,54 +90,12 @@ button{
     font-style: italic;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/* ----------------------------------------------main-page-styling---------------------------------- */
 .container {
     display: grid;
     grid-template-columns: 200px 1fr;
 }
 
-/* //////////////////////////////////////////////////////////////////sidebar/////////////////////// */
 .sidebar{
     height: 100vh;
     padding: 20px;
@@ -147,7 +105,7 @@ button{
     position: sticky;
     top: 0px;
     align-self: start;
-    border: 1px solid rgb(217, 217, 217);
+    border: 1px solid rgba(255, 255, 255, 0.5);
     border-top-right-radius: 15px;
     border-bottom-right-radius: 15px;
     overflow: hidden;
@@ -175,10 +133,10 @@ button{
     text-decoration: none;
 }
 
-
 /* //////////////////////////////////////////////////////////////////////////main content/////////// */
 .main-content{
-    padding: 10px;
+    /* padding: 10px; */
+    padding-left: 10px;
     height: 100vh;
     overflow: hidden;
 }
@@ -199,8 +157,9 @@ button{
 } */
 
 .main-section-bottom{
-    border: 1px solid rgb(217, 217, 217);
-    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-top-left-radius: 15px;
+    border-bottom-left-radius:15px;
     padding: 10px;
     flex: 2;
     display: flex;
