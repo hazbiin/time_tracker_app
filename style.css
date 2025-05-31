@@ -17,6 +17,9 @@ body{
 a{
     text-decoration: none;
 }
+a:active{
+    color: black;
+}
 button{
     cursor: pointer;
 }
@@ -31,7 +34,7 @@ button{
     backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 16px;
-    padding: 40px 30px;
+    padding: 60px 30px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
@@ -45,8 +48,13 @@ button{
     flex-direction: column;
     gap: 20px;
 }
+.form-heading{
+    font-size: 25px;
+    font-weight: bold;
+    letter-spacing: 3px;
+}
 .auth-input{
-    padding: 12px 10px;
+    padding: 14px 12px;
     background: none;
     outline: none;
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -55,19 +63,33 @@ button{
     width: 100%;
     font-style: italic;
 }
+.auth-input::placeholder{
+    color: #dad8d8;
+}
 .auth-btn{
     background: black;
-    color: #f6f6f6;
+    color: #d8d6d6;
     border: none;
     padding: 0;
     text-align: center;
-    border-radius: 5px;
-    padding: 10px 8px;
+    border-radius: 10px;
+    padding: 15px 8px;
     width:100%;
-    font-size: 14px;
+    font-size: 16px;
+    letter-spacing: 1px;
+    font-weight: bold;
     cursor: pointer;
 }
-
+.auth-btn:hover{
+    opacity: 0.9;
+}
+.auth-btn:active{
+    transform: scale(0.98);
+}
+.auth-switch-link{
+    color: #ececec;
+    margin-left: 7px;
+}
 
 
 
