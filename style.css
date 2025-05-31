@@ -17,14 +17,11 @@ body{
 a{
     text-decoration: none;
 }
-a:active{
-    color: black;
-}
 button{
     cursor: pointer;
 }
 
-/* -------------------------signup login desgin-------------------------------- */
+/* -------------------------signup login styles-------------------------------- */
 #signup-section, #login-section{
     position: absolute;
     left: 50%;
@@ -79,6 +76,7 @@ button{
     letter-spacing: 1px;
     font-weight: bold;
     cursor: pointer;
+    outline: none;
 }
 .auth-btn:hover{
     opacity: 0.9;
@@ -89,10 +87,8 @@ button{
 .auth-switch-link{
     color: #ececec;
     margin-left: 7px;
+    font-style: italic;
 }
-
-
-
 
 
 

@@ -18,33 +18,47 @@ const logoutBtn = document.getElementById("logout-btn");
 toLoginLink.addEventListener("click", () => {
   signupSection.style.display = "none";
   loginSection.style.display = "flex";
+
+  document.querySelector("#login-username").value = "";
+  document.querySelector("#login-password").value = "";
 });
 
 toSignupLink.addEventListener("click", () => {
   loginSection.style.display = "none";
   signupSection.style.display = "flex";
+
+  document.getElementById("signup-username").value = "";
+  document.getElementById("signup-email").value = "";
+  document.getElementById("signup-password").value = "";
 });
 
 // signup 
 signupForm.addEventListener("submit", (e) => {
     e.preventDefault();
     const username = document.getElementById("signup-username").value.trim();
+    const email = document.getElementById("signup-email").value;
     const password = document.getElementById("signup-password").value;  
+
+    const emailExists = users.find(u => u.email === email);
+    const usernameExists = users.find(u => u.username === username);
+    if(emailExists){
+        alert("Email already registered!");
+        return;
+    }
+    if(usernameExists){
+        alert("Username already taken!");
+        return;
+    }
 
     const newUser = {
       userId: Date.now(),
       username,
+      email,
       password,
       tasks : []
     };
     users.push(newUser);
     
-    // const user = users.find( u => u.username === username);
-    // if(user) {
-    //     alert("user already exists!");
-    //     return;
-    // }
-
     localStorage.setItem("users", JSON.stringify(users));
     localStorage.setItem("currentUser", username);
     
@@ -53,6 +67,10 @@ signupForm.addEventListener("submit", (e) => {
     if(currentUserName) {
       signupSection.style.display = "none";
       appSection.style.display = "block";
+
+      document.getElementById("signup-username").value = "";
+      document.getElementById("signup-password").value = "";
+      document.getElementById("signup-email").value = "";
       displayTasks();
     }
 });
@@ -65,7 +83,6 @@ loginForm.addEventListener("submit", (e) => {
     const password = document.querySelector("#login-password").value;
 
     const user = users.find( u => u.username === username && u.password === password);
-  
     if(!user){
       alert("invalid credentials");
       return;
@@ -75,6 +92,9 @@ loginForm.addEventListener("submit", (e) => {
 
     loginSection.style.display = "none";
     appSection.style.display = "block";
+
+    document.querySelector("#login-username").value = "";
+    document.querySelector("#login-password").value = "";
     displayTasks();
 });
 
@@ -83,8 +103,8 @@ document.querySelector("#logout-btn").addEventListener("click", () => {
  
   localStorage.removeItem("currentUser");
   appSection.style.display = "none";
-  loginSection.style.display = "block";
-})
+  loginSection.style.display = "flex";
+});
 
 
 // /////////////////////////////////////////////////////////////////////////////////////task timer management////
