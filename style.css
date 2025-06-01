@@ -314,59 +314,89 @@ button{
 .list-item-text-section{
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 8px;
+    flex: 1;
+}
+.task-header{
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 .task-name{
-    /* text-decoration: underline;
-    font-style: italic; */
-    font-size: 18px;
+    font-size: 20px;
+    color: #2d3748;
+    font-weight: 600;
+}
+.task-status{
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.status-todo{
+    background: rgba(255, 107, 107, 0.15);
+    color: #c53030;
+    border: 1px solid rgba(255, 107, 107, 0.3);
+}
+.status-inprogress{
+    background: rgba(255, 167, 38, 0.15);
+    color: #dd6b20;
+    border: 1px solid rgba(255, 167, 38, 0.3);
+}
+.status-done{
+    background: rgba(102, 187, 106, 0.15);
+    color: #38a169;
+    border: 1px solid rgba(102, 187, 106, 0.3);
+}
+.task-time-details{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.item-time{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #718096;
+    font-size: 14px;
 }
 .task-total{
-    font-size: 17px;
+    font-size: 18px;
     font-family: Poppins;
     font-style: italic;
     font-weight: 500;
+    color: #4a5568;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+.task-tags-container{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.task-tags-container p{
+    font-size: 12px;
+    color: #718096;
+    font-weight: bold;
+}
+.task-tag{
+    background: linear-gradient(135deg, #2c2c2c, #1a1a1a);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
 .list-item-buttons-section{
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 8px;
 }
-.timer-btn{
-    padding: 10px;
-    border: none;
-    background: none;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-    /* border-radius: 50%; */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
+
 .task-edit-btn{
     border: none;
     background: none;
@@ -400,6 +430,19 @@ button{
     
 
 
+
+
+.timer-btn{
+    padding: 10px;
+    border: none;
+    background: none;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    /* border-radius: 50%; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
 
 
 
@@ -530,21 +573,10 @@ button{
     gap: 5px;
     flex-wrap: wrap;
 }
-.task-tags-container{
+/* .task-tags-container{
     display: flex;
     gap: 10px;
-}
-.task-tag{
-    list-style: none;
-    background-color: #ccc;
-    color: black;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+} */
 
 /* ------------time log list----------- */
 .time-log-group {

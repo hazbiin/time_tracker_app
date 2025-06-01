@@ -395,82 +395,75 @@ function renderTask(task, containerElement) {
   }
 
   // formatting based on task status
-  let totalTimeText; 
   let timerBtn;
-  // let selectBox;
-  let taskTag;
+  // let taskTag;
+  let statusStyle;
 
   if(task.taskStatus === "to-do") {
-    totalTimeText = `time spent until now: ${totalTimeToDisplay}`;
+    statusStyle = 'status-todo';
     timerBtn = `
       <button class="start-timer-btn">
         ${buttonLabel}
       </button>
     `;
-
-    // selectBox = `
-    //   <select id="task-status" class="task-status-select-box" style="display:none" >
-    //     <option value="" selected>Mark as</option>
-    //     <option value="done"> ✅ Done</option>
-    //   </select>
-    // `;
   } else if(task.taskStatus === "in-progress") {
-    totalTimeText = `time spent until now: ${totalTimeToDisplay}`;
+    statusStyle = 'status-inprogress';
     timerBtn = `
       <button class="start-timer-btn">
         ${buttonLabel}
       </button>
     `;
-
-    // selectBox = `
-    //   <select id="task-status" class="task-status-select-box">
-    //     <option value="" selected>Mark as</option>
-    //     <option value="done"> ✅ Done</option>
-    //   </select>
-    // `;
-
   } else {
-    totalTimeText = `total task duration: ${totalTimeToDisplay}`;
-
+    statusStyle = 'status-done';
     timerBtn = `
       <button class="start-timer-btn" style="display:none">
         ${buttonLabel}
       </button>
     `;
-    
-    // selectBox = `
-    //   <select id="task-status" style="display:none" class="task-status-select-box">
-    //     <option value="" selected>Mark as</option>
-    //     <option value="done"> ✅ Done</option>
-    //   </select>
-    // `;
   }
 
+  // if(task.taskTag === "") {
+  //   taskTag = `
+  //     <div class="task-tags-container">
+  //       <p>task-tag: </p>
+  //       <span>-- -- --</span>
+  //     </div>
+  //   `;
+  // }else {
+  //   taskTag =  `
+  //     <div class="task-tags-container">
+  //       <p>task-tag: </p>
+  //       <span class="task-tag">${task.taskTag}</span>
+  //     </div>
+  //   `;
+  // }
 
-  if(task.taskTag === "") {
-    taskTag = `
-      <div class="task-tags-container">
-        <p>task-tag: </p>
-        <span>-- -- --</span>
-      </div>
-    `;
-  }else {
-    taskTag =  `
-      <div class="task-tags-container">
-        <p>task-tag: </p>
-        <span class="task-tag">${task.taskTag}</span>
-      </div>
-    `;
-  }
+  //  <div class="list-item-text-section">
+  //         <h4 class="task-name">${task.taskName}</h4>
+  //         <p class="task-total">${totalTimeText}</p>
+  //         <p class="task-status">task-status: ${task.taskStatus}</p>
+  //         ${taskTag}
+  //     </div>
+
 
   // setting innerHTML
   li.innerHTML = `
     <div class="task-info">
       <div class="list-item-text-section">
+        <div class="task-header">
           <h4 class="task-name">${task.taskName}</h4>
-          <p class="task-total">${totalTimeText}</p>
-          <p class="task-status">task-status: ${task.taskStatus}</p>
-          ${taskTag}
+          <span class="task-status ${statusStyle}">${task.taskStatus}</span>
+        </div>
+        <div class="task-time-details">
+          <div class="item-time">
+            <i class="fas fa-clock"></i>
+            <p class="task-total">${totalTimeToDisplay}</p>
+          </div>
+        </div>
+        <div class="task-tags-container">
+          <p>Tags:</p>
+        <span class="task-tag">${task.taskTag}</span>
+        </div>
       </div>
       <div class="list-item-buttons-section ">
            ${timerBtn}
@@ -484,7 +477,6 @@ function renderTask(task, containerElement) {
     </div>
   `;
 
-  
   containerElement.appendChild(li);
 
   // attach timers
@@ -766,12 +758,6 @@ function displayTotalTaskDuration(taskToUpdate, taskId) {
     }
   })
 }
-
-// 
-// tag edit, delete
-// task details open issue
-// graph. , show weekly grpah also. -- set grpah view then only you can move forward.
-// check logout , if there is any issue or not.
 
 
 // /////////////////////////////////////////////////////////////////////////////////////showing task details/////
