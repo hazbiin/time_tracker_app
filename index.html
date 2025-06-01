@@ -78,15 +78,15 @@
                 <!-- ---------------------task -management- section --------------------- -->
                 <section id="today-tasks-section" class="show-section">
                    
-                    <div class="main-section-bottom">
-                        <div class="current-day-details-section">
+                    <div class="main-section-container">
+                        <div class="section-head">
                             <div>
                                 <h3>Today's Tasks </h3>
                                 <span class="current-date"></span>
                             </div>
                             <div class="top-button-container">
-                                <button class="create-task-btn" id="create-task-popup-btn"> + Create New Task </button>
-                                <button class="create-task-btn" id="existing-task-btn">Work on Existing tasks ?</button>
+                                <button class="action-btn" id="create-task-popup-btn"> + Create New Task </button>
+                                <button class="action-btn" id="existing-task-btn">Work on Existing tasks ?</button>
                             </div>
                         </div>
                         
@@ -121,7 +121,7 @@
                                         <h3>To do</h3>
                                         <ul class="todo-tasks list-sub-category">
 
-                                            <!-- <li class="task-list-item" data-task-id="1748585491885">
+                                            <li class="task-list-item" data-task-id="1748585491885">
                                                 <div class="task-info">
                                                     <div class="list-item-text-section">
 
@@ -141,18 +141,18 @@
                                                         </div>
                                                     </div>
                                                     <div class="list-item-buttons-section ">
-                                                        <button class="start-timer-btn">
+                                                        <button class="start-timer-btn action-btn">
                                                             Begin Your Work Session
                                                         </button>
-                                                        <button class="task-details-btn" id="task-details-btn">
-                                                            view task details
+                                                        <button class="task-details-btn action-btn" id="task-details-btn">
+                                                           <i class="fas fa-eye"></i>
                                                         </button>
-                                                        <button class="task-delete-btn">
+                                                        <button class="task-delete-btn action-btn">
                                                             <i class="bi bi-trash3"></i>
                                                         </button>
                                                     </div>
                                                 </div>
-                                            </li> -->
+                                            </li>
                                         </ul>
                                     </li>
                                     <li class="list-category">
@@ -199,14 +199,13 @@
                 <!-- -------------------all tasks section----------------------------- -->
                 <section id="all-tasks-section" class="hide-section">
 
-                    <div class="main-section-bottom">
-                        <div style="display: flex; justify-content: space-between;">
+                    <div class="main-section-container">
+                        <div class="section-head">
                             <h3>Your Tasks List</h3>
-
                             <div class="search-section">
                                 <input type="text" id="search-input" placeholder="search by tags" style="display: inline-block;"/>
-                                <button class="create-task-btn" id="search-btn">Search</button>
-                                <button class="create-task-btn" id="clear-search-btn">Clear</button>
+                                <button class="action-btn" id="search-btn">Search</button>
+                                <button class="action-btn" id="clear-search-btn">Clear</button>
                             </div>
                         </div>
                         
@@ -243,49 +242,56 @@
 
                 <!-- ---------------analytics-section------------------- -->
                 <section id="analytics-section" class="hide-section">
-
-                    <div class="main-section-bottom">
-                        <h3>Analytics Dashboard</h3>
-
-                        <!-- <div class="analytics-top-row">
-                            <div class="analytics-top-column">
-                                <span>total time spend today</span>
-                                <h4>00h 00m</h4>
-                               
-                                <input type="date">
-                            </div>
-                            <div class="analytics-top-column">
-                                <span>total time spend this week</span>
-                                <h4>00h 00m</h4>
-                             
-                                <input type="week">
-                            </div>
-                            <div class="analytics-top-column">
-                                <span>total time spend this month</span>
-                                <h4>00h 00m</h4>
-                             
-                                <input type="month"/>
-                            </div>
-                        </div> -->
-
-                        <div class="analytics-bottom-row">
-                            <div class="analytics-bottom-row-left-section">
-                                <h3>Time spent per day</h3>
-                                <div class="grid-scrollable-container">
-                                    <div class="grid-container">
-                                    </div>
+                    <div class="main-section-container">
+                        <div class="section-head">
+                            <h3>Analytics Dashboard</h3>
+                        </div>
+                        <div class="analytics-section-bottom">
+                             <!-- <div class="analytics-top-row">
+                                <div class="analytics-top-column">
+                                    <span>total time spend today</span>
+                                    <h4>00h 00m</h4>
+                                
+                                    <input type="date">
                                 </div>
-                            </div>
-                            <!-- <div class="analytics-bottom-row-right-section">
-                                <h3>Daily Tasks Summary Hours Per Task (Top Tasks)</h3>
-                                <div class="daily-task-chart">
-                                    <input id="datePicker" type="date"/>
-                                    <div class="chart-container" style="position: relative; height: 50vh; width: 50vw;">
-                                        <canvas id="dailyTaskChart" class="dailyTaskChart"></canvas>
-                                    </div>
+                                <div class="analytics-top-column">
+                                    <span>total time spend this week</span>
+                                    <h4>00h 00m</h4>
+                                
+                                    <input type="week">
+                                </div>
+                                <div class="analytics-top-column">
+                                    <span>total time spend this month</span>
+                                    <h4>00h 00m</h4>
+                                
+                                    <input type="month"/>
                                 </div>
                             </div> -->
+
+                            <div class="analytics-bottom-row">
+                                <div class="analytics-bottom-row-left-section">
+                                    <h3>Time spent per day</h3>
+                                    <div class="grid-scrollable-container">
+                                        <div class="grid-container">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="analytics-bottom-row-right-section">
+                                    <h3>Daily Tasks Summary Hours Per Task (Top Tasks)</h3>
+                                    <div class="daily-task-chart">
+                                        <input id="datePicker" type="date"/>
+                                        <div class="chart-container" style="position: relative; height: 50vh; width: 50vw;">
+                                            <canvas id="dailyTaskChart" class="dailyTaskChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div> -->
+                            </div>
                         </div>
+
+                       
+
+                       
+
 
                     </div>
                 </section>
