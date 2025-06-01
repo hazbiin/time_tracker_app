@@ -223,7 +223,7 @@ function displayTasks() {
   const todoTasksList = dailyTasksList.querySelector('.todo-tasks');
   const inProgressTasksList = dailyTasksList.querySelector('.inprogress-tasks');
   const doneTasksList = dailyTasksList.querySelector('.done-tasks');
-  todoTasksList.innerHTML = "";
+  // todoTasksList.innerHTML = "";
   inProgressTasksList.innerHTML = "";
   doneTasksList.innerHTML = "";
 

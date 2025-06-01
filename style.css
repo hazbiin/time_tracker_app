@@ -229,18 +229,19 @@ button{
 
 /* /////////////////////////////////////////////////tasks list section//////////////*/
 .tasks-list-section{
-    /* background-color: rgb(241, 241, 241); */
-    padding: 10px;
-    border: 1px solid lightgrey;
-    border-radius: 15px;
     flex: 1;
-    transition: flex 0.5s ease;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
 }
 .new-tasks-list{
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
     height: 100%;
+    list-style: none;
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -250,35 +251,65 @@ button{
 .main-tasks-list{
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    /* gap: 15px; */
+    gap: 20px;
+    height: 100%;
+    list-style: none;
 }
 .list-category{
-    padding-bottom: 10px;
-    /* background-color: rgb(160, 159, 160); */
+    padding-bottom: 15px;
 }
 .list-category h3 {
-    background-color: lightgrey;
-    padding: 5px;
-    border-radius: 5px;
-    margin-bottom: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.list-category h3::before{
+    content: '';
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.list-category:nth-child(1) h3::before {
+    background: #ff6b6b;
+}
+.list-category:nth-child(2) h3::before {
+    background: #ffa726;
+}
+.list-category:nth-child(3) h3::before {
+    background: #66bb6a;
 }
 .list-sub-category{
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
+    list-style: none;
 }
 .task-list-item {
-    padding: 5px;
-    background-color: #f6f6f6;
+    background: rgba(255, 255, 255, 0.9);
     border-radius: 15px;
-    list-style-type:none;
+    list-style-type: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    overflow: hidden;
 }
 .task-info {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 18px 20px;
 }
 .list-item-text-section{
     display: flex;
@@ -296,6 +327,29 @@ button{
     font-style: italic;
     font-weight: 500;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .list-item-buttons-section{
     display: flex;
     align-items: center;
@@ -312,11 +366,6 @@ button{
     align-items: center;
     justify-content: center;
     cursor: pointer;
-}
-.timer-icon{
-    width: 30px;
-    height: 30px;
-    fill: rgb(114, 44, 114);
 }
 .task-edit-btn{
     border: none;
@@ -349,6 +398,21 @@ button{
     gap: 5px;
 }
     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* //////////////////////////////////////////////////////////////////////tasks details section///////////////////// */
 .tasks-details-section {
