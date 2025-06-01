@@ -44,18 +44,15 @@
                 <ul class="main-nav-links">
                     <li>
                        <span class="logo">time tracking app</span>
-                       <button id="toggle-btn">
-                            <img src="assets/svgs/keyboard_double_arrow_left_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg">
-                       </button>
                     </li>
                     <li>
-                        <button id="today-task-list-btn" class="nav-link">Track Today</button>
+                        <button id="today-task-list-btn" class="">Track Today</button>
                     </li>
                     <li>
-                        <button id="list-all-tasks-btn" class="nav-link">My Tasks List</button>
+                        <button id="list-all-tasks-btn" class="">My Tasks List</button>
                     </li>
                     <li>
-                        <button id="analytics-btn" class="nav-link">See Analytics</button>
+                        <button id="analytics-btn" class="">See Analytics</button>
                     </li>
                 </ul>
     
@@ -141,13 +138,14 @@
                                                         </div>
                                                     </div>
                                                     <div class="list-item-buttons-section ">
-                                                        <button class="start-timer-btn action-btn">
-                                                            Begin Your Work Session
+                                                        <button class="start-timer-btn action-btn pd-l">
+                                                            <!-- <i class="fas fa-play"></i> -->
+                                                            Begin Work Session
                                                         </button>
-                                                        <button class="task-details-btn action-btn" id="task-details-btn">
+                                                        <button class="task-details-btn action-btn pd-l" id="task-details-btn">
                                                            <i class="fas fa-eye"></i>
                                                         </button>
-                                                        <button class="task-delete-btn action-btn">
+                                                        <button class="task-delete-btn action-btn pd-l">
                                                             <i class="bi bi-trash3"></i>
                                                         </button>
                                                     </div>
@@ -203,7 +201,7 @@
                         <div class="section-head">
                             <h3>Your Tasks List</h3>
                             <div class="search-section">
-                                <input type="text" id="search-input" placeholder="search by tags" style="display: inline-block;"/>
+                                <input type="text" class="auth-input" id="search-input" placeholder="search by tags" style="display: inline-block;"/>
                                 <button class="action-btn" id="search-btn">Search</button>
                                 <button class="action-btn" id="clear-search-btn">Clear</button>
                             </div>

@@ -12,7 +12,7 @@ body{
     height: 100vh;
     overflow: hidden;
     position: relative;
-    background: linear-gradient(135deg, #073468c9, #7c72a3, #f3eff7);
+    background: linear-gradient(350deg, #073468c9, #7c72a3, #f3eff7);
 }
 a{
     text-decoration: none;
@@ -54,7 +54,7 @@ button{
     padding: 14px 12px;
     background: none;
     outline: none;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 8px;
     font-size: 17px;
     width: 100%;
@@ -301,7 +301,7 @@ button{
     list-style: none;
 }
 .task-list-item {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.6);
     border-radius: 15px;
     list-style-type: none;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -312,7 +312,7 @@ button{
 .task-list-item:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.7);
 }
 .task-info {
     display: flex;
@@ -419,18 +419,27 @@ button{
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 10px;
     transition: all 0.3s ease;
     position: relative;
+    letter-spacing: 0.5px;
 }
 .action-btn:hover{
     transform: translateY(-2px);
     box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
 }
+.pd-l{
+    padding: 10px 12px;
+}
+
+
+
 
 /* //////////////////////////////////////////////////////////////////////tasks details section///////////////////// */
 .tasks-details-section {
     height: 100%;
-    background-color: rgb(241, 241, 241);
+    /* background-color: rgb(241, 241, 241); */
+    background: rgba(255, 255, 255, 0.7);
     border-radius: 15px;
     
     flex-basis: 0;
@@ -631,7 +640,8 @@ button{
 
 /* ///////////////////////////////////////////////////////////////////////////////timer section////////////////////// */
 .timer-section{
-    background-color: rgb(241, 241, 241);
+    /* background-color: rgb(241, 241, 241); */
+    background: rgba(255, 255, 255, 0.7);
     border: 1px solid rgb(217, 217, 217);
     border-radius: 10px;
     height: 100%;

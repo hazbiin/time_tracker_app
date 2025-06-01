@@ -389,9 +389,9 @@ function renderTask(task, containerElement) {
   // formatting buttonlabel
   let buttonLabel;
   if(task.timeLogs.length === 0) {
-    buttonLabel = "Begin Your Work Session";
+    buttonLabel = "Begin Work Session";
   }else {
-    buttonLabel = "Resume Your Work Session";
+    buttonLabel = "Resume Work Session";
   }
 
   // formatting based on task status
@@ -402,21 +402,21 @@ function renderTask(task, containerElement) {
   if(task.taskStatus === "to-do") {
     statusStyle = 'status-todo';
     timerBtn = `
-      <button class="start-timer-btn action-btn">
+      <button class="start-timer-btn action-btn pd-l">
         ${buttonLabel}
       </button>
     `;
   } else if(task.taskStatus === "in-progress") {
     statusStyle = 'status-inprogress';
     timerBtn = `
-      <button class="start-timer-btn action-btn">
+      <button class="start-timer-btn action-btn pd-l">
         ${buttonLabel}
       </button>
     `;
   } else {
     statusStyle = 'status-done';
     timerBtn = `
-      <button class="start-timer-btn action-btn" style="display:none">
+      <button class="start-timer-btn action-btn pd-l" style="display:none">
         ${buttonLabel}
       </button>
     `;
@@ -467,10 +467,10 @@ function renderTask(task, containerElement) {
       </div>
       <div class="list-item-buttons-section">
            ${timerBtn}
-          <button class="task-details-btn action-btn" id="task-details-btn">
+          <button class="task-details-btn action-btn pd-l" id="task-details-btn">
             <i class="fas fa-eye"></i>
           </button>
-          <button class="task-delete-btn action-btn">
+          <button class="task-delete-btn action-btn pd-l">
             <i class="bi bi-trash3"></i>
           </button>
       </div>
@@ -669,7 +669,7 @@ timerBtn.addEventListener("click", (e) => {
       displayTotalTaskDuration(taskToUpdate, taskId);
 
       const currentTaskButtonLabel = currentTaskItem.querySelector('.start-timer-btn');
-      currentTaskButtonLabel.textContent = `Resume Your Work Session`;
+      currentTaskButtonLabel.textContent = `Resume Work Session`;
 
       if(timerSection.classList.contains("show")) {
         timerSection.classList.remove('show');
@@ -752,9 +752,9 @@ function displayTotalTaskDuration(taskToUpdate, taskId) {
     const [hrs,mins,secs] = taskToUpdate.taskTotalDuration.split(':');
 
     if(taskToUpdate.taskStatus === "in-progress") {
-      taskTotalContainer.textContent = `time spent until now: ${hrs}h ${mins}m ${secs}s`;
+      taskTotalContainer.textContent = `${hrs}h ${mins}m ${secs}s`;
     }else if(taskToUpdate.taskStatus === "done"){
-      taskTotalContainer.textContent = `total task duration: ${hrs}h ${mins}m ${secs}s`;
+      taskTotalContainer.textContent = `${hrs}h ${mins}m ${secs}s`;
     }
   })
 }
@@ -1476,7 +1476,7 @@ function createGraph(gridContainer, maxY, maxX = 14){
       }
 
       const styleObj = {
-        backgroundColor:"blueviolet",
+        backgroundColor:"black",
         opacity: "0.5",
         width: "75%",
         height: `${fillRatio * 100}%`,
