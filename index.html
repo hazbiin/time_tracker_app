@@ -79,7 +79,8 @@
                         <div class="section-head">
                             <div>
                                 <h3 class="main-heading">Today's Tasks </h3>
-                                <span class="current-date"></span>
+                                <p><span class="current-date"></span></p>
+                                
                             </div>
                             <div class="top-button-container">
                                 <button class="action-btn" id="create-task-popup-btn"> + Create New Task </button>
@@ -139,7 +140,7 @@
                                                     </div>
                                                     <div class="list-item-buttons-section ">
                                                         <button class="start-timer-btn action-btn pd-l">
-                                                            <!-- <i class="fas fa-play"></i> -->
+                                                            <i class="bi bi-stopwatch-fill"></i>
                                                             Begin Work Session
                                                         </button>
                                                         <button class="task-details-btn action-btn pd-l" id="task-details-btn">
@@ -201,7 +202,7 @@
                         <div class="section-head">
                             <div>
                                 <h3 class="main-heading">Your Tasks List</h3>
-                                <span class="main-sub-heading">View all your tasks details and search task by tags</span>
+                                <span class="main-sub-heading">View all your tasks details and search task by tags!</span>
                             </div>
                             <div class="top-button-container">
                                 <input type="text" class="auth-input search-bg" id="search-input" placeholder="search by tags" style="display: inline-block;"/>
@@ -247,49 +248,44 @@
                         <div class="section-head">
                             <div>
                                 <h3 class="main-heading">Analytics Dashboard</h3>
-                                <span class="main-sub-heading">Track your productivity and working hours</span>
+                                <span class="main-sub-heading">Track your productivity and working hours!</span>
                             </div>
                         </div>
-                        
                         <div class="analytics-section-bottom">
-                             <!-- <div class="analytics-top-row">
-                                <div class="analytics-top-column">
-                                    <span>total time spend today</span>
-                                    <h4>00h 00m</h4>
-                                
-                                    <input type="date">
+                            <div class="analytics-content-container">
+                                <div class="chart-controls">
+                                    <div class="view-toggle">
+                                        <button class="chart-toggle-btn toggle-active">Daily View</button>
+                                        <button class="chart-toggle-btn">Weekly View</button>
+                                    </div>
+                                    <div class="nav-controls">
+                                        <button class="nav-btn">
+                                            <i class="bi bi-chevron-left"></i>
+                                        </button>
+                                        <div class="current-period">current period</div>
+                                        <button class="nav-btn">
+                                            <i class="bi bi-chevron-right"></i>
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="analytics-top-column">
-                                    <span>total time spend this week</span>
-                                    <h4>00h 00m</h4>
-                                
-                                    <input type="week">
-                                </div>
-                                <div class="analytics-top-column">
-                                    <span>total time spend this month</span>
-                                    <h4>00h 00m</h4>
-                                
-                                    <input type="month"/>
-                                </div>
-                            </div> -->
-
-                            <div class="analytics-bottom-row">
-                                <div class="analytics-bottom-row-left-section">
-                                    <h3>Time spent per day</h3>
-                                    <div class="grid-scrollable-container">
+                                <div class="chart-container">
+                                    <div class="chart-header">
+                                        <div>   
+                                            <div class="chart-title">
+                                                Daily Task Time Distribution
+                                            </div>
+                                            <div class="chart-subtitle">
+                                                Hours spent on tasks throughtout the day
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="chart">
                                         <div class="grid-container">
                                         </div>
-                                    </div>
-                                </div>
-                                <!-- <div class="analytics-bottom-row-right-section">
-                                    <h3>Daily Tasks Summary Hours Per Task (Top Tasks)</h3>
-                                    <div class="daily-task-chart">
-                                        <input id="datePicker" type="date"/>
-                                        <div class="chart-container" style="position: relative; height: 50vh; width: 50vw;">
-                                            <canvas id="dailyTaskChart" class="dailyTaskChart"></canvas>
+                                        <div class="chart-x-labels">
                                         </div>
                                     </div>
-                                </div> -->
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -300,3 +296,11 @@
     <script src="script.js"></script>
 </body>
 </html>
+
+
+<!-- <div class="daily-task-chart">
+    <input id="datePicker" type="date"/>
+        <div class="chart-container" style="position: relative; height: 50vh; width: 50vw;">
+            <canvas id="dailyTaskChart" class="dailyTaskChart"></canvas>
+        </div>
+</div> -->

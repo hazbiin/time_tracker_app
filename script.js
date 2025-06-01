@@ -1350,6 +1350,18 @@ function renderAllTasksList(){
   })
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
 // -----------------getting duration worked on each day and week(implentation withour chartjs)---------------------
 
 function getWorkingHoursForDay() {
