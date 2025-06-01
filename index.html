@@ -38,7 +38,7 @@
     </div>
    
     <!-- -------------------main-app-section------------- -->
-    <section id="app-section" class="main-page" style="display: none;">
+    <section id="app-section" style="display: none;">
         <div class="container">
             <nav class="sidebar">
                 <ul class="main-nav-links">
@@ -78,7 +78,7 @@
                     <div class="main-section-container">
                         <div class="section-head">
                             <div>
-                                <h3>Today's Tasks </h3>
+                                <h3 class="main-heading">Today's Tasks </h3>
                                 <span class="current-date"></span>
                             </div>
                             <div class="top-button-container">
@@ -199,9 +199,12 @@
 
                     <div class="main-section-container">
                         <div class="section-head">
-                            <h3>Your Tasks List</h3>
-                            <div class="search-section">
-                                <input type="text" class="auth-input" id="search-input" placeholder="search by tags" style="display: inline-block;"/>
+                            <div>
+                                <h3 class="main-heading">Your Tasks List</h3>
+                                <span class="main-sub-heading">View all your tasks details and search task by tags</span>
+                            </div>
+                            <div class="top-button-container">
+                                <input type="text" class="auth-input search-bg" id="search-input" placeholder="search by tags" style="display: inline-block;"/>
                                 <button class="action-btn" id="search-btn">Search</button>
                                 <button class="action-btn" id="clear-search-btn">Clear</button>
                             </div>
@@ -242,8 +245,12 @@
                 <section id="analytics-section" class="hide-section">
                     <div class="main-section-container">
                         <div class="section-head">
-                            <h3>Analytics Dashboard</h3>
+                            <div>
+                                <h3 class="main-heading">Analytics Dashboard</h3>
+                                <span class="main-sub-heading">Track your productivity and working hours</span>
+                            </div>
                         </div>
+                        
                         <div class="analytics-section-bottom">
                              <!-- <div class="analytics-top-row">
                                 <div class="analytics-top-column">
@@ -285,12 +292,6 @@
                                 </div> -->
                             </div>
                         </div>
-
-                       
-
-                       
-
-
                     </div>
                 </section>
             </main>
