@@ -465,12 +465,12 @@ function renderTask(task, containerElement) {
         <span class="task-tag">${task.taskTag}</span>
         </div>
       </div>
-      <div class="list-item-buttons-section ">
+      <div class="list-item-buttons-section action-btn">
            ${timerBtn}
-          <button class="task-details-btn" id="task-details-btn">
-            view task details
+          <button class="task-details-btn action-btn" id="task-details-btn">
+            <i class="fas fa-eye"></i>
           </button>
-          <button class="task-delete-btn">
+          <button class="task-delete-btn action-btn">
             <i class="bi bi-trash3"></i>
           </button>
       </div>
