@@ -402,21 +402,21 @@ function renderTask(task, containerElement) {
   if(task.taskStatus === "to-do") {
     statusStyle = 'status-todo';
     timerBtn = `
-      <button class="start-timer-btn">
+      <button class="start-timer-btn action-btn">
         ${buttonLabel}
       </button>
     `;
   } else if(task.taskStatus === "in-progress") {
     statusStyle = 'status-inprogress';
     timerBtn = `
-      <button class="start-timer-btn">
+      <button class="start-timer-btn action-btn">
         ${buttonLabel}
       </button>
     `;
   } else {
     statusStyle = 'status-done';
     timerBtn = `
-      <button class="start-timer-btn" style="display:none">
+      <button class="start-timer-btn action-btn" style="display:none">
         ${buttonLabel}
       </button>
     `;
@@ -465,7 +465,7 @@ function renderTask(task, containerElement) {
         <span class="task-tag">${task.taskTag}</span>
         </div>
       </div>
-      <div class="list-item-buttons-section action-btn">
+      <div class="list-item-buttons-section">
            ${timerBtn}
           <button class="task-details-btn action-btn" id="task-details-btn">
             <i class="fas fa-eye"></i>
