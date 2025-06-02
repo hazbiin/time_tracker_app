@@ -93,13 +93,14 @@
                         <div class="new-task-popup">
                             <div class="task-inputs-container">
                                 <div class="popup-inputs">
-                                    <input id="task-name" type="text" placeholder="enter task name..."/>
-                                    <textarea id="task-desc" placeholder="enter description" id=""></textarea>
-                                    <input id="task-tag" type="text" placeholder="set a tag ..."/>
+                                    <input id="task-name" class="auth-input" type="text" placeholder="enter task name..."/>
+                                    <input id="task-tag" class="auth-input" type="text" placeholder="set a tag ..."/>
+                                    <textarea id="task-desc" class="auth-input" placeholder="enter description" id=""></textarea>
+                                   
                                 </div>
-                                <div class="popup-control-btns">
-                                    <button id="create-task-btn" class="btn">Create task</button>
-                                    <button id="close-popup-btn" class="btn">Cancel</button>
+                                <div class="top-button-container">
+                                    <button id="create-task-btn" class=" w-100 action-btn">Create task</button>
+                                    <button id="close-popup-btn" class="w-100 action-btn">Cancel</button>
                                 </div>
                             </div>
                         </div>
@@ -141,7 +142,7 @@
                                                     <div class="list-item-buttons-section ">
                                                         <button class="start-timer-btn action-btn pd-l">
                                                             <i class="bi bi-stopwatch-fill"></i>
-                                                            Begin Work Session
+                                                            <span class="start-timer-btn-text">Begin Work Session</span>
                                                         </button>
                                                         <button class="task-details-btn action-btn pd-l" id="task-details-btn">
                                                            <i class="fas fa-eye"></i>
@@ -202,7 +203,7 @@
                         <div class="section-head">
                             <div>
                                 <h3 class="main-heading">Your Tasks List</h3>
-                                <span class="main-sub-heading">View all your tasks details and search task by tags!</span>
+                                <span class="main-sub-heading">View all your tasks details and search tasks by tags!</span>
                             </div>
                             <div class="top-button-container">
                                 <input type="text" class="auth-input search-bg" id="search-input" placeholder="search by tags" style="display: inline-block;"/>
@@ -282,8 +283,6 @@
                                     <div class="chart">
                                         <div class="grid-container">
                                         </div>
-                                        <div class="chart-x-labels">
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -300,7 +299,7 @@
 
 <!-- <div class="daily-task-chart">
     <input id="datePicker" type="date"/>
-        <div class="chart-container" style="position: relative; height: 50vh; width: 50vw;">
-            <canvas id="dailyTaskChart" class="dailyTaskChart"></canvas>
-        </div>
+    <div class="chart-container" style="position: relative; height: 50vh; width: 50vw;">
+        <canvas id="dailyTaskChart" class="dailyTaskChart"></canvas>
+    </div>
 </div> -->

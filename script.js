@@ -403,21 +403,24 @@ function renderTask(task, containerElement) {
     statusStyle = 'status-todo';
     timerBtn = `
       <button class="start-timer-btn action-btn pd-l">
-        ${buttonLabel}
+        <i class="bi bi-stopwatch-fill"></i>
+        <span class="start-timer-btn-text">${buttonLabel}</span>
       </button>
     `;
   } else if(task.taskStatus === "in-progress") {
     statusStyle = 'status-inprogress';
     timerBtn = `
       <button class="start-timer-btn action-btn pd-l">
-        ${buttonLabel}
+        <i class="bi bi-stopwatch-fill"></i>
+        <span class="start-timer-btn-text">${buttonLabel}</span>
       </button>
     `;
   } else {
     statusStyle = 'status-done';
     timerBtn = `
       <button class="start-timer-btn action-btn pd-l" style="display:none">
-        ${buttonLabel}
+        <i class="bi bi-stopwatch-fill"></i>
+        <span class="start-timer-btn-text">${buttonLabel}</span>
       </button>
     `;
   }
@@ -604,7 +607,7 @@ timerBtn.addEventListener("click", (e) => {
       localStorage.setItem("users", JSON.stringify(users));
 
       const taskStatusLabel = currentTaskItem.querySelector('.task-status');
-      taskStatusLabel.textContent = `task-status: ${taskToUpdate.taskStatus}`;
+      taskStatusLabel.textContent = `${taskToUpdate.taskStatus}`;
       
       intervalId = setInterval(() => {
         seconds++;
@@ -625,12 +628,15 @@ timerBtn.addEventListener("click", (e) => {
       timerBtn.textContent = "stop";
 
       // dom changes 
-      // const dailyTasksList = document.getElementById("daily-tasks-list");
-      // const inProgressTasksList = dailyTasksList.querySelector('.inprogress-tasks');
-      // addUpdatedAndRemoveExisitingTaskItem(inProgressTasksList, currentTaskItem);
+      const dailyTasksList = document.getElementById("daily-tasks-list");
+      const inProgressTasksList = dailyTasksList.querySelector('.inprogress-tasks');
+      addUpdatedAndRemoveExisitingTaskItem(inProgressTasksList, currentTaskItem);
+
+      const currentTaskButtonLabel = currentTaskItem.querySelector('.start-timer-btn-text');
+      currentTaskButtonLabel.textContent = `Resume Work Session`;
 
       // render the current day tasks
-      displayTasks();
+      // displayTasks();
       
     }else {
 
@@ -668,7 +674,7 @@ timerBtn.addEventListener("click", (e) => {
       // necessary dom changes 
       displayTotalTaskDuration(taskToUpdate, taskId);
 
-      const currentTaskButtonLabel = currentTaskItem.querySelector('.start-timer-btn');
+      const currentTaskButtonLabel = currentTaskItem.querySelector('.start-timer-btn-text');
       currentTaskButtonLabel.textContent = `Resume Work Session`;
 
       if(timerSection.classList.contains("show")) {
@@ -916,8 +922,8 @@ function populateTaskDetails(currentTask) {
           <h3>Your Task Details</h3>
         </div>
         <div class="header-btns">
-          <button class="edit-toggle-btn btn">Edit mode</button>
-          <button class="btn tasks-details-section-close-btn">x</button>
+          <button class="edit-toggle-btn action-btn">Edit mode</button>
+          <button class="tasks-details-section-close-btn action-btn">x</button>
         </div>
       </div>
       <div class="task-details-content">
@@ -982,8 +988,8 @@ function populateTaskDetails(currentTask) {
       </div>
       </div>
       <div class="task-edit-actions" style="display: none;">
-        <button class="btn w-100 save-changes-btn">save changes</button>
-        <button class="btn w-100 cancel-edit-btn">Cancel</button>
+        <button class="action-btn w-100 save-changes-btn">save changes</button>
+        <button class="action-btn w-100 cancel-edit-btn">Cancel</button>
       </div>
   `;
 
@@ -1341,16 +1347,103 @@ function renderAllTasksList(){
 
   tasks.forEach(task => {
     if(task.taskStatus === "to-do") {
-      renderTask(task, todoTasksList)
+      renderTask(task, todoTasksList);
     }else if(task.taskStatus === "in-progress") {
-      renderTask(task, inProgressTasksList)
+      renderTask(task, inProgressTasksList);
     }else if(task.taskStatus === "done") {
-      renderTask(task, doneTasksList)
+      renderTask(task, doneTasksList);
     }
   })
 }
 
 
+// //////////////////////////////////////////////////////////chart implementation without charting libraries//////
+
+// getting duration worked on each day
+// function getWorkingHours(){
+//   const workHoursPerDay = {};
+
+//   const currentUserName = localStorage.getItem("currentUser");
+//   const currentUser = users.find(u => u.username === currentUserName);
+//   const tasks = currentUser?.tasks || [];
+
+//   tasks.forEach(task => {
+//     task.timeLogs.forEach(log => {
+
+//       // getting date key
+//       const date = new Date(log.startTime);
+//       const year = date.getFullYear();
+//       const month = String(date.getMonth() + 1).padStart(2, "0");
+//       const day = String(date.getDate()).padStart(2, "0");
+//       const dateKey = `${year}-${month}-${day}`;
+
+//       const [h, m, s] = log.totalTime.split(":");
+//       const totalSeconds = Number(h) * 3600 + Number(m) * 60 + Number(2);
+
+//       if(!workHoursPerDay[dateKey]){
+//         workHoursPerDay[dateKey] = 0;
+//       }
+
+//       workHoursPerDay[dateKey] += totalSeconds;
+//     });
+//   });
+
+//   Object.keys(workHoursPerDay).forEach(dateKey => {
+//     workHoursPerDay[dateKey] = Math.round((workHoursPerDay[dateKey] / 3600 )* 100) / 100;
+//   })
+
+//   return workHoursPerDay;
+// }
+
+// // helper function to get 14 days date keys
+// function get14DayWindowFromOffset(offset = 0) {
+
+//   // get today date object
+//   const today =  new Date();
+
+//   // move back or forward by offset 14- days blocks
+//   const startDate = new Date(today);
+//   startDate.setDate(today.getDate() - (today.getDate() - 1) % 14 + offset * 14);
+
+//   // creating 14 days dates
+//   const dateKeys = [];
+//   for(let i = 0; i < 14; i++) {
+//     const date = new Date(startDate);
+//     date.setDate(startDate.getDate() + i);
+
+//     const y = date.getFullYear();
+//     const m = String(date.getMonth() + 1).padStart(2, "0");
+//     const d = String(date.getDate()).padStart(2, "0");
+//     const key = `${y}-${m}-${d}`;
+
+//     dateKeys.push(key);
+//   }
+//   return dateKeys;
+// }
+
+// // getting final mapped data
+// const workHours = getWorkingHours();
+// const dateChunk = get14DayWindowFromOffset();  // offsets -1 0 1
+
+// const mappedData = dateChunk.map(date => ({
+//   date, 
+//   hours: workHours[date] || 0
+// }))
+// console.log("final mapped data",mappedData);
+
+// // getting maxY according to the exisiting max hours of mapped data
+// function getMaxYFromMappedData(mappedData){
+//   const allhours = mappedData.map(data => {
+//     return data.hours
+//   });
+//   const maxHour = Math.max(...allhours, 0);
+//   const withBuffer = Math.ceil(maxHour + 3);
+
+//   return Math.max(withBuffer, 8);
+// }
+// console.log(getMaxYFromMappedData(mappedData));
+
+// chart creation using grid.
 
 
 
@@ -1362,8 +1455,7 @@ function renderAllTasksList(){
 
 
 
-// -----------------getting duration worked on each day and week(implentation withour chartjs)---------------------
-
+// ////////////////////////////////////////////////////////////////old code//////////////
 function getWorkingHoursForDay() {
   const workHoursPerDay = {};
 
@@ -1395,7 +1487,7 @@ function getWorkingHoursForDay() {
 
 
 const workHoursPerDay = getWorkingHoursForDay();
-// console.log(workHoursPerDay);
+console.log(workHoursPerDay);
 const allDates = Object.keys(workHoursPerDay).sort();
 const gridContainer = document.querySelector('.grid-container');
 
@@ -1408,8 +1500,10 @@ function getMaxYFromData(workHoursPerDay) {
   return Math.max(withBuffer,8);
 }
 const maxY = getMaxYFromData(workHoursPerDay);
-// createGraph(gridContainer, maxY, 14);
 
+
+
+// createGraph(gridContainer, maxY, 14);
 function createGraph(gridContainer, maxY, maxX = 14){
   
   // taking on extra row and column for labels
@@ -1526,7 +1620,7 @@ function formateXAxisLabel(dateStr = "") {
 }
 
 
-// ////////////////////////////////////////////analytics using chart.js///////////////////////////////////////////////
+////////////////////////////////////////////analytics using chart.js///////////////////////////////////////////////
 // const showAnalyticsBtn = document.querySelector("#analytics-btn");
 
 // // adding listener for date changes
