@@ -257,14 +257,14 @@
                             <div class="analytics-content-container">
                                 <div class="chart-controls">
                                     <div class="view-toggle">
-                                        <button class="chart-toggle-btn toggle-active">Daily View</button>
-                                        <button class="chart-toggle-btn">Weekly View</button>
+                                        <button id="daily-chart-toggle-btn" class="chart-toggle-btn active-view">Daily View</button>
+                                        <button id="weekly-chart-toggle-btn" class="chart-toggle-btn">Weekly View</button>
                                     </div>
                                     <div class="nav-controls">
                                         <button id="previous-btn" class="nav-btn">
                                             <i class="bi bi-chevron-left"></i>
                                         </button>
-                                        <div id="current-period" class="current-period">current period</div>
+                                        <div id="current-period" class="current-period"></div>
                                         <button id="next-btn" class="nav-btn">
                                             <i class="bi bi-chevron-right"></i>
                                         </button>
@@ -273,11 +273,11 @@
                                 <div class="chart-container">
                                     <div class="chart-header">
                                         <div>   
-                                            <div class="chart-title">
-                                                Daily Task Time Distribution
+                                            <div id="chart-title" class="chart-title">
+                                                
                                             </div>
-                                            <div class="chart-subtitle">
-                                                Hours spent on tasks throughtout the day
+                                            <div id="chart-subtitle" class="chart-subtitle">
+                                                
                                             </div>
                                         </div>
                                     </div>

@@ -737,10 +737,11 @@ button{
     letter-spacing: 1px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.toggle-active{
+.active-view{
     background: linear-gradient(130deg, #073468c9, #7c72a3, #cdb2e9);
     color: rgba(255, 255, 255, 0.9);
     box-shadow: 0 4px 15px rgba(71, 53, 102, 0.3);
+    transform: translateY(-1px);
 }
 .nav-controls{
     display: flex;
@@ -775,10 +776,10 @@ button{
     cursor: not-allowed;
 }
 .current-period{
-    font-size: 1rem;
-    font-weight: 700;
+    font-size: 16px;
+    font-weight: 600;
     color: #706969;
-    min-width: 150px;
+    min-width: 250px;
     text-align: center;
 }
 .chart-container{
@@ -826,16 +827,19 @@ button{
   padding-right: 15px;
   border-right: 3px solid rgba(3, 19, 32, 0.164);
   font-size: 12px;
+  font-weight: bold;
+  color: #2c2c2c;
 }
 .x-labels {
   grid-column: 2;
   grid-row: 2;
   display: grid;
-  grid-template-columns: repeat(14, 1fr);
   font-size: 12px;
   text-align: center;
   border-top: 3px solid rgba(3, 19, 32, 0.164);
   padding-top: 15px;
+  font-weight: bold;
+  color: #2c2c2c ;
 }
 .grid-area {
   grid-column: 2;

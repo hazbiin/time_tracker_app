@@ -1327,9 +1327,12 @@ listAllTasksBtn.addEventListener("click", () => {
 const showAnalyticsBtn = document.querySelector("#analytics-btn");
 showAnalyticsBtn.addEventListener("click", () => {
   showSection("analytics-section");
-  renderGraph(currentOffset);
-});
 
+  // initial daily graph with no offset is loaded
+  renderGraph(currentOffset);
+  setActiveButton();
+  setChartTitle();
+});
 
 function renderAllTasksList(){
   const mainTasksList = document.querySelector('.main-tasks-list');
@@ -1419,6 +1422,35 @@ function get14DayWindowFromOffset(offset = 0) {
   return dateKeys;
 }
 
+// helper funciton ot get 7 days date keys
+function get7DayWeekFromOffset(offset = 0) {
+  const today = new Date();
+
+  // Get the current day index (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+  const currentDay = today.getDay();
+
+  // Calculate how many days to go back to get Monday
+  const diffToMonday = (currentDay + 6) % 7;
+
+  // get monday of the week based on offset
+  const startDate = new Date(today);
+  startDate.setDate(today.getDate() - diffToMonday + offset * 7);
+
+  // create 7 days dates
+  const weekDateKeys = [];
+  for(let i = 0; i < 7; i++){
+    const date = new Date(startDate);
+    date.setDate(startDate.getDate() + i);
+
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2,"0");
+    const d = String(date.getDate()).padStart(2,"0");
+    const key = `${y}-${m}-${d}`;
+    weekDateKeys.push(key);
+  }
+  return weekDateKeys;
+}
+
 // getting maxY according to the exisiting max hours of mapped data
 function getMaxYFromMappedData(mappedData){
   const allhours = mappedData.map(data => {
@@ -1430,18 +1462,30 @@ function getMaxYFromMappedData(mappedData){
   return Math.max(withBuffer, 8);
 }
 
+// format xlabels based on the charts 
 function formateXAxisLabel(dateStr) {
-
   const [year, month, day] = dateStr.split("-");
-  const monthNames = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-  ];
+  const date = new Date(`${year}-${month}-${day}`)
 
-  const monthIndex = parseInt(month, 10) - 1;
-  const dayNumber = parseInt(day, 10);
+  if(currentView === "daily") {
+    const monthNames = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+    const monthIndex = parseInt(month, 10) - 1;
+    const dayNumber = parseInt(day, 10);
 
-  return `${monthNames[monthIndex]} ${dayNumber}`;
+    return `${monthNames[monthIndex]} ${dayNumber}`;
+
+  }else {
+    const day = date.getDay();
+    const weekdayIndex = (day + 6) % 7;
+    const weekNames = [
+      "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"
+    ];
+
+    return `${weekNames[weekdayIndex]}`;
+  }
 }
 
 // creating graph layout
@@ -1456,12 +1500,14 @@ function createGraphLayout(gridContainer, yLabelsContainer, xLabelsContainer, ma
   }
 
   // x axis labels
+  // xLabelsContainer.style.gridTemplateColumns = `${repeat( `${dateChunk.length}, 1fr)}`
+  xLabelsContainer.style.gridTemplateColumns = `repeat(${dateChunk.length},1fr)`;
   xLabelsContainer.innerHTML = "";
   dateChunk.forEach(date => {
     const label = document.createElement("div");
     label.textContent = formateXAxisLabel(date);
     xLabelsContainer.appendChild(label);
-  })
+  });
 
   // grid cells 
   gridContainer.innerHTML = "";
@@ -1515,19 +1561,25 @@ function plotMarkers(gridContainer,mappedData){
 
 // /////////////////////////////////////////////////final grpah rendering funciton/////////////
 let currentOffset = 0;
+let currentView = "daily";
+const dailyChartToggleBtn = document.getElementById('daily-chart-toggle-btn');
+const weeklyChartToggleBtn = document.getElementById('weekly-chart-toggle-btn');
 const previousBtn = document.getElementById('previous-btn');
 const nextBtn = document.getElementById('next-btn');
 
 function renderGraph(offset){
   // graph data
   const workHours = getWorkingHours();
-  const dateChunk = get14DayWindowFromOffset(offset);
+
+  const dateChunk = currentView === "weekly" 
+    ? get7DayWeekFromOffset(offset)
+    : get14DayWindowFromOffset(offset);
+
   const mappedData = dateChunk.map(date => ({
     date,
     hours: workHours[date] || 0
   }));
-
-  console.log("current grpah mapped data",mappedData);
+  console.log("current graph mapped data",mappedData);
 
   // graph layout
   const maxY = getMaxYFromMappedData(mappedData);
@@ -1535,34 +1587,83 @@ function renderGraph(offset){
   const yLabels = document.querySelector('.y-labels');
   const xLabels = document.querySelector('.x-labels');
 
-  // graph controls
-  const currentPeriod = document.getElementById('current-period');
-  
   // createGraphlayout
   createGraphLayout(gridArea, yLabels, xLabels, maxY, dateChunk);
   plotMarkers(gridArea, mappedData);
 
-  // update current period label
-  const start = formateXAxisLabel(dateChunk[0]);
-  const end = formateXAxisLabel(dateChunk[dateChunk.length - 1]);
-  currentPeriod.textContent = `${start} - ${end}`;
-
   // disable the next btn when offset is 0
   nextBtn.disabled = (offset === 0);
+
+  // updating current period label
+  const currentPeriod = document.getElementById('current-period');
+  const start = formatDateLabel(dateChunk[0]);
+  const end = formatDateLabel(dateChunk[dateChunk.length - 1]);
+  currentPeriod.textContent = `${start} - ${end}`;
+ 
+} 
+
+function formatDateLabel(dateStr) {
+  const [year, month, day] = dateStr.split('-');
+  const date = new Date(+year, +month - 1, +day); // Constructs date in local time zone at midnight
+  const options = {
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  };
+  return new Intl.DateTimeFormat('en-US', options).format(date);
 }
+
+function setActiveButton() {
+  if(currentView === "daily") {
+    dailyChartToggleBtn.classList.add("active-view");
+    weeklyChartToggleBtn.classList.remove("active-view");
+  }else {
+    weeklyChartToggleBtn.classList.add("active-view");
+    dailyChartToggleBtn.classList.remove("active-view");
+  } 
+}
+
+function setChartTitle(){
+  const chartTitle = document.getElementById('chart-title');
+  const chartSubTitle = document.getElementById("chart-subtitle");
+
+  if(currentView === "daily") {
+    chartTitle.textContent = "Daily Task Time Distribution";
+    chartSubTitle.textContent = "Hours spent on tasks throughtout the day";
+  }else {
+    chartTitle.textContent = "Weekly Task Time Overview";
+    chartSubTitle.textContent = "Total hours worked each day of the week";
+  }
+}
+
+dailyChartToggleBtn.addEventListener("click", () => {
+  currentView = "daily";
+  currentOffset = 0;
+  setActiveButton();
+  setChartTitle();
+  renderGraph(currentOffset);
+});
+
+weeklyChartToggleBtn.addEventListener("click", () => {
+  currentView = "weekly";
+  currentOffset = 0;
+  setActiveButton();
+  setChartTitle();
+  renderGraph(currentOffset);
+});
 
 previousBtn.addEventListener("click", () => {
   currentOffset -= 1;
   renderGraph(currentOffset);
 });
+
 nextBtn.addEventListener("click", () => {
   if(currentOffset < 0) {
     currentOffset += 1;
     renderGraph(currentOffset);
   }
 });
-
-
 
 
 
