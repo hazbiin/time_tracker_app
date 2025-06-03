@@ -745,7 +745,7 @@ button{
 .nav-controls{
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 10px;
 }
 .nav-btn{
     /* background: linear-gradient(135deg, #667eea 0%, #8568a1 100%); */
@@ -770,11 +770,15 @@ button{
 .nav-btn:active {
     transform: translateY(-1px) scale(0.98);
 }
+.nav-btn:disabled{
+    opacity: 0.4;
+    cursor: not-allowed;
+}
 .current-period{
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: 700;
     color: #706969;
-    min-width: 200px;
+    min-width: 150px;
     text-align: center;
 }
 .chart-container{
@@ -820,7 +824,7 @@ button{
   flex-direction: column-reverse;
   justify-content: space-between;
   padding-right: 15px;
-  border-right: 2px solid black;
+  border-right: 3px solid rgba(3, 19, 32, 0.164);
   font-size: 12px;
 }
 .x-labels {
@@ -830,7 +834,7 @@ button{
   grid-template-columns: repeat(14, 1fr);
   font-size: 12px;
   text-align: center;
-  border-top: 2px solid black;
+  border-top: 3px solid rgba(3, 19, 32, 0.164);
   padding-top: 15px;
 }
 .grid-area {
@@ -849,48 +853,6 @@ button{
   left: 50%;
   transform: translateX(-50%);
 }
-
-
-
-/* ////////////////////////////////////////// */
-/* .grid-container {
-    display: grid;
-    height: 100%; 
-    width: 100%;
-}
-.y-label{
-    font-size: 12px;
-    font-weight: bold;
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-end;
-    padding-right: 10px;
-    border-right: 1px solid black;
-}
-.x-label{
-    border-top: 1px solid black;
-    font-size: 10px;
-    text-align: center;
-    white-space: nowrap;
-}
-.block{
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-bottom: 0.2px solid lightgray;
-}
-.marker-block{
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    z-index: 100;
-} */
-
-
-
 
 
 /* animation styles----- */
