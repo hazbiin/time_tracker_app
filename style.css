@@ -738,7 +738,7 @@ button{
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .toggle-active{
-    background: linear-gradient(135deg, #073468c9, #7c72a3, #cdb2e9);
+    background: linear-gradient(130deg, #073468c9, #7c72a3, #cdb2e9);
     color: rgba(255, 255, 255, 0.9);
     box-shadow: 0 4px 15px rgba(71, 53, 102, 0.3);
 }
@@ -748,7 +748,8 @@ button{
     gap: 20px;
 }
 .nav-btn{
-    background: linear-gradient(135deg, #667eea 0%, #8568a1 100%);
+    /* background: linear-gradient(135deg, #667eea 0%, #8568a1 100%); */
+    background: linear-gradient(135deg, #073468c9, #7c72a3, #cdb2e9);
     color: white;
     border: none;
     width: 50px;
@@ -802,11 +803,57 @@ button{
     margin-top: 5px;
     letter-spacing: 0.5px;
 }
-.chart{
+.chart-wrapper{
     flex: 1;
 }
+.chart {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: 1fr auto;
+  width: 100%;
+  height: 100%;
+}
+.y-labels {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-between;
+  padding-right: 15px;
+  border-right: 2px solid black;
+  font-size: 12px;
+}
+.x-labels {
+  grid-column: 2;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: repeat(14, 1fr);
+  font-size: 12px;
+  text-align: center;
+  border-top: 2px solid black;
+  padding-top: 15px;
+}
+.grid-area {
+  grid-column: 2;
+  grid-row: 1;
+  display: grid;
+  background: rgba(255, 255, 255, 0.4);
+  border-top-right-radius: 4px;
+}
+.block {
+  position: relative;
+}
+.marker-block {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+
+
 /* ////////////////////////////////////////// */
-.grid-container {
+/* .grid-container {
     display: grid;
     height: 100%; 
     width: 100%;
@@ -840,14 +887,18 @@ button{
     right: 0;
     margin: 0 auto;
     z-index: 100;
+} */
 
-    /* animation styles----- */
+
+
+
+
+/* animation styles----- */
     /* transform-origin: bottom;
     animation-name: growFromBottom;
     animation-duration: 0.1s;
     animation-timing-function: ease-out;
     animation-fill-mode: forwards;  */
-}
 
 /* @keyframes growFromBottom {
     0% {

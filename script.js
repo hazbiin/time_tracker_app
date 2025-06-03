@@ -1327,7 +1327,7 @@ listAllTasksBtn.addEventListener("click", () => {
 const showAnalyticsBtn = document.querySelector("#analytics-btn");
 showAnalyticsBtn.addEventListener("click", () => {
   showSection("analytics-section");
-  createGraph(gridContainer, maxY, 14);
+  // createGraph(gridContainer, maxY, 14);
 });
 
 
@@ -1358,105 +1358,8 @@ function renderAllTasksList(){
 
 
 // //////////////////////////////////////////////////////////chart implementation without charting libraries//////
-
 // getting duration worked on each day
-// function getWorkingHours(){
-//   const workHoursPerDay = {};
-
-//   const currentUserName = localStorage.getItem("currentUser");
-//   const currentUser = users.find(u => u.username === currentUserName);
-//   const tasks = currentUser?.tasks || [];
-
-//   tasks.forEach(task => {
-//     task.timeLogs.forEach(log => {
-
-//       // getting date key
-//       const date = new Date(log.startTime);
-//       const year = date.getFullYear();
-//       const month = String(date.getMonth() + 1).padStart(2, "0");
-//       const day = String(date.getDate()).padStart(2, "0");
-//       const dateKey = `${year}-${month}-${day}`;
-
-//       const [h, m, s] = log.totalTime.split(":");
-//       const totalSeconds = Number(h) * 3600 + Number(m) * 60 + Number(2);
-
-//       if(!workHoursPerDay[dateKey]){
-//         workHoursPerDay[dateKey] = 0;
-//       }
-
-//       workHoursPerDay[dateKey] += totalSeconds;
-//     });
-//   });
-
-//   Object.keys(workHoursPerDay).forEach(dateKey => {
-//     workHoursPerDay[dateKey] = Math.round((workHoursPerDay[dateKey] / 3600 )* 100) / 100;
-//   })
-
-//   return workHoursPerDay;
-// }
-
-// // helper function to get 14 days date keys
-// function get14DayWindowFromOffset(offset = 0) {
-
-//   // get today date object
-//   const today =  new Date();
-
-//   // move back or forward by offset 14- days blocks
-//   const startDate = new Date(today);
-//   startDate.setDate(today.getDate() - (today.getDate() - 1) % 14 + offset * 14);
-
-//   // creating 14 days dates
-//   const dateKeys = [];
-//   for(let i = 0; i < 14; i++) {
-//     const date = new Date(startDate);
-//     date.setDate(startDate.getDate() + i);
-
-//     const y = date.getFullYear();
-//     const m = String(date.getMonth() + 1).padStart(2, "0");
-//     const d = String(date.getDate()).padStart(2, "0");
-//     const key = `${y}-${m}-${d}`;
-
-//     dateKeys.push(key);
-//   }
-//   return dateKeys;
-// }
-
-// // getting final mapped data
-// const workHours = getWorkingHours();
-// const dateChunk = get14DayWindowFromOffset();  // offsets -1 0 1
-
-// const mappedData = dateChunk.map(date => ({
-//   date, 
-//   hours: workHours[date] || 0
-// }))
-// console.log("final mapped data",mappedData);
-
-// // getting maxY according to the exisiting max hours of mapped data
-// function getMaxYFromMappedData(mappedData){
-//   const allhours = mappedData.map(data => {
-//     return data.hours
-//   });
-//   const maxHour = Math.max(...allhours, 0);
-//   const withBuffer = Math.ceil(maxHour + 3);
-
-//   return Math.max(withBuffer, 8);
-// }
-// console.log(getMaxYFromMappedData(mappedData));
-
-// chart creation using grid.
-
-
-
-
-
-
-
-
-
-
-
-// ////////////////////////////////////////////////////////////////old code//////////////
-function getWorkingHoursForDay() {
+function getWorkingHours(){
   const workHoursPerDay = {};
 
   const currentUserName = localStorage.getItem("currentUser");
@@ -1465,159 +1368,337 @@ function getWorkingHoursForDay() {
 
   tasks.forEach(task => {
     task.timeLogs.forEach(log => {
-      const currentDateKey = formateDate(new Date(log.startTime));
+
+      // getting date key
+      const date = new Date(log.startTime);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      const dateKey = `${year}-${month}-${day}`;
+
       const [h, m, s] = log.totalTime.split(":");
-      const totalSeconds = Number(h) * 3600 + Number(m) * 60 + Number(s);
-      
-      if(!workHoursPerDay[currentDateKey]) {
-        workHoursPerDay[currentDateKey] = 0;
+      const totalSeconds = Number(h) * 3600 + Number(m) * 60 + Number(2);
+
+      if(!workHoursPerDay[dateKey]){
+        workHoursPerDay[dateKey] = 0;
       }
 
-      workHoursPerDay[currentDateKey] += totalSeconds;
-    })
+      workHoursPerDay[dateKey] += totalSeconds;
+    });
   });
 
-  Object.keys(workHoursPerDay).forEach(date => {
-    workHoursPerDay[date] =  Math.round((workHoursPerDay[date] / 3600) * 100) / 100;;
-  });
-
+  Object.keys(workHoursPerDay).forEach(dateKey => {
+    workHoursPerDay[dateKey] = Math.round((workHoursPerDay[dateKey] / 3600 )* 100) / 100;
+  })
 
   return workHoursPerDay;
 }
 
+// helper function to get 14 days date keys
+function get14DayWindowFromOffset(offset = 0) {
 
-const workHoursPerDay = getWorkingHoursForDay();
-console.log(workHoursPerDay);
-const allDates = Object.keys(workHoursPerDay).sort();
-const gridContainer = document.querySelector('.grid-container');
+  // get today date object
+  const today =  new Date();
 
+  // move back or forward by offset 14- days blocks
+  const startDate = new Date(today);
+  startDate.setDate(today.getDate() - (today.getDate() - 1) % 14 + offset * 14);
 
-// getting maxY according to the exisiting max hours of any day
-function getMaxYFromData(workHoursPerDay) {
-  const allhours = Object.values(workHoursPerDay);
-  const maxHours = Math.max(...allhours, 0);
-  const withBuffer = Math.ceil(maxHours + 3);
-  return Math.max(withBuffer,8);
+  // creating 14 days dates
+  const dateKeys = [];
+  for(let i = 0; i < 14; i++) {
+    const date = new Date(startDate);
+    date.setDate(startDate.getDate() + i);
+
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    const key = `${y}-${m}-${d}`;
+
+    dateKeys.push(key);
+  }
+  return dateKeys;
 }
-const maxY = getMaxYFromData(workHoursPerDay);
 
+// getting maxY according to the exisiting max hours of mapped data
+function getMaxYFromMappedData(mappedData){
+  const allhours = mappedData.map(data => {
+    return data.hours
+  });
+  const maxHour = Math.max(...allhours, 0);
+  const withBuffer = Math.ceil(maxHour + 3);
 
+  return Math.max(withBuffer, 8);
+}
 
-// createGraph(gridContainer, maxY, 14);
-function createGraph(gridContainer, maxY, maxX = 14){
-  
-  // taking on extra row and column for labels
-  maxX = maxX + 1;
-  maxY = maxY + 1;
+function formateXAxisLabel(dateStr) {
 
-  gridContainer.style.gridTemplateRows = `repeat(${maxY}, minmax(10px, 50px))`;
-  gridContainer.style.gridTemplateColumns = `repeat(${maxX},  minmax(10px, 50px))`;
+  const [year, month, day] = dateStr.split("-");
+  const monthNames = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
+
+  const monthIndex = parseInt(month, 10) - 1;
+  const dayNumber = parseInt(day, 10);
+
+  return `${monthNames[monthIndex]} ${dayNumber}`;
+}
+
+// creating graph layout
+function createGraphLayout(gridContainer, yLabelsContainer, xLabelsContainer, maxY, dateChunk){
+
+  // y axis labels
+  yLabelsContainer.innerHTML = "";
+  for(let i = 0; i <= maxY; i++) {
+    const label = document.createElement("div");
+    label.textContent = `${i.toString()}h`;
+    yLabelsContainer.appendChild(label);
+  }
+
+  // x axis labels
+  xLabelsContainer.innerHTML = "";
+  dateChunk.forEach(date => {
+    const label = document.createElement("div");
+    label.textContent = formateXAxisLabel(date);
+    xLabelsContainer.appendChild(label);
+  })
+
+  // grid cells 
   gridContainer.innerHTML = "";
+  gridContainer.style.gridTemplateRows = `repeat(${maxY},1fr)`;
+  gridContainer.style.gridTemplateColumns = `repeat(${dateChunk.length},1fr)`;
 
-  for(let y = maxY - 1; y >= 0; y--) {  //row-wise(from top to bottom)
-    // console.log(y)
-
-    for(let x = 0; x < maxX; x++) {    //col-wise(from left to right)
-      const cell = document.createElement('div');
-      // cell.classList.add('block');
-      // cell.dataset.xy = `${x},${y}`;
-      // gridContainer.appendChild(cell);
-
-      // -----------y-axis-label ------------
-      if(x === 0 && y !== 0) { 
-        cell.textContent = `${y.toString()}h`;
-        cell.classList.add("y-label");
-      }else if (x === 0 && y === 0){ 
-        // cell.textContent = "0m";
-        // cell.classList.add("y-label");
-        // cell.style.borderRight = "unset";
-
-      // -----------x-axis-label ------------
-      }else if(y === 0 && x !== 0){ 
-        const dateIndex = x - 1;
-        const formatedXLabel = formateXAxisLabel(allDates[dateIndex]);
-
-        // const label = allDates[dateIndex] || "";
-
-        cell.textContent = formatedXLabel;
-
-        cell.classList.add("x-label");
-
-      // ---------actual block -------------
-      } else if (x !== 0 && y !== 0) {
-        cell.classList.add("block");
-        cell.dataset.xy = `${x},${y}`;
-        // cell.textContent = `${x},${y}`;
-      }
-
+  for(let y = maxY - 1; y >= 0; y--) {
+    for(let x = 0; x < dateChunk.length; x++) {
+      const cell = document.createElement("div");
+      cell.classList.add("block");
+      cell.dataset.xy = `${x},${y}`;
       gridContainer.appendChild(cell);
     }
   }
-  
-  // ---------graph ploting logic ---------------------------------
-  allDates.forEach((date, x) => {
-    // console.log("-------------------new date --------------------");
-
-    const totalHours = workHoursPerDay[date];
-    // console.log("totalhours",totalHours);
-
-    // dev mode testing
-    // const actualHours = totalHours * SCALING_FACTOR;
-    // console.log(actualHours)
-    // const fullBlocks = Math.ceil(actualHours);
-
-    // getting full bar lenght, we have to loop untill this height
-    const fullBlocks = Math.ceil(totalHours); 
-    // console.log("fullblocks",fullBlocks);
-
-    for(let y = 0; y < fullBlocks; y++) {
-      // console.log("y value", y);
-
-      let fillRatio = 1;
-
-      // handle partial fill in lastblock
-      if(y === fullBlocks - 1 && totalHours % 1 !== 0) {
-        fillRatio = totalHours % 1; // remainder here will be the fill ratio
-        // console.log("fillratio", `${fillRatio * 100}%`)
-      }
-
-      const styleObj = {
-        backgroundColor:"black",
-        opacity: "0.5",
-        width: "75%",
-        height: `${fillRatio * 100}%`,
-        borderTopLeftRadius: fillRatio === 1 ? "0px" : "4px",
-        borderTopRightRadius: fillRatio === 1 ? "0px" : "4px"
-      }
-
-      createMarker(x, y, gridContainer, styleObj);
-    }
-  })
 }
 
-function createMarker(x, y, container, styleObj) {
-  const cell = container.querySelector(`[data-xy='${x + 1},${y + 1}']`);
+function createMarker(x, y, gridContainer, styleObj) {
+  const cell = gridContainer.querySelector(`[data-xy='${x},${y}']`);
   if(!cell) return;
 
   const marker = document.createElement("div");
-  marker.classList.add('marker-block');
+  marker.classList.add("marker-block");
   Object.assign(marker.style, styleObj);
   cell.appendChild(marker);
 }
 
-function formateXAxisLabel(dateStr = "") {
-  if(dateStr !== "") {
-    const [day, month] = dateStr.split("-");
+function plotMarkers(gridContainer,mappedData){
+  mappedData.forEach((data, x) => {
+    const totalHours = data.hours;
+    const fullBlocks = Math.ceil(totalHours);
 
-    const monthNames = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
-    ];
+    for(let y = 0; y < fullBlocks; y++) {
+      let fillRatio = 1;
+      if(y === fullBlocks - 1 && totalHours % 1 !== 0) {
+        fillRatio = totalHours % 1;
+      }
 
-    const monthIndex = parseInt(month, 10) - 1;
-    return `${monthNames[monthIndex]} ${parseInt(day, 10)}`;
-  }
+      const styleObj = {
+        height:`${fillRatio * 100}%`,
+        background:`black`,
+        opacity: "0.6",
+        width: "75%",
+        borderTopLeftRadius: fillRatio === 1 ? "0px" : "4px",
+        borderTopRightRadius: fillRatio === 1 ? "0px" : "4px"
+      };
+
+      createMarker(x, y, gridContainer, styleObj);
+    }
+  });
 }
+
+// /////////////////////////////////////////////////graph running input/////////////
+// getting final mapped data
+const workHours = getWorkingHours();
+const dateChunk = get14DayWindowFromOffset(0);  // offsets -1 0 1
+const mappedData = dateChunk.map(date => ({
+  date, 
+  hours: workHours[date] || 0
+}))
+console.log("final mapped data",mappedData);
+
+const maxY = getMaxYFromMappedData(mappedData);
+const gridArea = document.querySelector('.grid-area');
+const yLabels = document.querySelector('.y-labels');
+const xLabels = document.querySelector('.x-labels');
+
+createGraphLayout(gridArea, yLabels, xLabels, maxY, dateChunk);
+plotMarkers(gridArea, mappedData);
+
+
+
+
+// ////////////////////////////////////////////////////////////////old code//////////////
+// function getWorkingHoursForDay() {
+//   const workHoursPerDay = {};
+
+//   const currentUserName = localStorage.getItem("currentUser");
+//   const currentUser = users.find(u => u.username === currentUserName);
+//   const tasks = currentUser?.tasks || [];
+
+//   tasks.forEach(task => {
+//     task.timeLogs.forEach(log => {
+//       const currentDateKey = formateDate(new Date(log.startTime));
+//       const [h, m, s] = log.totalTime.split(":");
+//       const totalSeconds = Number(h) * 3600 + Number(m) * 60 + Number(s);
+      
+//       if(!workHoursPerDay[currentDateKey]) {
+//         workHoursPerDay[currentDateKey] = 0;
+//       }
+
+//       workHoursPerDay[currentDateKey] += totalSeconds;
+//     })
+//   });
+
+//   Object.keys(workHoursPerDay).forEach(date => {
+//     workHoursPerDay[date] =  Math.round((workHoursPerDay[date] / 3600) * 100) / 100;;
+//   });
+
+
+//   return workHoursPerDay;
+// }
+
+
+// const workHoursPerDay = getWorkingHoursForDay();
+// console.log(workHoursPerDay);
+// const allDates = Object.keys(workHoursPerDay).sort();
+// const gridContainer = document.querySelector('.grid-container');
+
+
+// // getting maxY according to the exisiting max hours of any day
+// function getMaxYFromData(workHoursPerDay) {
+//   const allhours = Object.values(workHoursPerDay);
+//   const maxHours = Math.max(...allhours, 0);
+//   const withBuffer = Math.ceil(maxHours + 3);
+//   return Math.max(withBuffer,8);
+// }
+// const maxY = getMaxYFromData(workHoursPerDay);
+
+
+
+// // createGraph(gridContainer, maxY, 14);
+// function createGraph(gridContainer, maxY, maxX = 14){
+  
+//   // taking on extra row and column for labels
+//   maxX = maxX + 1;
+//   maxY = maxY + 1;
+
+//   gridContainer.style.gridTemplateRows = `repeat(${maxY}, minmax(10px, 50px))`;
+//   gridContainer.style.gridTemplateColumns = `repeat(${maxX},  minmax(10px, 50px))`;
+//   gridContainer.innerHTML = "";
+
+//   for(let y = maxY - 1; y >= 0; y--) {  //row-wise(from top to bottom)
+//     // console.log(y)
+
+//     for(let x = 0; x < maxX; x++) {    //col-wise(from left to right)
+//       const cell = document.createElement('div');
+//       // cell.classList.add('block');
+//       // cell.dataset.xy = `${x},${y}`;
+//       // gridContainer.appendChild(cell);
+
+//       // -----------y-axis-label ------------
+//       if(x === 0 && y !== 0) { 
+//         cell.textContent = `${y.toString()}h`;
+//         cell.classList.add("y-label");
+//       }else if (x === 0 && y === 0){ 
+//         // cell.textContent = "0m";
+//         // cell.classList.add("y-label");
+//         // cell.style.borderRight = "unset";
+
+//       // -----------x-axis-label ------------
+//       }else if(y === 0 && x !== 0){ 
+//         const dateIndex = x - 1;
+//         const formatedXLabel = formateXAxisLabel(allDates[dateIndex]);
+
+//         // const label = allDates[dateIndex] || "";
+
+//         cell.textContent = formatedXLabel;
+
+//         cell.classList.add("x-label");
+
+//       // ---------actual block -------------
+//       } else if (x !== 0 && y !== 0) {
+//         cell.classList.add("block");
+//         cell.dataset.xy = `${x},${y}`;
+//         // cell.textContent = `${x},${y}`;
+//       }
+
+//       gridContainer.appendChild(cell);
+//     }
+//   }
+  
+//   // ---------graph ploting logic---------------------------------
+//   allDates.forEach((date, x) => {
+//     // console.log("-------------------new date --------------------");
+
+//     const totalHours = workHoursPerDay[date];
+//     // console.log("totalhours",totalHours);
+
+//     // dev mode testing
+//     // const actualHours = totalHours * SCALING_FACTOR;
+//     // console.log(actualHours)
+//     // const fullBlocks = Math.ceil(actualHours);
+
+//     // getting full bar lenght, we have to loop untill this height
+//     const fullBlocks = Math.ceil(totalHours); 
+//     // console.log("fullblocks",fullBlocks);
+
+//     for(let y = 0; y < fullBlocks; y++) {
+//       // console.log("y value", y);
+
+//       let fillRatio = 1;
+
+//       // handle partial fill in lastblock
+//       if(y === fullBlocks - 1 && totalHours % 1 !== 0) {
+//         fillRatio = totalHours % 1; // remainder here will be the fill ratio
+//         // console.log("fillratio", `${fillRatio * 100}%`)
+//       }
+
+//       const styleObj = {
+//         backgroundColor:"black",
+//         opacity: "0.5",
+//         width: "75%",
+//         height: `${fillRatio * 100}%`,
+//         borderTopLeftRadius: fillRatio === 1 ? "0px" : "4px",
+//         borderTopRightRadius: fillRatio === 1 ? "0px" : "4px"
+//       }
+
+//       createMarker(x, y, gridContainer, styleObj);
+//     }
+//   })
+// }
+
+// function createMarker(x, y, container, styleObj) {
+//   const cell = container.querySelector(`[data-xy='${x + 1},${y + 1}']`);
+//   if(!cell) return;
+
+//   const marker = document.createElement("div");
+//   marker.classList.add('marker-block');
+//   Object.assign(marker.style, styleObj);
+//   cell.appendChild(marker);
+// }
+
+// function formateXAxisLabel(dateStr = "") {
+//   if(dateStr !== "") {
+//     const [day, month] = dateStr.split("-");
+
+//     const monthNames = [
+//       "January", "February", "March", "April", "May", "June",
+//       "July", "August", "September", "October", "November", "December"
+//     ];
+
+//     const monthIndex = parseInt(month, 10) - 1;
+//     return `${monthNames[monthIndex]} ${parseInt(day, 10)}`;
+//   }
+// }
+
 
 
 ////////////////////////////////////////////analytics using chart.js///////////////////////////////////////////////
